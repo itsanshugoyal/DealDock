@@ -12,7 +12,7 @@ const steps = [
     title: "Connect your Instagram",
     body: "One OAuth tap. DealDock begins reading your inbox within 60 seconds. Official Meta API only — your account safety is non-negotiable.",
     color: "#22c55e",
-    glow: "rgba(34,197,94,0.2)",
+    glow: "rgba(34,197,94,0.25)",
   },
   {
     number: "02",
@@ -20,7 +20,7 @@ const steps = [
     title: "We sort by rupee value",
     body: "AI classifies every DM — brand deal, coaching lead, course inquiry. Hinglish, Hindi, English. The most valuable messages surface to the top, not the most recent.",
     color: "#3b82f6",
-    glow: "rgba(59,130,246,0.2)",
+    glow: "rgba(59,130,246,0.25)",
   },
   {
     number: "03",
@@ -28,7 +28,7 @@ const steps = [
     title: "Draft, send, track the money",
     body: "Voice-matched replies drafted for you. Review, edit, send. Every closed deal logged instantly in your Revenue Ledger. You see the rupees you recovered, month over month.",
     color: "#ffc107",
-    glow: "rgba(255,193,7,0.2)",
+    glow: "rgba(255,193,7,0.25)",
   },
 ];
 
@@ -48,23 +48,27 @@ export function HowItWorks() {
         viewport={viewportOnce}
         className="relative grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14"
       >
-        {/* Connecting line — desktop only */}
+        {/* Connecting line — desktop only, sits BEHIND icons via z-0 */}
         <div
           aria-hidden="true"
-          className="hidden md:block absolute top-[3.25rem] left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px"
+          className="hidden md:block absolute z-0 h-px"
           style={{
+            /* top aligns with icon vertical center: ~32px (number+mb) + 32px (icon radius) = 64px = 4rem */
+            top: "4rem",
+            /* start/end at the inner edge of the left/right icon circles */
+            left: "calc(16.67% + 2.25rem)",
+            right: "calc(16.67% + 2.25rem)",
             background:
-              "linear-gradient(to right, rgba(34,197,94,0.3), rgba(59,130,246,0.3), rgba(255,193,7,0.3))",
+              "linear-gradient(to right, rgba(34,197,94,0.35), rgba(59,130,246,0.35), rgba(255,193,7,0.35))",
           }}
         >
-          {/* Animated traveling dot */}
+          {/* Traveling dot */}
           <motion.div
-            className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/60"
-            style={{ left: 0 }}
+            className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/70"
             initial={{ left: "0%", opacity: 0 }}
             whileInView={{ left: "100%", opacity: [0, 1, 1, 0] }}
             viewport={{ once: true }}
-            transition={{ duration: 1.8, delay: 0.6, ease: "easeInOut" }}
+            transition={{ duration: 1.8, delay: 0.7, ease: "easeInOut" }}
           />
         </div>
 
@@ -86,24 +90,25 @@ export function HowItWorks() {
               {step.number}
             </motion.span>
 
-            {/* Icon circle with hover animation */}
+            {/* Icon circle — z-10 so it renders above the connector line */}
             <motion.div
               whileHover={{
                 scale: 1.12,
-                boxShadow: `0 0 32px ${step.glow}, 0 0 8px ${step.glow}`,
+                boxShadow: `0 0 36px ${step.glow}, 0 0 10px ${step.glow}`,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="relative w-16 h-16 rounded-full flex items-center justify-center mb-6 border cursor-pointer transition-colors duration-300"
+              className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center mb-6 cursor-pointer"
               style={{
-                backgroundColor: `${step.color}12`,
-                borderColor: `${step.color}25`,
-                boxShadow: `0 0 20px ${step.color}15`,
+                /* Solid dark background ensures the line is fully hidden behind the circle */
+                backgroundColor: "#111111",
+                border: `1px solid ${step.color}35`,
+                boxShadow: `inset 0 0 20px ${step.color}10, 0 0 18px ${step.color}18`,
               }}
             >
-              {/* Rotating ring on hover */}
+              {/* Dashed rotating ring on hover */}
               <motion.div
-                className="absolute w-16 h-16 rounded-full border"
-                style={{ borderColor: `${step.color}40`, borderStyle: "dashed" }}
+                className="absolute inset-0 rounded-full border"
+                style={{ borderColor: `${step.color}45`, borderStyle: "dashed" }}
                 whileHover={{ rotate: 90 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               />
@@ -122,7 +127,7 @@ export function HowItWorks() {
               {step.body}
             </p>
 
-            {/* Connector arrow — mobile only */}
+            {/* Mobile vertical connector */}
             {i < steps.length - 1 && (
               <div className="md:hidden mt-8 w-px h-8 bg-gradient-to-b from-white/10 to-transparent" />
             )}
