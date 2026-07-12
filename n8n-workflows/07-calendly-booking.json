@@ -1,0 +1,277 @@
+{
+  "name": "07 - Calendly Booking",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 07 — Calendly Booking Workflow\n\n**Credentials to configure:**\n- `Gmail OAuth2` — connect your Gmail account in n8n credentials\n- `AIRTABLE_BASE_ID` — Airtable base ID (env var)\n- `AIRTABLE_LEADS_TABLE` — usually `Leads` (env var)\n- `AIRTABLE_CALLS_TABLE` — usually `Calls` (env var)\n- `SLACK_WEBHOOK_LEADS` — Slack webhook for #dealdock-leads (env var)\n- `SENDER_NAME` — your name (env var, e.g. \"Anshu\")\n\n**Calendly webhook setup:**\n1. Go to Calendly → Integrations → Webhooks\n2. Add webhook URL = the URL shown on the Webhook node (activate workflow first)\n3. Select event: `invitee.created`\n4. The webhook will fire on every new booking\n\n**Calendly intake questions to add (in your event type settings):**\n1. What's your Instagram handle?\n2. Roughly how many DMs do you get per day?\n3. What do you primarily sell? (course / coaching / both)\n4. How did you hear about DealDock?\n\n**What it does:**\n1. Receives Calendly booking webhook\n2. Parses invitee name, email, scheduled time, answers\n3. Finds or creates lead in Airtable\n4. Creates a record in the Calls table\n5. Sends pre-call prep email 24h before the call\n6. Sends Slack notification of new booking\n7. 30 min after call end: reminds founder to add notes",
+        "height": 520,
+        "width": 440,
+        "color": 1
+      },
+      "id": "sticky-calendly",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-440, -260]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "calendly-booking",
+        "responseMode": "onReceived",
+        "responseData": "firstEntryJson"
+      },
+      "id": "calendly-webhook",
+      "name": "Calendly Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "calendly-booking-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Calendly webhook payload\n// Calendly sends different payload shapes for v1 and v2 webhooks\nconst payload = $input.item.json;\n\n// Handle both Calendly v1 and v2 webhook formats\nconst event = payload.event || payload.payload?.event_type || 'invitee.created';\n\n// v2 format\nlet invitee = payload.payload?.invitee || {};\nlet eventDetails = payload.payload?.event || {};\nlet questions = payload.payload?.questions_and_answers || [];\n\n// v1 format fallback\nif (!invitee.email && payload.invitee) {\n  invitee = payload.invitee || {};\n  eventDetails = payload.event || {};\n  questions = payload.questions_and_answers || [];\n}\n\n// Extract core fields\nconst name = invitee.name || invitee.full_name || '';\nconst email = invitee.email || '';\nconst scheduledAt = eventDetails.start_time || invitee.scheduled_event?.start_time || '';\nconst endTime = eventDetails.end_time || invitee.scheduled_event?.end_time || '';\nconst calendlyEventId = eventDetails.uuid || payload.uri || '';\nconst calendlyEventUrl = eventDetails.uri || '';\n\n// Parse intake answers\nconst getAnswer = (questionPart) => {\n  const q = questions.find(qa => \n    (qa.question || '').toLowerCase().includes(questionPart.toLowerCase())\n  );\n  return q?.answer || '';\n};\n\nconst igHandle = getAnswer('instagram') || getAnswer('ig handle') || '';\nconst dmVolume = getAnswer('dms') || getAnswer('how many') || '';\nconst productType = getAnswer('sell') || getAnswer('course') || '';\nconst heardFrom = getAnswer('hear') || '';\n\n// Format scheduled time for display (IST)\nlet scheduledDisplay = scheduledAt;\ntry {\n  const d = new Date(scheduledAt);\n  scheduledDisplay = d.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' });\n} catch(e) {}\n\n// Calculate pre-call email send time (24h before)\nconst preCallSendTime = scheduledAt\n  ? new Date(new Date(scheduledAt).getTime() - 24 * 60 * 60 * 1000).toISOString()\n  : null;\n\n// Calculate post-call reminder time (30min after end)\nconst postCallTime = endTime\n  ? new Date(new Date(endTime).getTime() + 30 * 60 * 1000).toISOString()\n  : null;\n\nreturn [{\n  json: {\n    name,\n    first_name: name.split(' ')[0] || name,\n    email,\n    scheduled_at: scheduledAt,\n    scheduled_display: scheduledDisplay,\n    end_time: endTime,\n    calendly_event_id: calendlyEventId,\n    calendly_event_url: calendlyEventUrl,\n    ig_handle: igHandle.replace('@', '').toLowerCase(),\n    dm_volume: dmVolume,\n    product_type: productType,\n    heard_from: heardFrom,\n    pre_call_send_time: preCallSendTime,\n    post_call_reminder_time: postCallTime\n  }\n}];"
+      },
+      "id": "parse-calendly",
+      "name": "Parse Calendly Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "={{ '{email}=\"' + $json.email + '\"' }}"
+            },
+            {
+              "name": "maxRecords",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "find-lead-calendly",
+      "name": "Find Lead by Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "found",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "lead-exists",
+      "name": "Lead Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $json.records[0].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"stage\": \"Call Booked\",\n    \"call_date\": \"{{ $('Parse Calendly Payload').item.json.scheduled_at }}\",\n    \"calendly_event_id\": \"{{ $('Parse Calendly Payload').item.json.calendly_event_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "update-lead-booked",
+      "name": "Update Lead — Call Booked",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [880, -120]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get lead record ID from the update response or find response\nconst findResp = $('Find Lead by Email').item.json;\nconst parsedData = $('Parse Calendly Payload').item.json;\n\nconst existingRecord = findResp.records?.[0];\nconst leadRecordId = existingRecord?.id || '';\n\nreturn [{\n  json: {\n    lead_record_id: leadRecordId,\n    ...parsedData\n  }\n}];"
+      },
+      "id": "prepare-calls-data",
+      "name": "Prepare Calls Table Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_CALLS_TABLE || 'Calls' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"invitee_name\": \"{{ $json.name }}\",\n    \"invitee_email\": \"{{ $json.email }}\",\n    \"scheduled_at\": \"{{ $json.scheduled_at }}\",\n    \"calendly_event_id\": \"{{ $json.calendly_event_id }}\",\n    \"status\": \"Scheduled\",\n    \"ig_handle_intake\": \"{{ $json.ig_handle }}\",\n    \"dm_volume_intake\": \"{{ $json.dm_volume }}\",\n    \"product_type_intake\": \"{{ $json.product_type }}\",\n    \"heard_from\": \"{{ $json.heard_from }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "create-calls-record",
+      "name": "Create Calls Table Record",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "amount": "=Math.max(0, Math.floor((new Date($('Parse Calendly Payload').item.json.pre_call_send_time) - Date.now()) / 1000))"
+      },
+      "id": "wait-for-pre-call",
+      "name": "Wait Until 24h Before Call",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1320, 0],
+      "webhookId": "wait-pre-call-email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Parse Calendly Payload').item.json.email }}",
+        "subject": "Quick prep for our call tomorrow",
+        "emailType": "text",
+        "message": "=Hi {{ $('Parse Calendly Payload').item.json.first_name }},\n\nLooking forward to tomorrow at {{ $('Parse Calendly Payload').item.json.scheduled_display }}.\n\nTo make the 20 minutes count, I'll be looking at your inbox patterns (publicly visible DM signals, not your actual messages).\n\nOne thing to think about before we talk: when was the last time you found a 2–3 day old DM that was clearly a buyer — and it was already too late?\n\nIf you have a specific example, share it on the call. That's usually where things get real.\n\nSee you tomorrow.\n— {{ $env.SENDER_NAME || 'Anshu' }}",
+        "options": {}
+      },
+      "id": "send-pre-call-email",
+      "name": "Send Pre-Call Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1540, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_LEADS }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"text\": \"📞 *Call booked!*\\n\\n*Name:* {{ $('Parse Calendly Payload').item.json.name }}\\n*Email:* {{ $('Parse Calendly Payload').item.json.email }}\\n*When:* {{ $('Parse Calendly Payload').item.json.scheduled_display }}\\n*IG handle (intake):* {{ $('Parse Calendly Payload').item.json.ig_handle || 'not provided' }}\\n*DM volume:* {{ $('Parse Calendly Payload').item.json.dm_volume || 'not provided' }}\\n*Product type:* {{ $('Parse Calendly Payload').item.json.product_type || 'not provided' }}\\n\\n✅ Pre-call email scheduled for 24h before. CRM updated.\"\n}",
+        "options": {}
+      },
+      "id": "slack-booking-notify",
+      "name": "Slack — Call Booked",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, -200]
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "amount": "=Math.max(0, Math.floor((new Date($('Parse Calendly Payload').item.json.post_call_reminder_time) - Date.now()) / 1000))"
+      },
+      "id": "wait-post-call",
+      "name": "Wait Until 30 Min After Call End",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1760, 0],
+      "webhookId": "wait-post-call-reminder"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_LEADS }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"text\": \"⏰ *Call with {{ $('Parse Calendly Payload').item.json.name }} just ended.*\\n\\nAdd your notes to Airtable NOW so the post-call follow-up email goes out correctly.\\n\\nWhat to add in Airtable:\\n- 2-3 bullet notes from the call\\n- Call outcome (interested / not-fit / needs-time)\\n- Any specific pain points mentioned\\n\\nOnce you add notes and mark outcome, the post-call email will fire automatically within 10 minutes.\\n\\n📋 Open Airtable → Calls table → find {{ $('Parse Calendly Payload').item.json.name }}\"\n}",
+        "options": {}
+      },
+      "id": "slack-post-call-reminder",
+      "name": "Slack — Post-Call Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1980, 0]
+    }
+  ],
+  "connections": {
+    "Calendly Webhook": {
+      "main": [
+        [{ "node": "Parse Calendly Payload", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Calendly Payload": {
+      "main": [
+        [{ "node": "Find Lead by Email", "type": "main", "index": 0 }]
+      ]
+    },
+    "Find Lead by Email": {
+      "main": [
+        [{ "node": "Lead Exists?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Lead Exists?": {
+      "main": [
+        [
+          { "node": "Update Lead — Call Booked", "type": "main", "index": 0 },
+          { "node": "Prepare Calls Table Data", "type": "main", "index": 0 }
+        ],
+        [{ "node": "Prepare Calls Table Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Prepare Calls Table Data": {
+      "main": [
+        [
+          { "node": "Create Calls Table Record", "type": "main", "index": 0 },
+          { "node": "Slack — Call Booked", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Create Calls Table Record": {
+      "main": [
+        [{ "node": "Wait Until 24h Before Call", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait Until 24h Before Call": {
+      "main": [
+        [{ "node": "Send Pre-Call Email", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send Pre-Call Email": {
+      "main": [
+        [{ "node": "Wait Until 30 Min After Call End", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait Until 30 Min After Call End": {
+      "main": [
+        [{ "node": "Slack — Post-Call Reminder", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "calendly", "booking"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "07-calendly-booking-v1"
+}

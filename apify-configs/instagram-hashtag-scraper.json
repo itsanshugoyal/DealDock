@@ -1,0 +1,45 @@
+{
+  "_actorId": "apify/instagram-hashtag-scraper",
+  "_description": "Scrapes recent posts from Instagram hashtags. Run daily at 6am IST via n8n cron. Rotate 2 hashtags per run across the full list. Results feed into Airtable Leads table via n8n webhook.",
+  "_runSchedule": "daily — rotate 2 hashtags per run",
+  "_n8nWebhook": "Set Apify actor webhook to POST to your n8n 'Apify → Airtable' flow URL",
+  "hashtags": [
+    "cohortbasedlearning",
+    "coursecreatorindia",
+    "onlinecoachingindia",
+    "reelsstrategy",
+    "solopreneurindia",
+    "digitalcoachindia"
+  ],
+  "resultsLimit": 50,
+  "scrapePostDetails": true,
+  "scrapeComments": false,
+  "proxy": {
+    "useApifyProxy": true,
+    "apifyProxyGroups": ["RESIDENTIAL"]
+  },
+  "_outputFields": [
+    "ownerUsername",
+    "ownerFullName",
+    "ownerFollowersCount",
+    "ownerBiography",
+    "ownerExternalUrl",
+    "ownerPostsCount",
+    "ownerIsBusinessAccount",
+    "caption",
+    "likesCount",
+    "commentsCount",
+    "timestamp",
+    "url",
+    "id"
+  ],
+  "_n8nFieldMapping": {
+    "ownerUsername": "ig_handle",
+    "ownerFollowersCount": "ig_followers",
+    "ownerBiography": "ig_bio",
+    "ownerExternalUrl": "ig_website",
+    "caption": "recent_post_sample",
+    "source": "ig_hashtag",
+    "source_detail": "hashtag name used in this run"
+  }
+}

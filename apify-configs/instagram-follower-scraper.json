@@ -1,0 +1,92 @@
+{
+  "_actorId": "apify/instagram-followers-scraper",
+  "_description": "Scrapes followers of known Indian creator accounts. Run 3x/week (Mon/Wed/Fri) at 6am IST. These followers are pre-qualified because they follow course creators — they likely run their own audiences. Filter in n8n: keep only those with 20K–300K followers on their own profiles.",
+  "_runSchedule": "3x per week — Monday, Wednesday, Friday at 6am IST",
+  "_n8nWebhook": "Set Apify actor webhook to POST to your n8n 'Apify → Airtable' flow URL",
+  "_filterNote": "n8n post-processing: for each follower returned, only push to Airtable if their own followerCount is between 20000 and 300000",
+  "username": "akshatsrivastava_",
+  "_usernameRotationNote": "Run a separate actor task per account. Rotate accounts across the 3 weekly runs to avoid hammering the same account daily. Suggested rotation: Mon=akshatsrivastava_+ankurwarikoo, Wed=rajshamani+anushkarathod_, Fri=sharanhegde+nikhilkamathofficial+warikoo",
+  "_targetAccounts": [
+    {
+      "handle": "akshatsrivastava_",
+      "niche": "business/career",
+      "approxFollowers": "1.2M",
+      "runDay": "Monday"
+    },
+    {
+      "handle": "ankurwarikoo",
+      "niche": "finance/career",
+      "approxFollowers": "2.1M",
+      "runDay": "Monday"
+    },
+    {
+      "handle": "rajshamani",
+      "niche": "business/entrepreneurship",
+      "approxFollowers": "1.8M",
+      "runDay": "Wednesday"
+    },
+    {
+      "handle": "anushkarathod_",
+      "niche": "fitness/wellness",
+      "approxFollowers": "900K",
+      "runDay": "Wednesday"
+    },
+    {
+      "handle": "sharanhegde",
+      "niche": "marketing/creator economy",
+      "approxFollowers": "450K",
+      "runDay": "Friday"
+    },
+    {
+      "handle": "nikhilkamathofficial",
+      "niche": "business/investing",
+      "approxFollowers": "1.1M",
+      "runDay": "Friday"
+    },
+    {
+      "handle": "warikoo",
+      "niche": "finance/career",
+      "approxFollowers": "2.3M",
+      "runDay": "Friday"
+    }
+  ],
+  "resultsLimit": 200,
+  "proxy": {
+    "useApifyProxy": true,
+    "apifyProxyGroups": ["RESIDENTIAL"]
+  },
+  "_n8nFilterLogic": {
+    "keepIf": {
+      "followersCount": {
+        "min": 20000,
+        "max": 300000
+      }
+    },
+    "discardIf": [
+      "followersCount < 20000",
+      "followersCount > 300000",
+      "isPrivate == true",
+      "postsCount < 12"
+    ]
+  },
+  "_outputFields": [
+    "username",
+    "fullName",
+    "followersCount",
+    "followingCount",
+    "postsCount",
+    "biography",
+    "externalUrl",
+    "isBusinessAccount",
+    "isVerified",
+    "isPrivate"
+  ],
+  "_n8nFieldMapping": {
+    "username": "ig_handle",
+    "followersCount": "ig_followers",
+    "biography": "ig_bio",
+    "externalUrl": "ig_website",
+    "source": "ig_follower_mining",
+    "source_detail": "follower of: <target_account_handle>"
+  }
+}

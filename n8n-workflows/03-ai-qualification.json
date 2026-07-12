@@ -1,0 +1,267 @@
+{
+  "name": "03 - AI Qualification",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 03 — AI Qualification Workflow\n\n**Credentials to configure:**\n- `ANTHROPIC_API_KEY` — Claude API key (env var)\n- `AIRTABLE_BASE_ID` — Airtable base ID (env var)\n- `AIRTABLE_LEADS_TABLE` — usually `Leads` (env var)\n- `SLACK_WEBHOOK_LEADS` — Slack webhook for #dealdock-leads (env var)\n\n**What it does:**\n1. Polls Airtable every 15 min for enriched leads not yet qualified\n2. Builds a qualification prompt using lead data\n3. Calls Claude claude-sonnet-4-6 to score the lead 0-10\n4. Parses the JSON response\n5. Updates Airtable with score, signals, hook, priority\n6. Sets qualification_status = qualified or dead\n7. Sends Slack hot alert for score >= 9\n\n**Cost:** ~$0.01 per lead with claude-sonnet-4-6",
+        "height": 380,
+        "width": 400,
+        "color": 6
+      },
+      "id": "sticky-qualification",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-400, -200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "qual-trigger",
+      "name": "Poll Every 15 Min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({enrichment_status}=\"complete\",{qualification_status}=\"pending\")"
+            },
+            {
+              "name": "maxRecords",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-enriched-leads",
+      "name": "Fetch Enriched Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "has-leads",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-leads-to-qualify",
+      "name": "Any Leads to Qualify?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "id": "split-qual-leads",
+      "name": "Split Leads",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [660, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build qualification prompt from lead fields\nconst record = $input.item.json;\nconst f = record.fields || {};\n\nconst prompt = `You are a sales qualifier for DealDock, a B2B SaaS for Indian Instagram creators.\n\nICP TARGET:\n- Indian solo creator with 40K–250K Instagram followers\n- Sells: course, cohort, or 1:1 coaching — their own product, via DMs\n- Revenue: ₹6L–₹20L/month estimated\n- DM volume: heavy (80–400/day)\n- No large team (max 1 VA)\n\n5 YES-SIGNALS (each worth +2 points):\n1. Bio link = paid product landing page (Stan Store, Exly, Graphy, Kajabi, Razorpay, custom)\n2. Bio CTA reads \"DM [KEYWORD]\" or \"DM for cohort\" — routing buyers through inbox\n3. Story highlights include Wins/Results/Testimonials/Students (5+ covers)\n4. Pinned post is a sales Reel with 200+ comments\n5. Recent posts mention cohort numbers (\"Batch 6 closing\", \"last 3 seats\")\n\n3 ANTI-SIGNALS (each worth -3 points):\n1. No own product — pure brand deal / UGC creator\n2. >700K followers + visible team size signal\n3. Free-content only, under 20K followers, no monetization signal\n\nLEAD DATA:\n- IG Handle: ${f.ig_handle || 'unknown'}\n- Followers: ${f.ig_followers || 0}\n- Bio: ${(f.ig_bio || '').substring(0, 300)}\n- Bio links: ${f.bio_links || 'none'}\n- Story highlights: ${f.story_highlights || 'none'}\n- Recent post captions (sample): ${(f.recent_posts_sample || '').substring(0, 500)}\n- Has product page: ${f.has_product_page || false}\n- Has booking link: ${f.has_booking || false}\n- Source: ${f.source || 'ig_hashtag'}\n\nRespond in JSON only:\n{\n  \"score\": <0-10>,\n  \"yes_signals_hit\": [\"list of signals present\"],\n  \"anti_signals_hit\": [\"list of disqualifiers present\"],\n  \"estimated_revenue_band\": \"<₹4L | ₹4-10L | ₹10-25L | ₹25L+ | unknown>\",\n  \"niche\": \"<business|fitness|finance|language|career|design|marketing|mindset|other>\",\n  \"primary_channel\": \"<IG DM | LinkedIn | Email>\",\n  \"personalization_hook\": \"<one specific, real observation from their profile to use in outreach — mention a specific post, cohort number, or bio detail>\",\n  \"outreach_priority\": \"<high|medium|low>\",\n  \"disqualify_reason\": \"<null or short reason if score < 5>\"\n}`;\n\nreturn [{\n  json: {\n    record_id: record.id,\n    ig_handle: f.ig_handle || '',\n    ig_followers: f.ig_followers || 0,\n    email: f.email || '',\n    email_found: f.email_found || false,\n    qualification_prompt: prompt\n  }\n}];"
+      },
+      "id": "build-prompt",
+      "name": "Build Qualification Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.qualification_prompt) }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "claude-qualify",
+      "name": "Claude — Qualify Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude's JSON response\nconst claudeResponse = $input.item.json;\nconst content = claudeResponse?.content?.[0]?.text || '{}';\n\nlet parsed;\ntry {\n  // Extract JSON from the response (Claude sometimes wraps in markdown)\n  const jsonMatch = content.match(/\\{[\\s\\S]*\\}/);\n  parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(content);\n} catch(e) {\n  parsed = {\n    score: 0,\n    yes_signals_hit: [],\n    anti_signals_hit: ['parse_error'],\n    estimated_revenue_band: 'unknown',\n    niche: 'other',\n    primary_channel: 'Email',\n    personalization_hook: 'Could not parse AI response',\n    outreach_priority: 'low',\n    disqualify_reason: 'AI response parse error'\n  };\n}\n\nconst score = parseInt(parsed.score) || 0;\nconst qualStatus = score >= 7 ? 'qualified' : (score >= 5 ? 'hold' : 'dead');\nconst emailSequenceActive = score >= 7;\n\n// Get lead info from upstream node\nconst leadInfo = $('Build Qualification Prompt').item.json;\n\nreturn [{\n  json: {\n    record_id: leadInfo.record_id,\n    ig_handle: leadInfo.ig_handle,\n    email: leadInfo.email,\n    email_found: leadInfo.email_found,\n    score,\n    yes_signals_hit: JSON.stringify(parsed.yes_signals_hit || []),\n    anti_signals_hit: JSON.stringify(parsed.anti_signals_hit || []),\n    estimated_revenue_band: parsed.estimated_revenue_band || 'unknown',\n    niche: parsed.niche || 'other',\n    primary_channel: parsed.primary_channel || 'Email',\n    personalization_hook: parsed.personalization_hook || '',\n    outreach_priority: parsed.outreach_priority || 'low',\n    disqualify_reason: parsed.disqualify_reason || null,\n    qualification_status: qualStatus,\n    email_sequence_active: emailSequenceActive,\n    sequence_step: 0\n  }\n}];"
+      },
+      "id": "parse-claude-response",
+      "name": "Parse Claude Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, -80]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"score\": {{ $json.score }},\n    \"yes_signals_hit\": {{ $json.yes_signals_hit }},\n    \"anti_signals_hit\": {{ $json.anti_signals_hit }},\n    \"estimated_revenue_band\": \"{{ $json.estimated_revenue_band }}\",\n    \"niche\": \"{{ $json.niche }}\",\n    \"personalization_hook\": \"{{ $json.personalization_hook.replace(/\"/g, \"'\") }}\",\n    \"outreach_priority\": \"{{ $json.outreach_priority }}\",\n    \"qualification_status\": \"{{ $json.qualification_status }}\",\n    \"email_sequence_active\": {{ $json.email_sequence_active }},\n    \"sequence_step\": {{ $json.sequence_step }},\n    \"disqualify_reason\": \"{{ $json.disqualify_reason || '' }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "update-qualification",
+      "name": "Update Airtable — Qualified",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1540, -80]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "hot-lead",
+              "leftValue": "={{ $('Parse Claude Response').item.json.score }}",
+              "rightValue": 9,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-hot-lead",
+      "name": "Score >= 9?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1760, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_LEADS }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"text\": \"🔥 HOT lead: @{{ $('Parse Claude Response').item.json.ig_handle }} scored {{ $('Parse Claude Response').item.json.score }}/10\\n\\n*Hook:* {{ $('Parse Claude Response').item.json.personalization_hook }}\\n*Niche:* {{ $('Parse Claude Response').item.json.niche }}\\n*Est Revenue:* {{ $('Parse Claude Response').item.json.estimated_revenue_band }}\\n*Priority:* {{ $('Parse Claude Response').item.json.outreach_priority }}\\n\\nhttps://instagram.com/{{ $('Parse Claude Response').item.json.ig_handle }}\"\n}",
+        "options": {}
+      },
+      "id": "slack-hot-lead",
+      "name": "Slack — Hot Lead Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1980, -160]
+    }
+  ],
+  "connections": {
+    "Poll Every 15 Min": {
+      "main": [
+        [{ "node": "Fetch Enriched Leads", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Enriched Leads": {
+      "main": [
+        [{ "node": "Any Leads to Qualify?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any Leads to Qualify?": {
+      "main": [
+        [{ "node": "Split Leads", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Split Leads": {
+      "main": [
+        [{ "node": "Build Qualification Prompt", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Qualification Prompt": {
+      "main": [
+        [{ "node": "Claude — Qualify Lead", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude — Qualify Lead": {
+      "main": [
+        [{ "node": "Parse Claude Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Claude Response": {
+      "main": [
+        [{ "node": "Update Airtable — Qualified", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Airtable — Qualified": {
+      "main": [
+        [{ "node": "Score >= 9?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Score >= 9?": {
+      "main": [
+        [{ "node": "Slack — Hot Lead Alert", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "qualification", "ai"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "03-ai-qualification-v1"
+}

@@ -1,0 +1,337 @@
+{
+  "name": "04 - Email Sequences",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 04 — Email Sequences Workflow\n\n**Credentials to configure:**\n- `Gmail OAuth2` — connect your Gmail account in n8n credentials\n- `AIRTABLE_BASE_ID` — Airtable base ID (env var)\n- `AIRTABLE_LEADS_TABLE` — usually `Leads` (env var)\n- `CALENDLY_LINK` — your Calendly booking URL (env var)\n- `SENDER_NAME` — your name for email signature (env var, e.g. \"Anshu\")\n- `SENDER_EMAIL` — your Gmail address (env var)\n\n**Schedule:** Runs daily at 12pm IST (06:30 UTC)\n\n**What it does:**\n1. Fetches all active email sequences where email found and not replied\n2. For each lead, checks which step and how many days elapsed\n3. Step 0: Sends Email 1 (intro) if not yet sent\n4. Step 1: Sends Email 2 (bump) if 3+ days since Email 1\n5. Step 2: Sends Email 3 (final) if 7+ days since Email 1\n6. After Email 3, deactivates the sequence\n7. Updates Airtable last_auto_touchpoint after each send\n\n**Gmail limit:** 500 emails/day on free Gmail — more than enough.",
+        "height": 420,
+        "width": 420,
+        "color": 3
+      },
+      "id": "sticky-email",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-420, -200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 30 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "email-trigger",
+      "name": "Daily 12pm IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({email_sequence_active}=1,{email_found}=1,{replied}=0,{sequence_step}<3)"
+            },
+            {
+              "name": "maxRecords",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-active-sequences",
+      "name": "Fetch Active Sequences",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "has-active",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-active-seqs",
+      "name": "Any Active Sequences?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "id": "split-seq-leads",
+      "name": "Split Leads",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [660, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine which email step to take based on timing\nconst record = $input.item.json;\nconst f = record.fields || {};\n\nconst today = new Date();\nconst dateFirstSent = f.date_first_msg_sent ? new Date(f.date_first_msg_sent) : null;\nconst daysSinceFirst = dateFirstSent\n  ? Math.floor((today - dateFirstSent) / (1000 * 60 * 60 * 24))\n  : null;\n\nconst sequenceStep = parseInt(f.sequence_step) || 0;\n\nlet action = 'skip';\n\nif (sequenceStep === 0 && !f.date_first_msg_sent) {\n  action = 'send_email_1';\n} else if (sequenceStep === 1 && daysSinceFirst !== null && daysSinceFirst >= 3) {\n  action = 'send_email_2';\n} else if (sequenceStep === 2 && daysSinceFirst !== null && daysSinceFirst >= 7) {\n  action = 'send_email_3';\n}\n\n// Extract first name from ig_handle as fallback\nconst firstName = f.first_name || f.name?.split(' ')[0] || f.ig_handle?.split('_')[0] || 'there';\n\nreturn [{\n  json: {\n    record_id: record.id,\n    action,\n    sequence_step: sequenceStep,\n    days_since_first: daysSinceFirst,\n    email: f.email || '',\n    first_name: firstName,\n    ig_handle: f.ig_handle || '',\n    personalization_hook: f.personalization_hook || 'your content caught my eye',\n    niche: f.niche || 'creator',\n    score: f.score || 0\n  }\n}];"
+      },
+      "id": "determine-action",
+      "name": "Determine Email Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -80]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "send_email_1",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "email1"
+            },
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "send_email_2",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "email2"
+            },
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "send_email_3",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "email3"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "switch-email-step",
+      "name": "Switch on Email Step",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1100, -80]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.first_name }} — quick observation about your DMs",
+        "emailType": "text",
+        "message": "=Hi {{ $json.first_name }},\n\n{{ $json.personalization_hook }} — that caught my attention.\n\nAt your DM volume, roughly 1 in 5 buying-intent messages (course inquiries, brand reach-outs, the \"tell me more\" DMs) goes cold before you ever see it. Not because you're slow — because inboxes don't sort by intent.\n\nBuilt something small for 6 creators to fix exactly that. It surfaces high-rupee DMs first, drafts replies in your voice, and shows you how much revenue you've recovered.\n\nFree for 90 days. I just want hard feedback. 20 min this week?\n\n— {{ $env.SENDER_NAME || 'Anshu' }}",
+        "options": {}
+      },
+      "id": "send-email-1",
+      "name": "Send Email 1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1320, -260],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $('Determine Email Action').item.json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"date_first_msg_sent\": \"{{ new Date().toISOString().split('T')[0] }}\",\n    \"sequence_step\": 1,\n    \"last_auto_touchpoint\": \"{{ new Date().toISOString().split('T')[0] }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "update-after-email1",
+      "name": "Update Airtable — Email 1 Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1540, -260]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Re: quick observation about your DMs",
+        "emailType": "text",
+        "message": "={{ $json.first_name }} — bumping this up.\n\nOne number that surprised me: the average Indian creator doing ₹10L+/mo misses ₹2–4L/month to unanswered DMs. Not from ignoring people — from not seeing them.\n\nIf this resonates even a little, 20 min is worth it.\n\n{{ $env.CALENDLY_LINK }}\n\n— {{ $env.SENDER_NAME || 'Anshu' }}",
+        "options": {}
+      },
+      "id": "send-email-2",
+      "name": "Send Email 2",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1320, -80],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $('Determine Email Action').item.json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"sequence_step\": 2,\n    \"last_auto_touchpoint\": \"{{ new Date().toISOString().split('T')[0] }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "update-after-email2",
+      "name": "Update Airtable — Email 2 Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1540, -80]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Last one from me",
+        "emailType": "text",
+        "message": "={{ $json.first_name }} — last note, I promise.\n\nIf DM volume isn't a problem for you, totally fine — skip this. But if you've had even one \"oh shit, missed that DM\" moment in the last month, that's what I'm solving.\n\nFree 90-day pilot. 20 min to decide.\n\n{{ $env.CALENDLY_LINK }}\n\n— {{ $env.SENDER_NAME || 'Anshu' }}",
+        "options": {}
+      },
+      "id": "send-email-3",
+      "name": "Send Email 3",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1320, 100],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $('Determine Email Action').item.json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"sequence_step\": 3,\n    \"email_sequence_active\": false,\n    \"last_auto_touchpoint\": \"{{ new Date().toISOString().split('T')[0] }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "update-after-email3",
+      "name": "Update Airtable — Sequence Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1540, 100]
+    }
+  ],
+  "connections": {
+    "Daily 12pm IST": {
+      "main": [
+        [{ "node": "Fetch Active Sequences", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Active Sequences": {
+      "main": [
+        [{ "node": "Any Active Sequences?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any Active Sequences?": {
+      "main": [
+        [{ "node": "Split Leads", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Split Leads": {
+      "main": [
+        [{ "node": "Determine Email Action", "type": "main", "index": 0 }]
+      ]
+    },
+    "Determine Email Action": {
+      "main": [
+        [{ "node": "Switch on Email Step", "type": "main", "index": 0 }]
+      ]
+    },
+    "Switch on Email Step": {
+      "main": [
+        [{ "node": "Send Email 1", "type": "main", "index": 0 }],
+        [{ "node": "Send Email 2", "type": "main", "index": 0 }],
+        [{ "node": "Send Email 3", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Send Email 1": {
+      "main": [
+        [{ "node": "Update Airtable — Email 1 Sent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send Email 2": {
+      "main": [
+        [{ "node": "Update Airtable — Email 2 Sent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send Email 3": {
+      "main": [
+        [{ "node": "Update Airtable — Sequence Complete", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "email", "outreach"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "04-email-sequences-v1"
+}

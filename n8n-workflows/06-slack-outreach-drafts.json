@@ -1,0 +1,314 @@
+{
+  "name": "06 - Slack Outreach Drafts",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 06 — Slack Outreach Drafts Workflow\n\n**Credentials to configure:**\n- `ANTHROPIC_API_KEY` — Claude API key (env var)\n- `AIRTABLE_BASE_ID` — Airtable base ID (env var)\n- `AIRTABLE_LEADS_TABLE` — usually `Leads` (env var)\n- `SLACK_WEBHOOK_OUTREACH` — Slack webhook for #dealdock-outreach (env var)\n- `CALENDLY_LINK` — your Calendly booking URL (env var)\n\n**Schedule:** Polls Airtable every 30 min for newly qualified leads\n\n**What it does:**\n1. Watches for leads where qualification_status just became 'qualified'\n2. Generates IG DM draft via Claude\n3. Generates LinkedIn connection note (25 words) via Claude\n4. Generates LinkedIn follow-up message (55 words) via Claude\n5. Posts a formatted Slack message to #dealdock-outreach with all drafts\n6. Marks the lead as outreach_drafted=true to avoid duplicate Slack messages\n\n**Manual action required:** You still send the IG DM and LinkedIn messages yourself — this just pre-drafts them for you.",
+        "height": 420,
+        "width": 420,
+        "color": 2
+      },
+      "id": "sticky-outreach",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-420, -200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "outreach-trigger",
+      "name": "Poll Every 30 Min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "AND({qualification_status}=\"qualified\",OR({outreach_drafted}=0,{outreach_drafted}=\"\",{outreach_drafted}=FALSE()))"
+            },
+            {
+              "name": "maxRecords",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-newly-qualified",
+      "name": "Fetch Newly Qualified Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "has-qualified",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-qualified-leads",
+      "name": "Any New Qualified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "id": "split-qualified",
+      "name": "Split Qualified Leads",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [660, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare lead data for AI generation\nconst record = $input.item.json;\nconst f = record.fields || {};\n\nconst firstName = f.first_name || f.name?.split(' ')[0] || f.ig_handle?.split('_')[0] || 'there';\n\nreturn [{\n  json: {\n    record_id: record.id,\n    ig_handle: f.ig_handle || '',\n    first_name: firstName,\n    full_name: f.name || firstName,\n    niche: f.niche || 'creator',\n    score: f.score || 0,\n    outreach_priority: f.outreach_priority || 'medium',\n    estimated_revenue_band: f.estimated_revenue_band || 'unknown',\n    personalization_hook: f.personalization_hook || 'your content',\n    linkedin_url: f.linkedin_url || '',\n    email: f.email || '',\n    ig_followers: f.ig_followers || 0\n  }\n}];"
+      },
+      "id": "prep-lead-data",
+      "name": "Prep Lead Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 300,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a cold Instagram DM for DealDock outreach. Max 60 words.\\nThe message should sound human, specific, and not like a pitch.\\n\\nCreator: @{{ $json.ig_handle }}\\nPersonalization hook: {{ $json.personalization_hook }}\\nNiche: {{ $json.niche }}\\n\\nRules:\\n- Mention ONE specific thing from their profile (use the hook)\\n- Frame it as quick observation not a pitch\\n- Reference built a small thing for 6 creators\\n- Offer free for 90 days, want hard feedback\\n- End with 20 min Zoom this week?\\n- Never mention the product name DealDock\\n- Sound like a founder talking to a peer, not a salesperson\\n\\nReturn only the DM text, no commentary.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "gen-ig-dm",
+      "name": "Claude — Generate IG DM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, -240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 150,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a LinkedIn connection request note. Exactly 25 words or fewer. Sounds human, founder-to-founder.\\n\\nName: {{ $('Prep Lead Data').item.json.first_name }}\\nHook: {{ $('Prep Lead Data').item.json.personalization_hook }}\\nContext: Building something for creators with heavy DM inbound\\n\\nReturn only the note text.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "gen-li-note",
+      "name": "Claude — Generate LinkedIn Note",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 200,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a LinkedIn follow-up message to send 24 hours after they accept the connection request. Max 55 words. Founder-to-founder tone.\\n\\nName: {{ $('Prep Lead Data').item.json.first_name }}\\nHook: {{ $('Prep Lead Data').item.json.personalization_hook }}\\nNiche: {{ $('Prep Lead Data').item.json.niche }}\\nContext: Creators doing Rs 5-30L/mo from IG tend to lose revenue to DM volume. Running a free 90-day pilot.\\nCalendly: {{ $env.CALENDLY_LINK }}\\n\\nReturn only the message text.\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "gen-li-followup",
+      "name": "Claude — Generate LinkedIn Followup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine all AI drafts\nconst leadData = $('Prep Lead Data').item.json;\nconst igDmResp = $('Claude — Generate IG DM').item.json;\nconst liNoteResp = $('Claude — Generate LinkedIn Note').item.json;\nconst liFollowupResp = $('Claude — Generate LinkedIn Followup').item.json;\n\nconst igDm = igDmResp?.content?.[0]?.text?.trim() || 'Could not generate IG DM';\nconst liNote = liNoteResp?.content?.[0]?.text?.trim() || 'Could not generate LinkedIn note';\nconst liFollowup = liFollowupResp?.content?.[0]?.text?.trim() || 'Could not generate LinkedIn followup';\n\nreturn [{\n  json: {\n    ...leadData,\n    ig_dm_draft: igDm,\n    linkedin_note: liNote,\n    linkedin_followup: liFollowup\n  }\n}];"
+      },
+      "id": "merge-drafts",
+      "name": "Merge All Drafts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, -80]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"ig_dm_draft\": {{ JSON.stringify($json.ig_dm_draft) }},\n    \"linkedin_note\": {{ JSON.stringify($json.linkedin_note) }},\n    \"linkedin_followup\": {{ JSON.stringify($json.linkedin_followup) }},\n    \"outreach_drafted\": true\n  }\n}",
+        "options": {}
+      },
+      "id": "save-drafts-airtable",
+      "name": "Save Drafts to Airtable",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1540, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_OUTREACH }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"🎯 New qualified lead — Priority: {{ $json.outreach_priority.toUpperCase() }} | Score: {{ $json.score }}/10\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Handle:* @{{ $json.ig_handle }} | *Niche:* {{ $json.niche }} | *Revenue est:* {{ $json.estimated_revenue_band }}\\n*Hook:* {{ $json.personalization_hook }}\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"✉️ *EMAIL* — auto-started via n8n workflow 04\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"🔗 *LINKEDIN CONNECTION NOTE (paste — 25 words):*\\n{{ $json.linkedin_note }}\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"🔗 *LINKEDIN FOLLOW-UP (send 24h after accept):*\\n{{ $json.linkedin_followup }}\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"💬 *IG DM (send manually 12–2pm IST):*\\n{{ $json.ig_dm_draft }}\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*IG profile:* https://instagram.com/{{ $json.ig_handle }}{{ $json.linkedin_url ? '\\\\n*LinkedIn:* ' + $json.linkedin_url : '' }}\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "slack-outreach-card",
+      "name": "Slack — Outreach Draft Card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1760, -80]
+    }
+  ],
+  "connections": {
+    "Poll Every 30 Min": {
+      "main": [
+        [{ "node": "Fetch Newly Qualified Leads", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Newly Qualified Leads": {
+      "main": [
+        [{ "node": "Any New Qualified?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any New Qualified?": {
+      "main": [
+        [{ "node": "Split Qualified Leads", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Split Qualified Leads": {
+      "main": [
+        [{ "node": "Prep Lead Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Prep Lead Data": {
+      "main": [
+        [
+          { "node": "Claude — Generate IG DM", "type": "main", "index": 0 },
+          { "node": "Claude — Generate LinkedIn Note", "type": "main", "index": 0 },
+          { "node": "Claude — Generate LinkedIn Followup", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Claude — Generate IG DM": {
+      "main": [
+        [{ "node": "Merge All Drafts", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude — Generate LinkedIn Note": {
+      "main": [
+        [{ "node": "Merge All Drafts", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude — Generate LinkedIn Followup": {
+      "main": [
+        [{ "node": "Merge All Drafts", "type": "main", "index": 0 }]
+      ]
+    },
+    "Merge All Drafts": {
+      "main": [
+        [{ "node": "Save Drafts to Airtable", "type": "main", "index": 0 }]
+      ]
+    },
+    "Save Drafts to Airtable": {
+      "main": [
+        [{ "node": "Slack — Outreach Draft Card", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "outreach", "slack", "ai"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "06-slack-outreach-drafts-v1"
+}

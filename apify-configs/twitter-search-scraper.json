@@ -1,0 +1,81 @@
+{
+  "_actorId": "apify/twitter-scraper",
+  "_description": "Searches Twitter/X for public posts from Indian creators signalling monetization, course launches, or build-in-public activity. Run daily at 6am IST alongside Instagram scrapers. Results feed into Airtable with source=twitter.",
+  "_runSchedule": "daily at 6am IST — rotate 2 search queries per day",
+  "_n8nWebhook": "Set Apify actor webhook to POST to your n8n 'Apify → Airtable' flow URL",
+  "_searchRotationNote": "Rotate through the queries array in n8n. Each day pick 2 queries. This avoids hitting rate limits and spreads signal discovery.",
+  "searchTerms": [
+    "india creator MRR -filter:replies min_faves:10",
+    "cohort india course -filter:replies",
+    "build in public india coach -filter:replies",
+    "\"online course\" \"students\" india -filter:replies",
+    "\"sold out\" \"batch\" india -filter:replies"
+  ],
+  "_searchTermDetails": [
+    {
+      "query": "india creator MRR -filter:replies min_faves:10",
+      "signal": "Creator publicly sharing revenue numbers — direct ICP fit signal",
+      "runDay": "Monday, Thursday"
+    },
+    {
+      "query": "cohort india course -filter:replies",
+      "signal": "Running or promoting a cohort — strongest product signal",
+      "runDay": "Tuesday, Friday"
+    },
+    {
+      "query": "build in public india coach -filter:replies",
+      "signal": "Coach sharing their journey publicly — high engagement, likely course",
+      "runDay": "Wednesday, Saturday"
+    },
+    {
+      "query": "\"online course\" \"students\" india -filter:replies",
+      "signal": "Referencing student count — active seller signal",
+      "runDay": "Monday, Friday"
+    },
+    {
+      "query": "\"sold out\" \"batch\" india -filter:replies",
+      "signal": "High-demand creator with full cohorts — premium ICP",
+      "runDay": "Tuesday, Saturday"
+    }
+  ],
+  "maxTweets": 50,
+  "addUserInfo": true,
+  "startUrls": [],
+  "proxy": {
+    "useApifyProxy": true
+  },
+  "_outputFields": [
+    "author.userName",
+    "author.name",
+    "author.followers",
+    "author.description",
+    "author.url",
+    "author.isBlueVerified",
+    "text",
+    "likeCount",
+    "retweetCount",
+    "replyCount",
+    "createdAt",
+    "url"
+  ],
+  "_n8nFieldMapping": {
+    "author.userName": "twitter_handle",
+    "author.followers": "twitter_followers",
+    "author.description": "twitter_bio",
+    "text": "recent_post_sample",
+    "source": "twitter",
+    "source_detail": "search query used"
+  },
+  "_n8nFilterLogic": {
+    "keepIf": {
+      "author.followers": {
+        "min": 5000,
+        "max": 1000000
+      },
+      "likeCount": {
+        "min": 5
+      }
+    },
+    "_enrichmentNote": "After dedup check, n8n should cross-reference twitter_handle against existing Airtable leads. If handle exists, update twitter_handle field only. If new, create lead record with source=twitter and enqueue for IG profile lookup to find ig_handle."
+  }
+}

@@ -1,0 +1,347 @@
+{
+  "name": "02 - Enrichment",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 02 — Enrichment Workflow\n\n**Credentials to configure:**\n- `HUNTER_API_KEY` — Hunter.io API key (env var)\n- `APIFY_API_TOKEN` — Apify API token (env var)\n- `AIRTABLE_BASE_ID` — Airtable base ID (env var)\n- `AIRTABLE_LEADS_TABLE` — usually `Leads` (env var)\n\n**What it does:**\n1. Polls Airtable every 15 min for leads where enrichment_status = pending\n2. For each lead, calls Hunter.io to find email\n3. Runs Apify Instagram Profile Scraper for deep data\n4. Classifies bio link (Stan Store, Exly, etc.)\n5. Merges all data and updates Airtable record\n6. Sets enrichment_status = complete\n\n**Note:** Hunter.io free tier = 25 lookups/month.\nUpgrade to Starter ($49/mo) for 500 lookups if volume increases.",
+        "height": 380,
+        "width": 400,
+        "color": 4
+      },
+      "id": "sticky-enrichment",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-400, -200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "poll-trigger",
+      "name": "Poll Every 15 Min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "{enrichment_status}=\"pending\""
+            },
+            {
+              "name": "maxRecords",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-pending-leads",
+      "name": "Fetch Pending Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "has-records",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-pending-leads",
+      "name": "Any Pending Leads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "id": "split-leads",
+      "name": "Split Leads",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [660, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract domain from ig_website for Hunter.io lookup\nconst record = $input.item.json;\nconst fields = record.fields || {};\nconst website = fields.ig_website || '';\n\nlet domain = '';\ntry {\n  if (website) {\n    const url = website.startsWith('http') ? website : 'https://' + website;\n    domain = new URL(url).hostname.replace('www.', '');\n  }\n} catch(e) {\n  domain = '';\n}\n\nreturn [{\n  json: {\n    record_id: record.id,\n    ig_handle: fields.ig_handle || '',\n    ig_website: website,\n    ig_bio: fields.ig_bio || '',\n    ig_followers: fields.ig_followers || 0,\n    domain: domain,\n    source_detail: fields.source_detail || ''\n  }\n}];"
+      },
+      "id": "extract-domain",
+      "name": "Extract Domain",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -80]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.hunter.io/v2/domain-search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "domain",
+              "value": "={{ $json.domain }}"
+            },
+            {
+              "name": "api_key",
+              "value": "={{ $env.HUNTER_API_KEY }}"
+            },
+            {
+              "name": "limit",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "hunter-lookup",
+      "name": "Hunter.io Email Lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, -160]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract first email from Hunter.io response\nconst hunterData = $input.item.json;\nconst emails = hunterData?.data?.emails || [];\n\nlet email = '';\nlet email_confidence = 0;\nlet email_found = false;\n\nif (emails.length > 0) {\n  // Pick highest confidence email\n  const sorted = emails.sort((a, b) => (b.confidence || 0) - (a.confidence || 0));\n  email = sorted[0].value || '';\n  email_confidence = sorted[0].confidence || 0;\n  email_found = email.length > 0;\n}\n\nreturn [{\n  json: {\n    email,\n    email_confidence,\n    email_found\n  }\n}];"
+      },
+      "id": "extract-email",
+      "name": "Extract Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, -160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-profile-scraper/runs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $env.APIFY_API_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"usernames\": [\"{{ $('Extract Domain').item.json.ig_handle }}\"],\n  \"resultsType\": \"details\",\n  \"resultsLimit\": 1\n}",
+        "options": {}
+      },
+      "id": "apify-profile-scraper",
+      "name": "Start Apify Profile Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "amount": 45,
+        "unit": "seconds"
+      },
+      "id": "wait-profile",
+      "name": "Wait 45s for Profile",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1320, 0],
+      "webhookId": "wait-profile-45s"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.apify.com/v2/acts/apify~instagram-profile-scraper/runs/{{ $('Start Apify Profile Scraper').item.json.data.id }}/dataset/items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $env.APIFY_API_TOKEN }}"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-profile-data",
+      "name": "Get Profile Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1540, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Apify profile scraper output\nconst items = $input.item.json;\nconst profile = Array.isArray(items) ? items[0] : items;\n\nif (!profile) {\n  return [{ json: {\n    follower_count: 0,\n    following_count: 0,\n    posts_count: 0,\n    is_business_account: false,\n    bio_links: [],\n    story_highlights: [],\n    recent_posts_sample: '',\n    recent_posts_avg_likes: 0,\n    is_verified: false\n  }}];\n}\n\n// Extract recent post captions (last 3)\nconst posts = profile.latestPosts || profile.posts || [];\nconst recentCaptions = posts.slice(0, 3).map(p => p.caption || '').filter(Boolean);\nconst recentPostsSample = recentCaptions.join(' | ');\n\n// Average likes\nconst avgLikes = posts.length > 0\n  ? Math.round(posts.slice(0, 9).reduce((sum, p) => sum + (p.likesCount || 0), 0) / Math.min(posts.length, 9))\n  : 0;\n\n// Bio links\nconst bioLinks = [];\nif (profile.externalUrl) bioLinks.push(profile.externalUrl);\nif (profile.bioLinks) bioLinks.push(...profile.bioLinks.map(l => l.url || l));\n\n// Story highlights\nconst highlights = (profile.highlightReels || []).map(h => h.title || h.name || '');\n\nreturn [{\n  json: {\n    follower_count: profile.followersCount || 0,\n    following_count: profile.followingCount || 0,\n    posts_count: profile.postsCount || 0,\n    is_business_account: profile.isBusinessAccount || false,\n    bio_links: bioLinks,\n    story_highlights: highlights,\n    recent_posts_sample: recentPostsSample.substring(0, 1000),\n    recent_posts_avg_likes: avgLikes,\n    is_verified: profile.verified || false\n  }\n}];"
+      },
+      "id": "parse-profile",
+      "name": "Parse Profile Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check bio links for product page signals\nconst profileData = $('Parse Profile Data').item.json;\nconst bioLinks = profileData.bio_links || [];\n\nconst productSignals = ['stan.store', 'exly.app', 'graphy.com', 'kajabi.com', 'razorpay.com', 'instamojo', 'gumroad', 'patreon'];\nconst bookingSignals = ['calendly.com', 'topmate.io', 'cal.com', 'tidycal'];\n\nconst allLinksText = bioLinks.join(' ').toLowerCase();\n\nconst has_product_page = productSignals.some(signal => allLinksText.includes(signal));\nconst has_booking = bookingSignals.some(signal => allLinksText.includes(signal));\n\nreturn [{\n  json: {\n    has_product_page,\n    has_booking,\n    bio_links_str: bioLinks.join(', ')\n  }\n}];"
+      },
+      "id": "classify-bio-links",
+      "name": "Classify Bio Links",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1980, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge all enrichment data\nconst recordData = $('Extract Domain').item.json;\nconst emailData = $('Extract Email').item.json;\nconst profileData = $('Parse Profile Data').item.json;\nconst bioClassification = $('Classify Bio Links').item.json;\n\nreturn [{\n  json: {\n    record_id: recordData.record_id,\n    ig_handle: recordData.ig_handle,\n    // Email data\n    email: emailData.email || '',\n    email_confidence: emailData.email_confidence || 0,\n    email_found: emailData.email_found || false,\n    // Profile data\n    ig_followers: profileData.follower_count || recordData.ig_followers || 0,\n    ig_following: profileData.following_count || 0,\n    ig_posts_count: profileData.posts_count || 0,\n    is_business_account: profileData.is_business_account || false,\n    bio_links: bioClassification.bio_links_str,\n    story_highlights: (profileData.story_highlights || []).join(', '),\n    recent_posts_sample: profileData.recent_posts_sample || '',\n    recent_posts_avg_likes: profileData.recent_posts_avg_likes || 0,\n    is_verified: profileData.is_verified || false,\n    // Bio classification\n    has_product_page: bioClassification.has_product_page,\n    has_booking: bioClassification.has_booking,\n    enrichment_status: 'complete'\n  }\n}];"
+      },
+      "id": "merge-enrichment",
+      "name": "Merge Enrichment Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2200, 0]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"email\": \"{{ $json.email }}\",\n    \"email_found\": {{ $json.email_found }},\n    \"email_confidence\": {{ $json.email_confidence }},\n    \"ig_followers\": {{ $json.ig_followers }},\n    \"ig_following\": {{ $json.ig_following }},\n    \"ig_posts_count\": {{ $json.ig_posts_count }},\n    \"is_business_account\": {{ $json.is_business_account }},\n    \"bio_links\": \"{{ $json.bio_links }}\",\n    \"story_highlights\": \"{{ $json.story_highlights }}\",\n    \"recent_posts_sample\": \"{{ $json.recent_posts_sample.replace(/\"/g, \"'\") }}\",\n    \"recent_posts_avg_likes\": {{ $json.recent_posts_avg_likes }},\n    \"has_product_page\": {{ $json.has_product_page }},\n    \"has_booking\": {{ $json.has_booking }},\n    \"is_verified\": {{ $json.is_verified }},\n    \"enrichment_status\": \"complete\"\n  }\n}",
+        "options": {}
+      },
+      "id": "update-airtable-enriched",
+      "name": "Update Airtable — Enriched",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2420, 0]
+    }
+  ],
+  "connections": {
+    "Poll Every 15 Min": {
+      "main": [
+        [{ "node": "Fetch Pending Leads", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Pending Leads": {
+      "main": [
+        [{ "node": "Any Pending Leads?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any Pending Leads?": {
+      "main": [
+        [{ "node": "Split Leads", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Split Leads": {
+      "main": [
+        [{ "node": "Extract Domain", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Domain": {
+      "main": [
+        [
+          { "node": "Hunter.io Email Lookup", "type": "main", "index": 0 },
+          { "node": "Start Apify Profile Scraper", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Hunter.io Email Lookup": {
+      "main": [
+        [{ "node": "Extract Email", "type": "main", "index": 0 }]
+      ]
+    },
+    "Start Apify Profile Scraper": {
+      "main": [
+        [{ "node": "Wait 45s for Profile", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait 45s for Profile": {
+      "main": [
+        [{ "node": "Get Profile Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Profile Data": {
+      "main": [
+        [{ "node": "Parse Profile Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Profile Data": {
+      "main": [
+        [{ "node": "Classify Bio Links", "type": "main", "index": 0 }]
+      ]
+    },
+    "Classify Bio Links": {
+      "main": [
+        [{ "node": "Merge Enrichment Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Email": {
+      "main": [
+        [{ "node": "Merge Enrichment Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Merge Enrichment Data": {
+      "main": [
+        [{ "node": "Update Airtable — Enriched", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "enrichment"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "02-enrichment-v1"
+}

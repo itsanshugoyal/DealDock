@@ -1,0 +1,68 @@
+{
+  "_actorId": "apify/youtube-scraper",
+  "_description": "Mines podcast episode guest lists from top Indian creator/entrepreneur YouTube channels. Run weekly (Sunday at 6am IST). n8n post-processes the episode titles to extract guest names, then Google searches for their Instagram handles. Yield: 30–40 high-quality leads per week.",
+  "_runSchedule": "weekly — Sunday at 6am IST",
+  "_n8nWebhook": "Set Apify actor webhook to POST to your n8n 'Podcast Guest Mining' flow URL",
+  "_guestExtractionNote": "After this actor runs, n8n should: (1) feed episode titles to Claude API with prompt 'Extract the guest name from this YouTube episode title. Return only the full name or null.' (2) For each extracted name, run a Google search: '<name> instagram' to find their IG handle. (3) Use Apify instagram-profile-scraper to enrich. (4) Push to Airtable with source=podcast_guest.",
+  "startUrls": [
+    {
+      "url": "https://www.youtube.com/channel/UCXXs3ASuXpVFH9X8PwvBMrg",
+      "label": "Raj Shamani — Figuring Out",
+      "channelId": "UCXXs3ASuXpVFH9X8PwvBMrg"
+    },
+    {
+      "url": "https://www.youtube.com/@NeonShow",
+      "label": "Neon Show",
+      "channelId": "UC_note_resolve_at_runtime"
+    },
+    {
+      "url": "https://www.youtube.com/@BuildwithAprameya",
+      "label": "Build with Aprameya",
+      "channelId": "UC_note_resolve_at_runtime"
+    },
+    {
+      "url": "https://www.youtube.com/@RanveerAllahbadia",
+      "label": "BeerBiceps — Ranveer Allahbadia",
+      "channelId": "UC_note_resolve_at_runtime"
+    }
+  ],
+  "_channelIdResolutionNote": "For channels listed as UC_note_resolve_at_runtime, visit the channel on YouTube, right-click → View Page Source, search for 'channelId' or use https://commentpicker.com/youtube-channel-id.php to resolve the ID, then update startUrls.",
+  "searchKeywords": [
+    "coach",
+    "creator",
+    "course",
+    "online business",
+    "lakhs",
+    "crore",
+    "entrepreneur",
+    "cohort",
+    "instagram"
+  ],
+  "_searchKeywordsNote": "These keywords are used by n8n to filter episode titles AFTER the actor returns all videos. The actor itself scrapes all videos from the channels listed above. n8n then filters for titles containing any of these keywords.",
+  "maxResults": 50,
+  "scrapeComments": false,
+  "proxy": {
+    "useApifyProxy": true
+  },
+  "_outputFields": [
+    "title",
+    "url",
+    "channelName",
+    "channelUrl",
+    "description",
+    "date",
+    "viewCount",
+    "likeCount",
+    "duration",
+    "thumbnailUrl"
+  ],
+  "_n8nPipelineAfterActor": [
+    "1. Filter: keep only episodes where title contains any keyword from searchKeywords",
+    "2. For each filtered episode title, call Claude API: 'Extract guest name from YouTube episode title. Title: <title>. Respond with JSON: {\"guest_name\": \"<name or null>\", \"confidence\": \"high|medium|low\"}'",
+    "3. For confidence=high or medium, proceed. For low, skip.",
+    "4. Google search: '<guest_name> instagram india' — extract first IG profile URL result",
+    "5. Run instagram-profile-scraper on discovered handle",
+    "6. Dedup check against Airtable",
+    "7. If new lead: push to Airtable with source=podcast_guest, source_detail='Guest on: <channel_name> — episode: <episode_title>'"
+  ]
+}

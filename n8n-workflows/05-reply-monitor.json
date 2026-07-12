@@ -1,0 +1,383 @@
+{
+  "name": "05 - Reply Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 05 — Reply Monitor Workflow\n\n**Credentials to configure:**\n- `Gmail OAuth2` — connect your Gmail account in n8n credentials\n- `ANTHROPIC_API_KEY` — Claude API key (env var)\n- `AIRTABLE_BASE_ID` — Airtable base ID (env var)\n- `AIRTABLE_LEADS_TABLE` — usually `Leads` (env var)\n- `SLACK_WEBHOOK_LEADS` — Slack webhook for #dealdock-leads (env var)\n- `CALENDLY_LINK` — your Calendly booking URL (env var)\n\n**Schedule:** Runs every 2 hours\n\n**What it does:**\n1. Searches Gmail inbox for replies to outreach emails\n2. For each reply, finds the matching lead in Airtable\n3. Uses Claude to classify sentiment (warm/lukewarm/not-fit/unsubscribe)\n4. Updates Airtable with reply status and sentiment\n5. Routes based on sentiment:\n   - warm: Slack urgent alert + Calendly link auto-email\n   - lukewarm: follow-up queued\n   - not-fit/unsubscribe: marks dead and stops sequence\n6. Marks Gmail message as read",
+        "height": 420,
+        "width": 420,
+        "color": 5
+      },
+      "id": "sticky-reply",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-420, -200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 */2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "reply-trigger",
+      "name": "Every 2 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {
+          "q": "in:inbox is:unread (subject:\"quick observation about your DMs\" OR subject:\"DealDock\" OR subject:\"Re: quick observation\" OR subject:\"Last one from me\")",
+          "readStatus": "unread",
+          "receivedAfter": "={{ Math.floor((Date.now() - 48*60*60*1000) / 1000) }}"
+        },
+        "returnAll": false,
+        "limit": 20,
+        "options": {
+          "includeSpamTrash": false
+        }
+      },
+      "id": "gmail-search",
+      "name": "Gmail — Search Replies",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [220, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "has-replies",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-replies",
+      "name": "Any Replies?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract sender email and message body from Gmail message\nconst msg = $input.item.json;\n\n// Extract sender email from headers\nconst headers = msg.payload?.headers || [];\nconst fromHeader = headers.find(h => h.name.toLowerCase() === 'from');\nconst fromRaw = fromHeader?.value || '';\n\n// Parse email from \"Name <email@domain.com>\" format\nconst emailMatch = fromRaw.match(/<([^>]+)>/) || fromRaw.match(/([\\w.+%-]+@[\\w.-]+\\.[a-z]{2,})/i);\nconst senderEmail = emailMatch ? emailMatch[1].toLowerCase() : '';\n\n// Extract name\nconst nameMatch = fromRaw.match(/^([^<]+)</);\nconst senderName = nameMatch ? nameMatch[1].trim().replace(/\"/g, '') : senderEmail.split('@')[0];\n\n// Extract message body (try plain text first)\nlet body = '';\nconst parts = msg.payload?.parts || [];\nconst textPart = parts.find(p => p.mimeType === 'text/plain');\nif (textPart?.body?.data) {\n  body = Buffer.from(textPart.body.data, 'base64').toString('utf-8');\n} else if (msg.snippet) {\n  body = msg.snippet;\n}\n\n// Truncate body to first 500 chars for classification\nconst bodyTruncated = body.substring(0, 500);\n\nreturn [{\n  json: {\n    message_id: msg.id,\n    thread_id: msg.threadId,\n    sender_email: senderEmail,\n    sender_name: senderName,\n    message_body: bodyTruncated,\n    received_date: new Date().toISOString().split('T')[0]\n  }\n}];"
+      },
+      "id": "extract-sender",
+      "name": "Extract Sender & Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, -80]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "={{ 'AND({email}=\"' + $json.sender_email + '\",{replied}=0)' }}"
+            },
+            {
+              "name": "maxRecords",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "find-lead-by-email",
+      "name": "Find Lead in Airtable",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [880, -80]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {},
+          "conditions": [
+            {
+              "id": "found-lead",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "lead-found",
+      "name": "Lead Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1100, -80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $env.ANTHROPIC_API_KEY }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 256,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Classify this email reply into one of: warm / lukewarm / not-fit / unsubscribe\\n\\nwarm = interested, asking questions, wants to connect\\nlukewarm = mildly curious but not committed\\nnot-fit = explicitly not a match (wrong type, has team, etc)\\nunsubscribe = wants to be removed from emails\\n\\nReply: {{ $('Extract Sender & Body').item.json.message_body.replace(/\"/g, \"'\") }}\\n\\nRespond JSON only: {\\\"sentiment\\\": \\\"warm|lukewarm|not-fit|unsubscribe\\\", \\\"key_signal\\\": \\\"one sentence explaining why\\\"}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "claude-sentiment",
+      "name": "Claude — Classify Sentiment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1320, -160]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse sentiment response and prepare update\nconst claudeResp = $input.item.json;\nconst text = claudeResp?.content?.[0]?.text || '{}';\n\nlet parsed;\ntry {\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  parsed = match ? JSON.parse(match[0]) : { sentiment: 'lukewarm', key_signal: 'could not parse' };\n} catch(e) {\n  parsed = { sentiment: 'lukewarm', key_signal: 'parse error' };\n}\n\n// Get lead record\nconst leadRecords = $('Find Lead in Airtable').item.json.records || [];\nconst lead = leadRecords[0];\nconst leadFields = lead?.fields || {};\n\n// Determine new stage\nconst sentimentToStage = {\n  warm: 'Hot Lead',\n  lukewarm: 'Lukewarm',\n  'not-fit': 'Dead',\n  unsubscribe: 'Dead'\n};\n\nconst senderInfo = $('Extract Sender & Body').item.json;\n\nreturn [{\n  json: {\n    record_id: lead?.id || '',\n    ig_handle: leadFields.ig_handle || '',\n    email: senderInfo.sender_email,\n    name: senderInfo.sender_name || leadFields.first_name || senderInfo.sender_email,\n    message_body: senderInfo.message_body,\n    message_id: senderInfo.message_id,\n    sentiment: parsed.sentiment,\n    key_signal: parsed.key_signal,\n    new_stage: sentimentToStage[parsed.sentiment] || 'Lukewarm',\n    stop_sequence: ['not-fit', 'unsubscribe'].includes(parsed.sentiment),\n    reply_date: new Date().toISOString().split('T')[0]\n  }\n}];"
+      },
+      "id": "parse-sentiment",
+      "name": "Parse Sentiment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, -160]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}/{{ $json.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"replied\": true,\n    \"reply_sentiment\": \"{{ $json.sentiment }}\",\n    \"date_replied\": \"{{ $json.reply_date }}\",\n    \"stage\": \"{{ $json.new_stage }}\",\n    \"email_sequence_active\": {{ !$json.stop_sequence }}\n  }\n}",
+        "options": {}
+      },
+      "id": "update-reply-status",
+      "name": "Update Airtable — Reply Logged",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1760, -160]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Sentiment').item.json.sentiment }}",
+                    "rightValue": "warm",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "warm"
+            },
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Sentiment').item.json.sentiment }}",
+                    "rightValue": "lukewarm",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "lukewarm"
+            },
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Sentiment').item.json.sentiment }}",
+                    "rightValue": "not-fit",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "not_fit"
+            },
+            {
+              "conditions": {
+                "options": {},
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Sentiment').item.json.sentiment }}",
+                    "rightValue": "unsubscribe",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "unsubscribe"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "route-by-sentiment",
+      "name": "Route by Sentiment",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1980, -160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_LEADS }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"text\": \"🔥 *Warm reply* from {{ $('Parse Sentiment').item.json.name }} ({{ $('Parse Sentiment').item.json.email }})\\n\\n*Reply to:* @{{ $('Parse Sentiment').item.json.ig_handle }}\\n*Signal:* {{ $('Parse Sentiment').item.json.key_signal }}\\n\\n*Message preview:*\\n> {{ $('Parse Sentiment').item.json.message_body.substring(0, 300) }}\\n\\n👉 Reply immediately and send Calendly: {{ $env.CALENDLY_LINK }}\"\n}",
+        "options": {}
+      },
+      "id": "slack-warm-alert",
+      "name": "Slack — Warm Reply Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2200, -320]
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Extract Sender & Body').item.json.message_id }}"
+      },
+      "id": "mark-read",
+      "name": "Mark Gmail as Read",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [2200, -80],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gmail-oauth2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every 2 Hours": {
+      "main": [
+        [{ "node": "Gmail — Search Replies", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gmail — Search Replies": {
+      "main": [
+        [{ "node": "Any Replies?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any Replies?": {
+      "main": [
+        [{ "node": "Extract Sender & Body", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Extract Sender & Body": {
+      "main": [
+        [{ "node": "Find Lead in Airtable", "type": "main", "index": 0 }]
+      ]
+    },
+    "Find Lead in Airtable": {
+      "main": [
+        [{ "node": "Lead Found?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Lead Found?": {
+      "main": [
+        [{ "node": "Claude — Classify Sentiment", "type": "main", "index": 0 }],
+        [{ "node": "Mark Gmail as Read", "type": "main", "index": 0 }]
+      ]
+    },
+    "Claude — Classify Sentiment": {
+      "main": [
+        [{ "node": "Parse Sentiment", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Sentiment": {
+      "main": [
+        [{ "node": "Update Airtable — Reply Logged", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Airtable — Reply Logged": {
+      "main": [
+        [{ "node": "Route by Sentiment", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route by Sentiment": {
+      "main": [
+        [{ "node": "Slack — Warm Reply Alert", "type": "main", "index": 0 }],
+        [{ "node": "Mark Gmail as Read", "type": "main", "index": 0 }],
+        [{ "node": "Mark Gmail as Read", "type": "main", "index": 0 }],
+        [{ "node": "Mark Gmail as Read", "type": "main", "index": 0 }],
+        [{ "node": "Mark Gmail as Read", "type": "main", "index": 0 }]
+      ]
+    },
+    "Slack — Warm Reply Alert": {
+      "main": [
+        [{ "node": "Mark Gmail as Read", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "replies", "monitoring"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "05-reply-monitor-v1"
+}

@@ -1,0 +1,105 @@
+{
+  "_actorId": "apify/instagram-profile-scraper",
+  "_description": "Deep-fetches profile data for a list of IG handles discovered during sourcing. Run at 7am IST as part of the Enrichment Agent (Stage 2). Input handles are pulled from Airtable leads where enrichment_status=pending.",
+  "_runSchedule": "daily at 7am IST — triggered by n8n enrichment flow",
+  "_n8nWebhook": "Set Apify actor webhook to POST to your n8n 'Enrichment Agent' flow URL",
+  "usernames": [
+    "sample_creator_handle"
+  ],
+  "_usernamesNote": "In production, n8n dynamically builds this array by querying Airtable for all leads where enrichment_status=pending, then passes it as actor input via the Apify API.",
+  "resultsType": "details",
+  "scrapeStories": false,
+  "scrapeHighlights": true,
+  "scrapeTaggedPosts": false,
+  "proxy": {
+    "useApifyProxy": true,
+    "apifyProxyGroups": ["RESIDENTIAL"]
+  },
+  "_outputFields": {
+    "follower_count": {
+      "apifyField": "followersCount",
+      "airtableField": "ig_followers",
+      "type": "Number"
+    },
+    "following_count": {
+      "apifyField": "followingCount",
+      "airtableField": "ig_following",
+      "type": "Number"
+    },
+    "posts_count": {
+      "apifyField": "postsCount",
+      "airtableField": "ig_posts_count",
+      "type": "Number"
+    },
+    "is_business_account": {
+      "apifyField": "isBusinessAccount",
+      "airtableField": "ig_is_business",
+      "type": "Checkbox"
+    },
+    "bio": {
+      "apifyField": "biography",
+      "airtableField": "ig_bio",
+      "type": "Long text"
+    },
+    "bio_links": {
+      "apifyField": "externalUrls",
+      "airtableField": "ig_website",
+      "type": "URL — take first value"
+    },
+    "story_highlights": {
+      "apifyField": "highlightReelCount",
+      "airtableField": "story_highlights_count",
+      "type": "Number"
+    },
+    "recent_posts_captions": {
+      "apifyField": "latestPosts[*].caption",
+      "airtableField": "recent_post_sample",
+      "type": "Long text — join first 3 captions"
+    },
+    "recent_posts_avg_likes": {
+      "apifyField": "latestPosts[*].likesCount",
+      "airtableField": "ig_avg_likes",
+      "type": "Number — average of last 9"
+    },
+    "is_verified": {
+      "apifyField": "verified",
+      "airtableField": "ig_is_verified",
+      "type": "Checkbox"
+    },
+    "profile_pic_url": {
+      "apifyField": "profilePicUrl",
+      "airtableField": "ig_profile_pic",
+      "type": "URL — not stored in Airtable, used for Slack previews only"
+    },
+    "username": {
+      "apifyField": "username",
+      "airtableField": "ig_handle",
+      "type": "Single line text — use to match existing Airtable record"
+    }
+  },
+  "_bioLinkClassifier": {
+    "_description": "After this actor returns, n8n fetches the bio link URL and checks for these strings to set has_product_page and has_booking_link in Airtable",
+    "product_page_signals": [
+      "stan.store",
+      "stanstore",
+      "exly.app",
+      "graphy.com",
+      "kajabi.com",
+      "razorpay.com",
+      "instamojo.com",
+      "teachable.com",
+      "thinkific.com",
+      "payhip.com",
+      "gumroad.com",
+      "upi",
+      "pay.me"
+    ],
+    "booking_link_signals": [
+      "calendly.com",
+      "topmate.io",
+      "cal.com",
+      "savvycal.com",
+      "meetings.hubspot"
+    ]
+  }
+}

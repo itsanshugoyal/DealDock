@@ -1,0 +1,407 @@
+{
+  "name": "01 - Lead Sourcing",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 01 — Lead Sourcing Workflow\n\n**Credentials to configure:**\n- `Apify API Token` → Apify node credentials\n- `Airtable API` → Airtable node credentials (set Base ID in each Airtable node)\n- `Slack Webhook URL` → set `SLACK_WEBHOOK_LEADS` environment variable\n\n**Environment variables needed:**\n- `APIFY_API_TOKEN` — your Apify API token\n- `AIRTABLE_BASE_ID` — your Airtable base ID\n- `AIRTABLE_LEADS_TABLE` — usually `Leads`\n- `SLACK_WEBHOOK_LEADS` — incoming webhook URL for #dealdock-leads\n\n**Schedule:** Runs daily at 6am IST (00:30 UTC)\n\n**What it does:**\n1. Picks 2 hashtags based on day of week\n2. Runs Apify Instagram Hashtag Scraper\n3. Polls until Apify run completes\n4. For each post/profile found, checks Airtable for duplicates\n5. Creates new Airtable Leads records for net-new handles\n6. Sends Slack summary",
+        "height": 440,
+        "width": 420,
+        "color": 7
+      },
+      "id": "sticky-note-01",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-400, -200]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 30 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 6am IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pick 2 hashtags based on today's day of week (0=Sun, 6=Sat)\nconst hashtags = [\n  'cohortbasedlearning',\n  'coursecreatorindia',\n  'onlinecoachingindia',\n  'reelsstrategy',\n  'solopreneurindia',\n  'digitalcoachindia',\n  'onlinecoach',\n  'coursecreator'\n];\n\nconst dayOfWeek = new Date().getDay();\n// Rotate pairs: Sun=0,1 | Mon=2,3 | Tue=4,5 | Wed=6,7 | Thu=0,2 | Fri=1,3 | Sat=4,6\nconst pairs = [\n  [0, 1], [2, 3], [4, 5], [6, 7],\n  [0, 2], [1, 3], [4, 6]\n];\n\nconst todayPair = pairs[dayOfWeek];\nconst todayHashtags = todayPair.map(i => hashtags[i]);\n\nreturn [{\n  json: {\n    hashtags: todayHashtags,\n    hashtag1: todayHashtags[0],\n    hashtag2: todayHashtags[1],\n    runDate: new Date().toISOString().split('T')[0]\n  }\n}];"
+      },
+      "id": "pick-hashtags",
+      "name": "Pick Today's Hashtags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-hashtag-scraper/runs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $env.APIFY_API_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"hashtags\": [\"{{ $json.hashtag1 }}\", \"{{ $json.hashtag2 }}\"],\n  \"resultsLimit\": 50,\n  \"scrapePostDetails\": true,\n  \"scrapeComments\": false\n}",
+        "options": {}
+      },
+      "id": "apify-run-actor",
+      "name": "Start Apify Hashtag Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "wait-30s",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [660, 0],
+      "webhookId": "wait-apify-30s"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.apify.com/v2/acts/apify~instagram-hashtag-scraper/runs/{{ $('Start Apify Hashtag Scraper').item.json.data.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $env.APIFY_API_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-run-status",
+      "name": "Check Apify Run Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "status-check",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-succeeded",
+      "name": "Run Succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.apify.com/v2/acts/apify~instagram-hashtag-scraper/runs/{{ $('Start Apify Hashtag Scraper').item.json.data.id }}/dataset/items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $env.APIFY_API_TOKEN }}"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-dataset-items",
+      "name": "Get Apify Dataset Items",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1320, -80]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=",
+        "options": {}
+      },
+      "id": "split-items",
+      "name": "Split Into Individual Leads",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1540, -80]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Apify Instagram hashtag scraper output to our lead schema\nconst item = $input.item.json;\n\n// The scraper returns post objects; extract the owner/profile data\nconst handle = item.ownerUsername || item.username || item.owner?.username || '';\nconst followers = item.ownerFollowersCount || item.followersCount || item.owner?.followersCount || 0;\nconst bio = item.ownerBiography || item.biography || item.owner?.biography || '';\nconst website = item.ownerExternalUrl || item.externalUrl || item.owner?.externalUrl || '';\nconst hashtag = item.hashtag || $('Pick Today\\'s Hashtags').first().json.hashtag1;\n\nif (!handle) {\n  return []; // skip items with no handle\n}\n\nreturn [{\n  json: {\n    ig_handle: handle.toLowerCase(),\n    ig_followers: followers,\n    ig_bio: bio,\n    ig_website: website,\n    source: 'ig_hashtag',\n    source_detail: hashtag,\n    date_sourced: new Date().toISOString().split('T')[0],\n    enrichment_status: 'pending',\n    qualification_status: 'pending',\n    raw_post_caption: item.caption || ''\n  }\n}];"
+      },
+      "id": "normalize-lead",
+      "name": "Normalize Lead Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, -80]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "has-handle",
+              "leftValue": "={{ $json.ig_handle }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "has-followers",
+              "leftValue": "={{ $json.ig_followers }}",
+              "rightValue": 5000,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-valid-leads",
+      "name": "Filter Valid Leads",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1980, -80]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "={{ '{ig_handle}=\"' + $json.ig_handle + '\"' }}"
+            },
+            {
+              "name": "maxRecords",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-airtable-duplicate",
+      "name": "Check Airtable Duplicate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2200, -160]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "id": "is-new-lead",
+              "leftValue": "={{ $json.records.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-new-lead",
+      "name": "Is New Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2420, -160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.airtable.com/v0/{{ $env.AIRTABLE_BASE_ID }}/{{ $env.AIRTABLE_LEADS_TABLE }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"fields\": {\n    \"ig_handle\": \"{{ $('Normalize Lead Fields').item.json.ig_handle }}\",\n    \"ig_followers\": {{ $('Normalize Lead Fields').item.json.ig_followers }},\n    \"ig_bio\": \"{{ $('Normalize Lead Fields').item.json.ig_bio.replace(/\"/g, \"'\") }}\",\n    \"ig_website\": \"{{ $('Normalize Lead Fields').item.json.ig_website }}\",\n    \"source\": \"{{ $('Normalize Lead Fields').item.json.source }}\",\n    \"source_detail\": \"{{ $('Normalize Lead Fields').item.json.source_detail }}\",\n    \"date_sourced\": \"{{ $('Normalize Lead Fields').item.json.date_sourced }}\",\n    \"enrichment_status\": \"pending\",\n    \"qualification_status\": \"pending\",\n    \"raw_post_caption\": \"{{ $('Normalize Lead Fields').item.json.raw_post_caption.replace(/\"/g, \"'\").substring(0, 500) }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "create-airtable-record",
+      "name": "Create Airtable Record",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2640, -240]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate count of newly created leads for Slack summary\nconst items = $input.all();\nreturn [{\n  json: {\n    newLeadsCount: items.length,\n    hashtags: $('Pick Today\\'s Hashtags').first().json.hashtags.join(', '),\n    runDate: new Date().toISOString().split('T')[0]\n  }\n}];"
+      },
+      "id": "aggregate-count",
+      "name": "Aggregate Lead Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2860, -240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_LEADS }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={\n  \"text\": \"✅ Sourced {{ $json.newLeadsCount }} new leads from Instagram today\\n📌 Hashtags scraped: {{ $json.hashtags }}\\n📅 Date: {{ $json.runDate }}\"\n}",
+        "options": {}
+      },
+      "id": "slack-notify",
+      "name": "Slack — Leads Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [3080, -240]
+    }
+  ],
+  "connections": {
+    "Daily 6am IST": {
+      "main": [
+        [{ "node": "Pick Today's Hashtags", "type": "main", "index": 0 }]
+      ]
+    },
+    "Pick Today's Hashtags": {
+      "main": [
+        [{ "node": "Start Apify Hashtag Scraper", "type": "main", "index": 0 }]
+      ]
+    },
+    "Start Apify Hashtag Scraper": {
+      "main": [
+        [{ "node": "Wait 30s", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait 30s": {
+      "main": [
+        [{ "node": "Check Apify Run Status", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Apify Run Status": {
+      "main": [
+        [{ "node": "Run Succeeded?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Run Succeeded?": {
+      "main": [
+        [{ "node": "Get Apify Dataset Items", "type": "main", "index": 0 }],
+        [{ "node": "Wait 30s", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Apify Dataset Items": {
+      "main": [
+        [{ "node": "Split Into Individual Leads", "type": "main", "index": 0 }]
+      ]
+    },
+    "Split Into Individual Leads": {
+      "main": [
+        [{ "node": "Normalize Lead Fields", "type": "main", "index": 0 }]
+      ]
+    },
+    "Normalize Lead Fields": {
+      "main": [
+        [{ "node": "Filter Valid Leads", "type": "main", "index": 0 }]
+      ]
+    },
+    "Filter Valid Leads": {
+      "main": [
+        [{ "node": "Check Airtable Duplicate", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Check Airtable Duplicate": {
+      "main": [
+        [{ "node": "Is New Lead?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is New Lead?": {
+      "main": [
+        [{ "node": "Create Airtable Record", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Create Airtable Record": {
+      "main": [
+        [{ "node": "Aggregate Lead Count", "type": "main", "index": 0 }]
+      ]
+    },
+    "Aggregate Lead Count": {
+      "main": [
+        [{ "node": "Slack — Leads Summary", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["dealdock", "sourcing"],
+  "triggerCount": 0,
+  "updatedAt": "2026-05-20T00:00:00.000Z",
+  "versionId": "01-lead-sourcing-v1"
+}

@@ -7,6 +7,23 @@
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "dealdock-product-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "C:\\code\\dealdock-app",
+        "run",
+        "dev",
+        "-w",
+        "@dealdock/web",
+        "--",
+        "-p",
+        "3100"
+      ],
+      "port": 3100,
+      "autoPort": true
     }
   ]
 }
