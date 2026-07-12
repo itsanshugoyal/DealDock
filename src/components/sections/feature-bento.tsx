@@ -11,63 +11,21 @@ import {
 import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/motion";
 import { ClassificationBadge } from "@/components/shared/classification-badge";
+import { useLocale } from "@/lib/locale-context";
+import type { ClassificationType } from "@/data/locales/types";
 
-const bentoCards = [
-  {
-    id: "revenue-inbox",
-    icon: Tray,
-    title: "Revenue Inbox",
-    body: "Every DM sorted by what it's worth. Brand deals at the top. Fan messages at the bottom. The ₹3L brief that would've expired unseen? Now it's the first thing you see.",
-    span: "lg:col-span-2",
-    accent: "#ffc107",
-    visual: "inbox",
-  },
-  {
-    id: "voice-drafting",
-    icon: Microphone,
-    title: "Your voice. AI speed.",
-    body: "Drafts that sound like you wrote them — your greeting, your tone, your sign-off. 70% of pilot creators send them without edits.",
-    span: "lg:col-span-1",
-    accent: "#22c55e",
-    visual: "voice",
-  },
-  {
-    id: "revenue-ledger",
-    icon: ChartBar,
-    title: "Revenue Ledger",
-    body: "One-tap close. Every recovered rupee tracked month over month. Proof that DealDock pays for itself many times over.",
-    span: "lg:col-span-1",
-    accent: "#3b82f6",
-    visual: "ledger",
-  },
-  {
-    id: "review-queue",
-    icon: CheckSquare,
-    title: "Human in the loop",
-    body: "Uncertain messages go to review — never your inbox. Nothing sends without your approval. Ever.",
-    span: "lg:col-span-1",
-    accent: "#a855f7",
-    visual: "review",
-  },
-  {
-    id: "hinglish",
-    icon: Translate,
-    title: "Hindi. English. Hinglish.",
-    body: "Code-switching doesn't break our classifier. Built for how Indian creators actually talk — bro, this works.",
-    span: "lg:col-span-1",
-    accent: "#f97316",
-    visual: "hinglish",
-  },
+const cardMeta = [
+  { id: "revenue-inbox", icon: Tray, title: "Revenue Inbox", span: "lg:col-span-2", accent: "#ffc107", visual: "inbox" },
+  { id: "voice-drafting", icon: Microphone, title: "Your voice. AI speed.", span: "lg:col-span-1", accent: "#22c55e", visual: "voice" },
+  { id: "revenue-ledger", icon: ChartBar, title: "Revenue Ledger", span: "lg:col-span-1", accent: "#3b82f6", visual: "ledger" },
+  { id: "review-queue", icon: CheckSquare, title: "Human in the loop", span: "lg:col-span-1", accent: "#a855f7", visual: "review" },
+  { id: "language", icon: Translate, title: "", span: "lg:col-span-1", accent: "#f97316", visual: "language" },
 ];
 
-function InboxVisual() {
+function InboxVisual({ rows }: { rows: { type: ClassificationType; value: string; preview: string }[] }) {
   return (
     <div className="mt-4 space-y-1.5">
-      {[
-        { type: "brand" as const, value: "₹3.2L", preview: "@herbalindia_brand" },
-        { type: "coaching" as const, value: "₹1.8L", preview: "@vikram_fitness91" },
-        { type: "course" as const, value: "₹80K", preview: "@anjali_learns" },
-      ].map((row, i) => (
+      {rows.map((row, i) => (
         <div key={i} className="flex items-center justify-between py-1.5 border-b border-white/[0.04]">
           <div className="flex items-center gap-2">
             <ClassificationBadge type={row.type} />
@@ -80,14 +38,12 @@ function InboxVisual() {
   );
 }
 
-function VoiceVisual() {
+function VoiceVisual({ draft }: { draft: string }) {
   return (
     <div className="mt-4 space-y-2">
       <p className="text-[10px] text-[#737373] uppercase tracking-wider">Draft generated</p>
       <div className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.05]">
-        <p className="text-[12px] text-[#a3a3a3] leading-relaxed">
-          &quot;Hey Vikram! Haan bhai, 1-on-1 coaching still open for the right fit. My 12-week program is ₹18K — DM me your goals and we&apos;ll see if it&apos;s a match 💪&quot;
-        </p>
+        <p className="text-[12px] text-[#a3a3a3] leading-relaxed">{draft}</p>
       </div>
       <div className="flex items-center gap-2 mt-2">
         <div className="h-1 flex-1 rounded-full bg-white/[0.06]">
@@ -137,13 +93,11 @@ function ReviewVisual() {
   );
 }
 
-function HinglishVisual() {
+function LanguageVisual({ draft }: { draft: string }) {
   return (
     <div className="mt-4 space-y-2">
       <div className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.05]">
-        <p className="text-[12px] text-[#a3a3a3]">
-          &quot;Bhai tera coaching program lena hai yaar, kitna charge karta hai?&quot;
-        </p>
+        <p className="text-[12px] text-[#a3a3a3]">{draft}</p>
       </div>
       <div className="flex items-center gap-2">
         <ClassificationBadge type="coaching" />
@@ -153,15 +107,32 @@ function HinglishVisual() {
   );
 }
 
-const visualMap: Record<string, React.ReactNode> = {
-  inbox: <InboxVisual />,
-  voice: <VoiceVisual />,
-  ledger: <LedgerVisual />,
-  review: <ReviewVisual />,
-  hinglish: <HinglishVisual />,
-};
-
 export function FeatureBento() {
+  const { features } = useLocale();
+
+  const cardCopy = [
+    features.inboxBody,
+    features.voiceBody,
+    features.ledgerBody,
+    features.reviewBody,
+    features.languageBody,
+  ];
+  const cardTitles = [
+    "Revenue Inbox",
+    "Your voice. AI speed.",
+    "Revenue Ledger",
+    "Human in the loop",
+    features.languageTitle,
+  ];
+
+  const visualMap: Record<string, React.ReactNode> = {
+    inbox: <InboxVisual rows={features.inboxVisualRows} />,
+    voice: <VoiceVisual draft={features.voiceDraft} />,
+    ledger: <LedgerVisual />,
+    review: <ReviewVisual />,
+    language: <LanguageVisual draft={features.languageDraft} />,
+  };
+
   return (
     <SectionWrapper id="features" className="bg-[#0a0a0a]">
       <SectionHeader
@@ -177,7 +148,7 @@ export function FeatureBento() {
         viewport={viewportOnce}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
-        {bentoCards.map((card) => {
+        {cardMeta.map((card, ci) => {
           const Icon = card.icon;
           return (
             <motion.div
@@ -199,10 +170,10 @@ export function FeatureBento() {
 
                 {/* Text */}
                 <h3 className="text-[16px] font-semibold text-[#fafafa] mb-2">
-                  {card.title}
+                  {cardTitles[ci]}
                 </h3>
                 <p className="text-[13px] text-[#737373] leading-relaxed">
-                  {card.body}
+                  {cardCopy[ci]}
                 </p>
 
                 {/* Visual */}

@@ -4,10 +4,15 @@ import { motion } from "motion/react";
 import { Check, Sparkle } from "@phosphor-icons/react";
 import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/motion";
-import { pricingTiers } from "@/data/pricing";
 import { cn } from "@/lib/utils";
+import { useApplyModal } from "@/lib/apply-modal-context";
+import { useLocale } from "@/lib/locale-context";
 
 export function Pricing() {
+  const { openModal } = useApplyModal();
+  const { pricing, currencySymbol, moneyFormat } = useLocale();
+  const numberLocale = moneyFormat === "lakh" ? "en-IN" : "en-US";
+
   return (
     <SectionWrapper id="pricing" className="bg-[#0a0a0a]">
       <SectionHeader
@@ -24,7 +29,7 @@ export function Pricing() {
         viewport={viewportOnce}
         className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
       >
-        {pricingTiers.map((tier) => (
+        {pricing.tiers.map((tier) => (
           <motion.div
             key={tier.id}
             variants={scaleIn}
@@ -95,7 +100,7 @@ export function Pricing() {
                     whileHover={{ scale: 1.04 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
-                    ₹{tier.price.toLocaleString("en-IN")}
+                    {currencySymbol}{tier.price.toLocaleString(numberLocale)}
                   </motion.span>
                   <span className="text-[#737373] text-sm">{tier.period}</span>
                 </div>
@@ -130,8 +135,8 @@ export function Pricing() {
               </ul>
 
               {/* CTA */}
-              <motion.a
-                href="#"
+              <motion.button
+                onClick={() => openModal(tier.name)}
                 whileHover={
                   tier.highlighted
                     ? { scale: 1.03, boxShadow: "0 0 20px rgba(255,193,7,0.4)" }
@@ -140,14 +145,14 @@ export function Pricing() {
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
                 className={cn(
-                  "block w-full text-center py-3 rounded-full text-[14px] font-semibold transition-colors duration-200",
+                  "w-full text-center py-3 rounded-full text-[14px] font-semibold transition-colors duration-200",
                   tier.highlighted
                     ? "bg-[#ffc107] text-[#050505] hover:bg-[#e5a800]"
                     : "bg-white/[0.06] text-[#fafafa] hover:bg-white/[0.1] border border-white/[0.08]"
                 )}
               >
                 {tier.cta}
-              </motion.a>
+              </motion.button>
             </div>
           </motion.div>
         ))}
@@ -161,8 +166,7 @@ export function Pricing() {
         transition={{ delay: 0.4 }}
         className="text-center mt-10 text-[13px] text-[#525252]"
       >
-        Pilot members keep this pricing as long as they remain subscribed. First
-        invoice runs after one full week of active use.
+        {pricing.termsNote}
       </motion.p>
     </SectionWrapper>
   );

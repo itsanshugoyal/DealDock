@@ -12,6 +12,8 @@ type RupeeCounterProps = {
   className?: string;
   duration?: number;
   style?: React.CSSProperties;
+  /** "decimal" (default) = prefix + N.NN + suffix. "comma" = prefix + comma-grouped whole number + suffix (e.g. $3,200). */
+  format?: "decimal" | "comma";
 };
 
 export function RupeeCounter({
@@ -22,6 +24,7 @@ export function RupeeCounter({
   className,
   duration = 1.5,
   style,
+  format = "decimal",
 }: RupeeCounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(0);
@@ -34,13 +37,16 @@ export function RupeeCounter({
       ease: "easeOut",
       onUpdate: (latest) => {
         if (ref.current) {
-          ref.current.textContent =
-            prefix + latest.toFixed(decimals) + suffix;
+          const formatted =
+            format === "comma"
+              ? Math.round(latest).toLocaleString("en-US")
+              : latest.toFixed(decimals);
+          ref.current.textContent = prefix + formatted + suffix;
         }
       },
     });
     return () => controls.stop();
-  }, [inView, value, duration, decimals, prefix, suffix, motionValue]);
+  }, [inView, value, duration, decimals, prefix, suffix, motionValue, format]);
 
   return (
     <span ref={ref} className={cn("tabular-nums", className)} style={style}>

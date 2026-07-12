@@ -5,10 +5,13 @@ import { ArrowRight } from "@phosphor-icons/react";
 import { RevenueInboxMockup } from "@/components/mockups/revenue-inbox-mockup";
 import { GlowEffect } from "@/components/shared/glow-effect";
 import { staggerContainer, wordReveal, fadeUp, slideFromRight } from "@/lib/motion";
-
-const headline = ["You're losing", "lakhs every month.", "They're sitting", "in your DMs."];
+import { useApplyModal } from "@/lib/apply-modal-context";
+import { useLocale } from "@/lib/locale-context";
 
 export function Hero() {
+  const { openModal } = useApplyModal();
+  const { hero } = useLocale();
+
   return (
     <section className="relative min-h-[100dvh] flex items-center overflow-hidden pt-24 pb-16">
       {/* Background glow decorations */}
@@ -41,16 +44,14 @@ export function Hero() {
               variants={staggerContainer(0.06)}
               className="text-display mb-6"
             >
-              {headline.map((line, li) => (
+              {hero.headlineLines.map((line, li) => (
                 <span key={li} className="block">
                   {line.split(" ").map((word, wi) => (
                     <motion.span
                       key={wi}
                       variants={wordReveal}
                       className={`inline-block mr-[0.25em] ${
-                        line.includes("lakhs") && word === "lakhs"
-                          ? "text-[#ffc107]"
-                          : ""
+                        word === hero.highlightWord ? "text-[#ffc107]" : ""
                       }`}
                     >
                       {word}
@@ -65,11 +66,9 @@ export function Hero() {
               variants={fadeUp}
               className="text-body-lg text-[#a3a3a3] mb-10 max-w-xl"
             >
-              DealDock finds the brand deals, coaching leads, and course
-              inquiries buried in your Instagram inbox — sorts them by rupee
-              value — and drafts replies in your voice.{" "}
+              {hero.subheadPrefix}{" "}
               <span className="text-[#e5e5e5] font-medium">
-                Average pilot creator: ₹2.4L recovered in month one.
+                {hero.subheadBoldStat}
               </span>
             </motion.p>
 
@@ -78,21 +77,15 @@ export function Hero() {
               variants={fadeUp}
               className="flex flex-col sm:flex-row items-start gap-4"
             >
-              <a
-                href="#pricing"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .querySelector("#pricing")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
+              <button
+                onClick={() => openModal()}
                 className="group inline-flex items-center gap-2 bg-[#ffc107] text-[#050505] font-bold text-base px-7 py-3.5 rounded-full hover:bg-[#e5a800] transition-all duration-300 active:scale-[0.98]"
               >
                 Apply for Pilot
                 <span className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 group-hover:-translate-y-px transition-transform">
                   <ArrowRight size={12} weight="bold" />
                 </span>
-              </a>
+              </button>
               <button
                 onClick={() =>
                   document
@@ -111,7 +104,7 @@ export function Hero() {
               variants={fadeUp}
               className="mt-5 text-[13px] text-[#525252]"
             >
-              Capped cohort · No setup fee · Cancel anytime
+              {hero.trustLine}
             </motion.p>
           </motion.div>
 

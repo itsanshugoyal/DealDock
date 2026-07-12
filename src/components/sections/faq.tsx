@@ -1,20 +1,25 @@
-import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
-import { faqItems } from "@/data/faq";
+"use client";
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.a,
-    },
-  })),
-};
+import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
+import { useLocale } from "@/lib/locale-context";
+import type { FaqItem } from "@/data/locales/types";
 
 export function Faq() {
+  const { faq } = useLocale();
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
   return (
     <>
       <script
@@ -29,17 +34,17 @@ export function Faq() {
         />
 
         <div className="max-w-2xl mx-auto">
-          <FaqAccordion />
+          <FaqAccordion items={faq} />
         </div>
       </SectionWrapper>
     </>
   );
 }
 
-function FaqAccordion() {
+function FaqAccordion({ items }: { items: FaqItem[] }) {
   return (
     <div className="divide-y divide-white/[0.06]">
-      {faqItems.map((item, i) => (
+      {items.map((item, i) => (
         <details key={i} className="group py-5">
           <summary className="flex items-center justify-between cursor-pointer list-none gap-4">
             <span className="text-[15px] font-medium text-[#e5e5e5] group-open:text-[#ffc107] transition-colors">

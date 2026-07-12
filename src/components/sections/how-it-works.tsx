@@ -4,35 +4,18 @@ import { motion } from "motion/react";
 import { InstagramLogo, ArrowsDownUp, PaperPlaneTilt } from "@phosphor-icons/react";
 import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
 import { staggerContainer, fadeUp, viewportOnce } from "@/lib/motion";
+import { useLocale } from "@/lib/locale-context";
 
-const steps = [
-  {
-    number: "01",
-    Icon: InstagramLogo,
-    title: "Connect your Instagram",
-    body: "One OAuth tap. DealDock begins reading your inbox within 60 seconds. Official Meta API only — your account safety is non-negotiable.",
-    color: "#22c55e",
-    glow: "rgba(34,197,94,0.25)",
-  },
-  {
-    number: "02",
-    Icon: ArrowsDownUp,
-    title: "We sort by rupee value",
-    body: "AI classifies every DM — brand deal, coaching lead, course inquiry. Hinglish, Hindi, English. The most valuable messages surface to the top, not the most recent.",
-    color: "#3b82f6",
-    glow: "rgba(59,130,246,0.25)",
-  },
-  {
-    number: "03",
-    Icon: PaperPlaneTilt,
-    title: "Draft, send, track the money",
-    body: "Voice-matched replies drafted for you. Review, edit, send. Every closed deal logged instantly in your Revenue Ledger. You see the rupees you recovered, month over month.",
-    color: "#ffc107",
-    glow: "rgba(255,193,7,0.25)",
-  },
+const stepMeta = [
+  { Icon: InstagramLogo, color: "#22c55e", glow: "rgba(34,197,94,0.25)" },
+  { Icon: ArrowsDownUp, color: "#3b82f6", glow: "rgba(59,130,246,0.25)" },
+  { Icon: PaperPlaneTilt, color: "#ffc107", glow: "rgba(255,193,7,0.25)" },
 ];
 
 export function HowItWorks() {
+  const { howItWorks } = useLocale();
+  const steps = howItWorks.steps.map((s, i) => ({ ...s, ...stepMeta[i], number: `0${i + 1}` }));
+
   return (
     <SectionWrapper id="how-it-works">
       <SectionHeader
@@ -53,16 +36,13 @@ export function HowItWorks() {
           aria-hidden="true"
           className="hidden md:block absolute z-0 h-px"
           style={{
-            /* top aligns with icon vertical center: ~32px (number+mb) + 32px (icon radius) = 64px = 4rem */
             top: "4rem",
-            /* start/end at the inner edge of the left/right icon circles */
             left: "calc(16.67% + 2.25rem)",
             right: "calc(16.67% + 2.25rem)",
             background:
               "linear-gradient(to right, rgba(34,197,94,0.35), rgba(59,130,246,0.35), rgba(255,193,7,0.35))",
           }}
         >
-          {/* Traveling dot */}
           <motion.div
             className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/70"
             initial={{ left: "0%", opacity: 0 }}
@@ -90,7 +70,7 @@ export function HowItWorks() {
               {step.number}
             </motion.span>
 
-            {/* Icon circle — z-10 so it renders above the connector line */}
+            {/* Icon circle */}
             <motion.div
               whileHover={{
                 scale: 1.12,
@@ -99,24 +79,18 @@ export function HowItWorks() {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center mb-6 cursor-pointer"
               style={{
-                /* Solid dark background ensures the line is fully hidden behind the circle */
                 backgroundColor: "#111111",
                 border: `1px solid ${step.color}35`,
                 boxShadow: `inset 0 0 20px ${step.color}10, 0 0 18px ${step.color}18`,
               }}
             >
-              {/* Dashed rotating ring on hover */}
               <motion.div
                 className="absolute inset-0 rounded-full border"
                 style={{ borderColor: `${step.color}45`, borderStyle: "dashed" }}
                 whileHover={{ rotate: 90 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               />
-              <step.Icon
-                size={26}
-                weight="duotone"
-                style={{ color: step.color }}
-              />
+              <step.Icon size={26} weight="duotone" style={{ color: step.color }} />
             </motion.div>
 
             {/* Content */}

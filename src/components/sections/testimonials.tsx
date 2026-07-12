@@ -5,9 +5,12 @@ import { Quotes } from "@phosphor-icons/react";
 import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/motion";
 import { RupeeCounter } from "@/components/shared/rupee-counter";
-import { testimonials } from "@/data/testimonials";
+import { useLocale, useMoneyFormat } from "@/lib/locale-context";
 
 export function Testimonials() {
+  const { testimonials, currencySymbol } = useLocale();
+  const money = useMoneyFormat();
+
   return (
     <SectionWrapper>
       <SectionHeader
@@ -44,12 +47,13 @@ export function Testimonials() {
                 }}
               >
                 <div className="flex items-baseline gap-1">
-                  <span className="text-[10px] font-medium mr-1" style={{ color: t.accentColor }}>₹</span>
+                  <span className="text-[10px] font-medium mr-1" style={{ color: t.accentColor }}>{currencySymbol}</span>
                   <RupeeCounter
                     value={parseFloat(t.recovered)}
-                    suffix="L"
+                    suffix={money.format === "decimal" ? "L" : ""}
                     prefix=""
-                    decimals={1}
+                    decimals={money.decimals}
+                    format={money.format}
                     duration={1.4}
                     className="text-2xl font-bold font-mono"
                     style={{ color: t.accentColor }}

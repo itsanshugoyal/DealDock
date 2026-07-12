@@ -4,8 +4,13 @@ import { motion } from "motion/react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { GlowEffect } from "@/components/shared/glow-effect";
 import { staggerContainer, fadeUp, viewportOnce } from "@/lib/motion";
+import { useApplyModal } from "@/lib/apply-modal-context";
+import { useLocale } from "@/lib/locale-context";
 
 export function FinalCta() {
+  const { openModal } = useApplyModal();
+  const { finalCta } = useLocale();
+
   return (
     <section className="relative py-28 lg:py-36 overflow-hidden">
       <GlowEffect
@@ -34,34 +39,26 @@ export function FinalCta() {
             variants={fadeUp}
             className="text-body-lg text-[#a3a3a3] max-w-xl mx-auto mb-10"
           >
-            Join the pilot. Capped cohort. ₹4,000/month. Pays for itself in one
-            recovered deal.
+            {finalCta.body}
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="#pricing"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .querySelector("#pricing")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
+            <button
+              onClick={() => openModal()}
               className="group inline-flex items-center gap-2 bg-[#ffc107] text-[#050505] font-bold text-base px-8 py-4 rounded-full hover:bg-[#e5a800] transition-all duration-300 active:scale-[0.98] shadow-[0_0_40px_rgba(255,193,7,0.3)]"
             >
               Apply for Pilot
               <span className="w-7 h-7 rounded-full bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 group-hover:-translate-y-px transition-transform">
                 <ArrowRight size={14} weight="bold" />
               </span>
-            </a>
+            </button>
           </motion.div>
 
           <motion.p
             variants={fadeUp}
             className="mt-6 text-[13px] text-[#525252]"
           >
-            No setup fee · Cancel anytime · First invoice after one week of
-            active use
+            {finalCta.trustLine}
           </motion.p>
         </motion.div>
       </div>

@@ -2,17 +2,7 @@
 
 import { motion } from "motion/react";
 import { staggerContainer, fadeUp, viewportOnce } from "@/lib/motion";
-
-const dmRows = [
-  { text: "Love your content bhai!! 🔥🔥", type: "fan", sender: "@rohan_fan123" },
-  { text: "Hi! We're Herbalia India — interested in a paid collab for our Q2...", type: "brand", sender: "@herbalindia_brand", value: "₹3.2L" },
-  { text: "Bro which protein do you recommend for beginners??", type: "fan", sender: "@gym_newbie_99" },
-  { text: "Hey! Your coaching program — is 1-on-1 still available?", type: "coaching", sender: "@vikram_fitness91", value: "₹1.8L" },
-  { text: "Your story was so inspiring 😭❤️", type: "fan", sender: "@anjali_admirer" },
-  { text: "Free collab — we send products, you post once?", type: "spam", sender: "@freeproducts_collab" },
-  { text: "Is your next course cohort still open? I've been waiting...", type: "course", sender: "@anjali_learns", value: "₹80K" },
-  { text: "Bhai can you check my diet plan?? DM kar", type: "fan", sender: "@health_enthusiast" },
-];
+import { useLocale } from "@/lib/locale-context";
 
 const typeConfig = {
   brand: {
@@ -43,6 +33,9 @@ const typeConfig = {
 };
 
 export function DmThreadMockup() {
+  const { dmThreadMockup } = useLocale();
+  const dmRows = dmThreadMockup.rows;
+
   return (
     <div className="card-bezel w-full max-w-sm mx-auto lg:mx-0">
       <div className="card-bezel-inner overflow-hidden">

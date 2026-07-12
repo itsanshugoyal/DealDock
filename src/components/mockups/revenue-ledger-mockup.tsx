@@ -6,26 +6,20 @@ import { TrendUp } from "@phosphor-icons/react";
 import { ClassificationBadge } from "@/components/shared/classification-badge";
 import { RupeeCounter } from "@/components/shared/rupee-counter";
 import { staggerContainer } from "@/lib/motion";
-
-const months = [
-  { label: "Dec", value: 1.2, height: 28 },
-  { label: "Jan", value: 2.1, height: 48 },
-  { label: "Feb", value: 1.8, height: 40 },
-  { label: "Mar", value: 3.4, height: 75 },
-  { label: "Apr", value: 2.9, height: 64 },
-  { label: "May", value: 4.7, height: 100 },
-];
-
-const recentDeals = [
-  { date: "May 3", handle: "@herbalindia_brand", type: "brand" as const, value: 3.2 },
-  { date: "Apr 28", handle: "@vikram_fitness91", type: "coaching" as const, value: 1.8 },
-  { date: "Apr 21", handle: "@nykaa_collab", type: "brand" as const, value: 2.5 },
-];
+import { useLocale, useMoneyFormat } from "@/lib/locale-context";
 
 export function RevenueLedgerMockup() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
+  const { ledgerMockup, currencySymbol } = useLocale();
+  const money = useMoneyFormat();
+  const { months, recentDeals, tileLabels, thisMonthValue, avgDealValue, topDealValue } = ledgerMockup;
+
+  const formatStatic = (v: number) =>
+    money.format === "comma"
+      ? `${currencySymbol}${Math.round(v).toLocaleString("en-US")}`
+      : `${currencySymbol}${v}L`;
 
   return (
     <div ref={ref} className="card-bezel w-full">
@@ -55,9 +49,9 @@ export function RevenueLedgerMockup() {
             className="grid grid-cols-3 gap-3"
           >
             {[
-              { label: "This month", value: 4.7, suffix: "L", prefix: "₹", highlight: true },
-              { label: "Avg deal size", value: 2.4, suffix: "L", prefix: "₹", highlight: false },
-              { label: "Top deal", value: 3.2, suffix: "L", prefix: "₹", highlight: false },
+              { label: tileLabels.thisMonth, value: thisMonthValue, highlight: true },
+              { label: tileLabels.avgDeal, value: avgDealValue, highlight: false },
+              { label: tileLabels.topDeal, value: topDealValue, highlight: false },
             ].map((tile, i) => (
               <motion.div
                 key={i}
@@ -75,9 +69,10 @@ export function RevenueLedgerMockup() {
                 </p>
                 <RupeeCounter
                   value={tile.value}
-                  suffix={tile.suffix}
-                  prefix={tile.prefix}
-                  decimals={1}
+                  suffix={money.format === "decimal" ? "L" : ""}
+                  prefix={money.prefix}
+                  decimals={money.decimals}
+                  format={money.format}
                   duration={1.4}
                   className="text-lg font-bold font-mono"
                   style={{ color: tile.highlight ? "#ffc107" : "#e5e5e5" }}
@@ -89,7 +84,7 @@ export function RevenueLedgerMockup() {
           {/* Bar chart */}
           <div>
             <p className="text-[11px] text-[#737373] uppercase tracking-wider mb-4">
-              Monthly recovered (₹L)
+              Monthly recovered ({currencySymbol})
             </p>
             <div className="flex items-end gap-2" style={{ height: "96px" }}>
               {months.map((month, i) => {
@@ -102,7 +97,6 @@ export function RevenueLedgerMockup() {
                     onMouseEnter={() => setHoveredBar(i)}
                     onMouseLeave={() => setHoveredBar(null)}
                   >
-                    {/* Tooltip */}
                     <AnimatePresence>
                       {isHovered && (
                         <motion.div
@@ -118,9 +112,8 @@ export function RevenueLedgerMockup() {
                             className="text-[13px] font-bold font-mono"
                             style={{ color: isLast ? "#ffc107" : "#e5e5e5" }}
                           >
-                            ₹{month.value}L
+                            {formatStatic(month.value)}
                           </p>
-                          {/* Arrow */}
                           <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-[#1a1a1a]" />
                         </motion.div>
                       )}
@@ -187,7 +180,7 @@ export function RevenueLedgerMockup() {
                     </span>
                   </div>
                   <span className="text-[13px] font-mono font-semibold text-[#ffc107]">
-                    ₹{deal.value}L
+                    {formatStatic(deal.value)}
                   </span>
                 </motion.div>
               ))}

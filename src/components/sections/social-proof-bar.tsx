@@ -1,18 +1,10 @@
-import { cn } from "@/lib/utils";
+"use client";
 
-const creators = [
-  { name: "Priya Sharma", img: "https://i.pravatar.cc/40?img=47", niche: "Fitness" },
-  { name: "Rahul Kapoor", img: "https://i.pravatar.cc/40?img=12", niche: "Business" },
-  { name: "Ananya Singh", img: "https://i.pravatar.cc/40?img=49", niche: "Lifestyle" },
-  { name: "Nisha Kumar", img: "https://i.pravatar.cc/40?img=45", niche: "Fashion" },
-  { name: "Shivam Patel", img: "https://i.pravatar.cc/40?img=15", niche: "Tech" },
-  { name: "Deepika Mehra", img: "https://i.pravatar.cc/40?img=44", niche: "Food" },
-  { name: "Vivek Rathi", img: "https://i.pravatar.cc/40?img=33", niche: "Travel" },
-  { name: "Kavya Pillai", img: "https://i.pravatar.cc/40?img=48", niche: "Beauty" },
-];
+import { useLocale } from "@/lib/locale-context";
 
 export function SocialProofBar() {
-  const doubled = [...creators, ...creators];
+  const { socialProof } = useLocale();
+  const doubled = [...socialProof.creators, ...socialProof.creators];
 
   return (
     <div className="border-y border-white/[0.06] bg-[#0a0a0a] py-5 overflow-hidden">
@@ -21,9 +13,10 @@ export function SocialProofBar() {
           {/* Stat text */}
           <div className="flex-shrink-0 text-center sm:text-left">
             <p className="text-[13px] text-[#737373] whitespace-nowrap">
-              <span className="text-[#fafafa] font-semibold">40+ creators</span>{" "}
-              recovering{" "}
-              <span className="text-[#ffc107] font-semibold">₹1.2Cr+</span> monthly
+              <span className="text-[#fafafa] font-semibold">{socialProof.statPrefix}</span>{" "}
+              {socialProof.statMiddle}{" "}
+              <span className="text-[#ffc107] font-semibold">{socialProof.statValue}</span>{" "}
+              {socialProof.statSuffix}
             </p>
           </div>
 

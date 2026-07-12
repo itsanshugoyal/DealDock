@@ -1,4 +1,10 @@
+"use client";
+
+import { useLocale } from "@/lib/locale-context";
+
 export function Footer() {
+  const { footer } = useLocale();
+
   return (
     <footer className="border-t border-white/[0.06] bg-[#050505] py-10">
       <div className="section-container">
@@ -9,7 +15,7 @@ export function Footer() {
               DealDock
             </p>
             <p className="text-[12px] text-[#525252] mt-0.5">
-              Revenue recovery for Instagram creators.
+              {footer.tagline}
             </p>
           </div>
 
