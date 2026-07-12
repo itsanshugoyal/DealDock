@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Check, Sparkle } from "@phosphor-icons/react";
+import { Check, Sparkle, ShieldCheck, HandPalm, ArrowCounterClockwise } from "@phosphor-icons/react";
 import { SectionWrapper, SectionHeader } from "@/components/shared/section-wrapper";
 import { staggerContainer, scaleIn, viewportOnce } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -158,13 +158,36 @@ export function Pricing() {
         ))}
       </motion.div>
 
+      {/* Trust chips — objection handling at the moment of decision */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={viewportOnce}
+        transition={{ delay: 0.25, duration: 0.5 }}
+        className="mt-12 flex flex-wrap items-center justify-center gap-3"
+      >
+        {[
+          { Icon: ShieldCheck, label: "Official Meta API only" },
+          { Icon: HandPalm, label: "Nothing sends without your approval" },
+          { Icon: ArrowCounterClockwise, label: "Cancel anytime, export everything" },
+        ].map(({ Icon, label }) => (
+          <span
+            key={label}
+            className="inline-flex items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.03] px-3.5 py-2 text-[12px] text-[#a3a3a3]"
+          >
+            <Icon size={13} weight="bold" className="text-[#ffc107]" />
+            {label}
+          </span>
+        ))}
+      </motion.div>
+
       {/* Pilot terms note */}
       <motion.p
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={viewportOnce}
         transition={{ delay: 0.4 }}
-        className="text-center mt-10 text-[13px] text-[#525252]"
+        className="text-center mt-6 text-[13px] text-[#525252]"
       >
         {pricing.termsNote}
       </motion.p>

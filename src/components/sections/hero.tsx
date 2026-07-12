@@ -34,10 +34,20 @@ export function Hero() {
             initial="hidden"
             animate="visible"
           >
-            {/* Eyebrow */}
-            <motion.p variants={fadeUp} className="text-eyebrow mb-6">
-              Revenue Recovery for Instagram Creators
-            </motion.p>
+            {/* Status chip — scarcity + liveness above the fold */}
+            <motion.div variants={fadeUp} className="mb-7">
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3.5 py-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ffc107] opacity-60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#ffc107]" />
+                </span>
+                <span className="text-[12px] font-medium text-[#a3a3a3]">
+                  Pilot cohort open
+                  <span className="mx-2 text-[#404040]">·</span>
+                  <span className="text-[#e5e5e5]">Limited seats</span>
+                </span>
+              </span>
+            </motion.div>
 
             {/* Headline — word-by-word reveal */}
             <motion.h1

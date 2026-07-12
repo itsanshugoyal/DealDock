@@ -24,7 +24,7 @@ export function SectionWrapper({
   return (
     <motion.section
       id={id}
-      className={cn("py-24 lg:py-28", className)}
+      className={cn("py-24 lg:py-36", className)}
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
@@ -69,7 +69,10 @@ export function SectionHeader({
       {subhead && (
         <motion.p
           variants={fadeUp}
-          className="mt-5 text-body-lg text-[#a3a3a3] max-w-2xl"
+          className={cn(
+            "mt-5 text-body-lg text-[#a3a3a3] max-w-2xl",
+            centered && "mx-auto"
+          )}
         >
           {subhead}
         </motion.p>

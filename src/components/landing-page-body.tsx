@@ -8,6 +8,7 @@ import { FloatingNav } from "@/components/sections/floating-nav";
 import { Hero } from "@/components/sections/hero";
 import { SocialProofBar } from "@/components/sections/social-proof-bar";
 import { ProblemSection } from "@/components/sections/problem-section";
+import { Manifesto } from "@/components/sections/manifesto";
 import { HowItWorks } from "@/components/sections/how-it-works";
 import { FeatureBento } from "@/components/sections/feature-bento";
 import { RevenueLedgerShowcase } from "@/components/sections/revenue-ledger-showcase";
@@ -29,6 +30,7 @@ export function LandingPageBody({ content }: { content: LocaleContent }) {
           <Hero />
           <SocialProofBar />
           <ProblemSection />
+          <Manifesto />
           <HowItWorks />
           <FeatureBento />
           <RevenueLedgerShowcase />
