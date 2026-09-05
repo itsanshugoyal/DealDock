@@ -41,6 +41,7 @@
   /* === Typography === */
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
 
   /* === Spacing === */
   --spacing-section: 7rem;
@@ -88,6 +89,17 @@ body {
   text-wrap: balance;
 }
 
+/* Hero headline — sized so each sentence holds its own line at desktop widths.
+   Deliberately smaller than .text-display: a two-sentence headline reads stronger
+   as two clean lines than as a shouting three-line block. */
+.text-hero {
+  font-size: clamp(2.375rem, 5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
 .text-h1 {
   font-size: clamp(2rem, 4vw, 3.5rem);
   line-height: 1.08;
@@ -122,6 +134,16 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #ffc107;
+}
+
+/* Editorial serif accent — the one word carrying the emotional weight of a headline.
+   Optical size runs larger than the sans it sits beside, so it needs no extra weight. */
+.text-serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  padding-right: 0.06em;
 }
 
 /* Hairline gradient divider between chapters — reads as structure, not decoration */
@@ -172,6 +194,53 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06),
     0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================
+   HERO BACKGROUND TEXTURE
+   ============================================================ */
+
+/* Faint technical grid, masked to fade out radially so it never reads as a
+   wallpaper — it only suggests structure behind the content. */
+.hero-grid {
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px
+    );
+  background-size: 64px 64px;
+  mask-image: radial-gradient(
+    ellipse 80% 55% at 50% 35%,
+    #000 20%,
+    transparent 78%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 55% at 50% 35%,
+    #000 20%,
+    transparent 78%
+  );
+}
+
+/* Perspective wrapper for the Z-axis product cascade.
+   Only engaged from md up — on a narrow phone the tilt distorts the card's text
+   without adding any sense of depth. Without perspective the same rotateX
+   flattens to a ~1% vertical squash, which is imperceptible. */
+@media (min-width: 768px) {
+  .hero-stage {
+    perspective: 2000px;
+    perspective-origin: 50% 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stage {
+    perspective: none;
+  }
 }
 
 /* ============================================================

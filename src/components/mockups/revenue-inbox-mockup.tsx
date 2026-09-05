@@ -5,13 +5,14 @@ import { ClassificationBadge } from "@/components/shared/classification-badge";
 import { RupeeCounter } from "@/components/shared/rupee-counter";
 import { staggerContainer, fadeUp, viewportOnce } from "@/lib/motion";
 import { useLocale, useMoneyFormat } from "@/lib/locale-context";
+import { cn } from "@/lib/utils";
 
-export function RevenueInboxMockup() {
+export function RevenueInboxMockup({ className }: { className?: string }) {
   const { inboxMockup, currencySymbol } = useLocale();
   const money = useMoneyFormat();
 
   return (
-    <div className="card-bezel w-full max-w-md mx-auto lg:mx-0">
+    <div className={cn("card-bezel w-full max-w-md mx-auto lg:mx-0", className)}>
       <div className="card-bezel-inner p-0 overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between bg-[#111111]">

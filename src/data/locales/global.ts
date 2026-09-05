@@ -18,7 +18,7 @@ export const globalLocale: LocaleContent = {
   },
 
   hero: {
-    headlineLines: ["You're losing", "thousands every month.", "They're sitting", "in your DMs."],
+    headlineLines: ["You're losing thousands every month.", "They're sitting in your DMs."],
     highlightWord: "thousands",
     subheadPrefix:
       "DealDock finds the brand deals, coaching leads, and course inquiries buried in your Instagram inbox — sorts them by deal value — and drafts replies in your voice.",
