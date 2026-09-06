@@ -1,121 +1,45 @@
 "use client";
 
-import { motion } from "motion/react";
-import { ClassificationBadge } from "@/components/shared/classification-badge";
-import { RupeeCounter } from "@/components/shared/rupee-counter";
-import { staggerContainer, fadeUp, viewportOnce } from "@/lib/motion";
-import { useLocale, useMoneyFormat } from "@/lib/locale-context";
-import { cn } from "@/lib/utils";
+import { ArrowDown, PencilSimple, Tray } from "@phosphor-icons/react";
+import { useLocale } from "@/lib/locale-context";
 
-export function RevenueInboxMockup({ className }: { className?: string }) {
-  const { inboxMockup, currencySymbol } = useLocale();
-  const money = useMoneyFormat();
-
+/** Static and explicitly illustrative: no simulated live connection or sends. */
+export function RevenueInboxMockup({ className = "" }: { className?: string }) {
+  const { id } = useLocale();
+  const format = (value: number) => new Intl.NumberFormat(id === "in" ? "en-IN" : "en-US", { style: "currency", currency: id === "in" ? "INR" : "USD", maximumFractionDigits: 0 }).format(value);
+  const enquiries = [
+    { label: "Brand collaboration", initials: "BC", text: "Could you share your availability for a paid partnership?", amount: id === "in" ? 65000 : 1800 },
+    { label: "Coaching enquiry", initials: "CE", text: "Is there a place on your 12-week programme?", amount: id === "in" ? 18000 : 450 },
+    { label: "Course enquiry", initials: "CQ", text: "Can I still join the next cohort?", amount: id === "in" ? 8500 : 180 },
+  ];
   return (
-    <div className={cn("card-bezel w-full max-w-md mx-auto lg:mx-0", className)}>
-      <div className="card-bezel-inner p-0 overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between bg-[#111111]">
-          <div>
-            <p className="text-[11px] text-[#737373] uppercase tracking-widest font-medium">
-              Revenue Inbox
-            </p>
-            <p className="text-sm font-semibold text-[#fafafa] mt-0.5">
-              Sorted by {currencySymbol} value
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#ffc107]/20 text-[#ffc107] text-[10px] font-bold border border-[#ffc107]/30">
-              {inboxMockup.rows.length}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,0.8)]" />
-              <span className="text-[11px] text-[#22c55e]">Live</span>
+    <div className={"m-inbox " + className}>
+      <div className="flex items-center justify-between gap-3 border-b border-white/15 px-5 py-5 sm:px-6">
+        <div className="flex items-center gap-2.5 text-sm font-medium"><Tray size={19} aria-hidden="true" />Revenue Inbox</div>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-[#c1c6bb]">Sample / 03</span>
+      </div>
+      <div className="flex items-center justify-between gap-2 px-5 pt-5 pb-3 text-[10px] uppercase tracking-wider text-[#c1c6bb] sm:px-6">
+        <span>Worth a closer look</span><span className="flex items-center gap-1">Est. value <ArrowDown size={11} aria-hidden="true" /></span>
+      </div>
+      <ol className="px-3 sm:px-4">
+        {enquiries.map((row, index) => (
+          <li key={row.label} className={"m-inbox-row " + (index === 1 ? "m-inbox-row-selected" : "")}>
+            <div className="flex min-w-0 items-start gap-3">
+              <span aria-hidden="true" className="m-initials hidden sm:flex">{row.initials}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+                  <span className="text-[12px] font-medium">{row.label}</span>
+                  <span className="m-money text-[13px]">{format(row.amount)}</span>
+                </div>
+                <p className="mt-2 text-[12px] leading-relaxed text-[#c1c6bb]">{row.text}</p>
+                {index === 1 && <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] text-[#dfbd7f]"><PencilSimple size={12} aria-hidden="true" />Draft ready for your review</span>}
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Rows */}
-        <motion.div
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-          className="divide-y divide-white/[0.04]"
-        >
-          {inboxMockup.rows.map((row, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              whileHover={{ backgroundColor: "rgba(255,255,255,0.025)" }}
-              className="px-4 py-3.5 flex items-start gap-3 transition-colors cursor-pointer group"
-            >
-              {/* Avatar */}
-              <div className="relative flex-shrink-0 mt-0.5">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                  style={{ backgroundColor: row.avatarColor + "30", border: `1px solid ${row.avatarColor}40` }}
-                >
-                  <span style={{ color: row.avatarColor }}>{row.initials}</span>
-                </div>
-                {row.isNew && (
-                  <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#22c55e]" />
-                  </span>
-                )}
-              </div>
-
-              {/* Left: badge + handle + preview */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="text-[12px] font-semibold text-[#e5e5e5]">
-                    {row.handle}
-                  </span>
-                  <span className="text-[11px] text-[#525252]">{row.age}</span>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <ClassificationBadge type={row.type} />
-                  {row.hasDraft && (
-                    <span className="text-[10px] text-[#ffc107] bg-[#ffc107]/10 border border-[#ffc107]/20 rounded-full px-1.5 py-0.5 leading-none">
-                      Draft ready
-                    </span>
-                  )}
-                </div>
-                <p className="text-[12px] text-[#737373] truncate mt-1">
-                  {row.preview}
-                </p>
-              </div>
-
-              {/* Right: value */}
-              <div className="text-right flex-shrink-0">
-                <div className="text-[15px] font-mono font-bold">
-                  <RupeeCounter
-                    value={row.value}
-                    suffix={row.valueSuffix}
-                    prefix={money.prefix}
-                    decimals={money.decimals}
-                    format={money.format}
-                    duration={1.2}
-                    className="text-[#ffc107]"
-                  />
-                </div>
-                <p className="text-[10px] text-[#525252] mt-0.5">est. value</p>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Footer */}
-        <div className="px-5 py-3 border-t border-white/[0.06] flex items-center justify-between bg-[#111111]">
-          <span className="text-[11px] text-[#525252]">{inboxMockup.footerLabel}</span>
-          <motion.span
-            whileHover={{ x: 2 }}
-            className="text-[11px] text-[#ffc107] cursor-pointer hover:text-[#e5a800] transition-colors flex items-center gap-1"
-          >
-            View all →
-          </motion.span>
-        </div>
+          </li>
+        ))}
+      </ol>
+      <div className="mx-5 mt-4 mb-5 border-t border-white/15 pt-4 text-[11px] leading-relaxed text-[#c1c6bb] sm:mx-6">
+        Estimates help you prioritize. They aren’t confirmed sales.
       </div>
     </div>
   );

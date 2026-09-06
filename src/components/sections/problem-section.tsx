@@ -1,77 +1,25 @@
-"use client";
-
-import { motion } from "motion/react";
-import { DmThreadMockup } from "@/components/mockups/dm-thread-mockup";
-import { SectionWrapper } from "@/components/shared/section-wrapper";
-import { fadeUp, slideFromLeft, staggerContainer, viewportOnce } from "@/lib/motion";
-import { useLocale } from "@/lib/locale-context";
+import { ArrowDownRight } from "@phosphor-icons/react";
 
 export function ProblemSection() {
-  const { problem, currencySymbol } = useLocale();
-
   return (
-    <SectionWrapper className="bg-[#0a0a0a]">
-      <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-        {/* Left: mockup */}
-        <motion.div
-          className="flex-1 w-full lg:max-w-[42%]"
-          variants={slideFromLeft}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-        >
-          <DmThreadMockup />
-        </motion.div>
-
-        {/* Right: copy */}
-        <motion.div
-          className="flex-1 lg:max-w-[55%]"
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-        >
-          <motion.p variants={fadeUp} className="text-eyebrow mb-4">
-            {problem.eyebrow}
-          </motion.p>
-
-          <motion.h2 variants={fadeUp} className="text-h1 mb-6">
-            {problem.headlinePrefix}{" "}
-            <span className="text-[#ffc107]">{problem.headlineHighlight}</span>
-          </motion.h2>
-
-          <motion.p
-            variants={fadeUp}
-            className="text-body-lg text-[#a3a3a3] mb-5 max-w-lg"
-          >
-            {problem.para1}
-          </motion.p>
-
-          <motion.p
-            variants={fadeUp}
-            className="text-body-lg text-[#a3a3a3] mb-8 max-w-lg"
-          >
-            {problem.para2Prefix}{" "}
-            <span className="text-[#e5e5e5]">{problem.para2Bold}</span>
-          </motion.p>
-
-          <motion.div
-            variants={fadeUp}
-            className="inline-flex items-center gap-3 bg-[#ffc107]/[0.08] border border-[#ffc107]/20 rounded-2xl px-5 py-4"
-          >
-            <div className="w-8 h-8 rounded-full bg-[#ffc107]/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-[#ffc107] text-base font-bold">{currencySymbol}</span>
-            </div>
-            <p className="text-sm text-[#a3a3a3]">
-              {problem.calloutPrefix}{" "}
-              <span className="text-[#ffc107] font-semibold">
-                {problem.calloutValue}
-              </span>{" "}
-              {problem.calloutSuffix}
-            </p>
-          </motion.div>
-        </motion.div>
+    <section className="m-section m-container">
+      <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-24">
+        <div>
+          <p className="m-kicker mb-5">01 / The missed conversation</p>
+          <h2 className="m-title">A busy inbox.<br /><em>A quiet opportunity.</em></h2>
+          <p className="m-muted mt-6 max-w-sm text-[15px] leading-relaxed">Story reactions. Quick questions. Someone asking about your next programme. They all arrive in the same place.</p>
+        </div>
+        <div className="m-message-study">
+          <p className="m-kicker mb-5">Sound familiar?</p>
+          <div className="m-noise-message"><span>Story reply</span><span>Loved this one.</span></div>
+          <div className="m-enquiry-message">
+            <div className="flex items-center justify-between gap-3"><span className="m-kicker">A potential customer</span><ArrowDownRight size={22} aria-hidden="true" /></div>
+            <p className="mt-4 text-xl font-medium leading-snug sm:text-2xl">“Is your next cohort still open?<br className="hidden sm:block" /> I’d love to join.”</p>
+          </div>
+          <div className="m-noise-message"><span>New message</span><span>Where was this filmed?</span></div>
+          <p className="m-muted mt-5 text-xs leading-relaxed">Illustrative messages. The aim is simple: give buying enquiries the attention they deserve.</p>
+        </div>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }
