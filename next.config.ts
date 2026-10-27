@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   reactStrictMode: true,
+  async redirects() {
+    return [{ source: "/global", destination: "/", permanent: true }];
+  },
 };
 
 export default nextConfig;

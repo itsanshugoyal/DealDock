@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
+
 import { LocaleProvider } from "@/lib/locale-context";
 import { ApplyModalProvider } from "@/lib/apply-modal-context";
 import { ApplyModal } from "@/components/sections/apply-modal";
-import { LocaleBanner } from "@/components/shared/locale-banner";
 import { FloatingNav } from "@/components/sections/floating-nav";
 import { Hero } from "@/components/sections/hero";
 import { SocialProofBar } from "@/components/sections/social-proof-bar";
@@ -24,8 +25,7 @@ export function LandingPageBody({ content }: { content: LocaleContent }) {
     <LocaleProvider content={content}>
       <ApplyModalProvider>
         <ApplyModal />
-        <LocaleBanner />
-        <main>
+        <aside className="review-notice" aria-label="Design archive notice">Original design archive. Claims, figures and testimonials are unverified. <Link href="/">View the accepted design ↗</Link></aside><main style={{paddingBottom: 100}}>
           <FloatingNav />
           <Hero />
           <SocialProofBar />

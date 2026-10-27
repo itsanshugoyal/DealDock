@@ -343,3 +343,14 @@ body {
     animation: none;
   }
 }
+
+/* Archived design is retained for comparison, not as a second application flow. */
+.review-notice { position: fixed; z-index: 1000; bottom: 0; left: 0; right: 0; padding: 12px 20px; background: #f9d84a; color: #191d1b; text-align: center; font-size: 12px; line-height: 1.6; border-top: 1px solid #191d1b; }
+.review-notice a { display: inline-block; min-height: 24px; font-weight: 700; text-decoration: underline; margin-left: 10px; }
+.review-dialog { margin: auto; width: min(90vw,480px); padding: 30px; border: 1px solid #c4cbbf; border-radius: 10px; background: #f3f4ef; color: #191d1b; }
+.review-dialog::backdrop { background: #000b; }
+.review-dialog h2 { font-size: 25px; font-weight: 650; line-height: 1.2; }
+.review-dialog p { font-size: 15px; line-height: 1.8; margin: 20px 0; }
+.review-dialog a { display: block; background: #191d1b; color: white; padding: 15px; border-radius: 5px; text-align: center; }
+.review-dialog button { display: block; min-height: 44px; margin: 12px auto 0; font-size: 13px; text-decoration: underline; cursor: pointer; }
+.review-dialog :focus-visible,.review-notice a:focus-visible { outline: 3px solid #8b6e00; outline-offset: 4px; }

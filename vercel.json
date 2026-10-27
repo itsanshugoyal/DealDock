@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "headers": [
+    {"source": "/dashboard/:path*", "headers": [{"key":"X-Robots-Tag","value":"noindex, nofollow"},{"key":"Cache-Control","value":"private, no-store"}]},
+    {"source": "/api/crm/:path*", "headers": [{"key":"Cache-Control","value":"private, no-store"}]}
+  ],
+  "redirects": [{"source":"/","destination":"/dashboard","permanent":false,"has":[{"type":"host","value":"dealdock-crm.vercel.app"}]}]
+}

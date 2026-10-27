@@ -7,25 +7,9 @@ import type { FaqItem } from "@/data/locales/types";
 export function Faq() {
   const { faq } = useLocale();
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faq.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.a,
-      },
-    })),
-  };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
       <SectionWrapper id="faq" className="bg-[#0a0a0a]">
         <SectionHeader
           eyebrow="FAQ"
