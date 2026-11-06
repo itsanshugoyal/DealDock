@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     index: MARKETING_SITE_LIVE,
     follow: MARKETING_SITE_LIVE,
   },
-  metadataBase: new URL(process.env.SITE_URL || "https://dealdock-design-review.vercel.app"),
+  metadataBase: new URL(process.env.SITE_URL || "https://dealdock.io"),
 };
 
 export const viewport: Viewport = {

@@ -16,7 +16,7 @@ export function MarketingDocument({ title, updatedAt = "DealDock pilot · Update
       </main>
       <footer className={styles.footer}>
         <span><strong>DealDock</strong> · Human-approved replies. Always.</span>
-        <nav className={styles.footerLinks} aria-label="Footer navigation"><Link href="/">Home</Link><Link href="/about">About</Link><Link href="/privacy">Privacy</Link><Link href="/pilot-terms">Pilot terms</Link><Link href="/contact">Contact</Link></nav>
+        <nav className={styles.footerLinks} aria-label="Footer navigation"><Link href="/">Home</Link><Link href="/blog">Guides</Link><Link href="/about">About</Link><Link href="/privacy">Privacy</Link><Link href="/pilot-terms">Pilot terms</Link><Link href="/contact">Contact</Link></nav>
       </footer>
     </div>
   );
