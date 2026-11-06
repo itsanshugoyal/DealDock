@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
+import { MarketingWebsiteStructuredData } from "@/components/marketing/structured-data";
 
 export const metadata: Metadata = {
   title: "About DealDock",
@@ -20,6 +21,9 @@ export default function AboutPage() {
       <p>The first cohort is deliberately small. The team works with creators who already receive buyer conversations through Instagram and can share candid feedback about where their current follow-through breaks down.</p>
       <h2>Who is building it</h2>
       <p>Anshu is building DealDock with design partners. If you sell coaching, courses or cohorts and want to discuss fit, you can <Link href="/#apply">apply for the pilot</Link> or <Link href="/contact">ask a question first</Link>.</p>
+      <h2>About the name</h2>
+      <p>DealDock at dealdock.io is an Instagram DM inbox for creators. It isn’t connected to other businesses that use the DealDock name, such as software for real-estate agents or venture-capital firms.</p>
+      <MarketingWebsiteStructuredData />
     </MarketingDocument>
   );
 }

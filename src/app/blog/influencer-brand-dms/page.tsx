@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { BlogArticle } from "@/components/marketing/blog-article";
 import styles from "@/components/marketing/blog-article.module.css";
+import { blogMetadata } from "@/lib/blog-posts";
 
-const title = "From Instagram DMs to Paid Brand Deals: An Influencer’s Guide";
-const description = "Manage brand collaborations from the first Instagram DM to payment. Learn how to review offers, reply, follow up and keep track of each deal.";
-const socialImage = "/guides/influencer-brand-inbox-review.png";
 const faqs = [
   {
     question: "How can influencers manage too many brand DMs?",
@@ -53,26 +51,10 @@ const faqs = [
   },
 ];
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://dealdock.io"),
-  title: `${title} | DealDock`,
-  description,
-  alternates: { canonical: "https://dealdock.io/blog/influencer-brand-dms" },
-  keywords: ["Instagram brand collaboration DMs", "influencer DM management", "manage brand enquiries", "reply to brand collaboration messages", "brand deal tracking", "influencer payment tracking"],
-  openGraph: { type: "article", url: "https://dealdock.io/blog/influencer-brand-dms", title, description, siteName: "DealDock", images: [{ url: socialImage, width: 1672, height: 941, alt: "A highlighted brand enquiry on a phone beside a notebook" }] },
-  twitter: { card: "summary_large_image", title, description, images: [socialImage] },
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = blogMetadata("influencer-brand-dms");
 
 export default function InfluencerBrandDmsReview() {
-  return <BlogArticle title={title} updatedAt="DealDock guide · Updated 5 November 2026" faqs={faqs}>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@graph": [
-        { "@type": "BlogPosting", headline: title, description, author: { "@type": "Organization", name: "DealDock" }, publisher: { "@type": "Organization", name: "DealDock" } },
-        { "@type": "FAQPage", mainEntity: faqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) },
-      ],
-    }).replace(/</g, "\\u003c") }} />
+  return <BlogArticle slug="influencer-brand-dms" faqs={faqs}>
     <p>“We’d love to work with you!”</p>
     <p>Nice message to get. Less nice when you find it ten days later, underneath a pile of story reactions.</p>
     <p>One brand needs your rates. Another said they’d send a brief, and you can’t remember whether it arrived. When you’re handling everything yourself, those loose ends sit in your head while you’re trying to film.</p>
@@ -81,7 +63,7 @@ export default function InfluencerBrandDmsReview() {
     <h2>A collaboration DM is a starting point</h2>
     <p>“Interested in collaborating?” could mean a paid campaign, an affiliate link or a discount code for a product you’re expected to buy. Until you ask, you don’t know.</p>
     <p>Before sending your media kit, find out what they’re asking for. Is there a brief? When does the content need to go live? And are they paying a fee or offering products? You’ll have a much easier time answering once the offer is clear.</p>
-    <figure className={styles.illustration}><Image src="/guides/influencer-brand-inbox-review.png" alt="A brand enquiry highlighted among messages on a phone beside a notebook" width={1672} height={941} sizes="(max-width: 768px) 100vw, 800px" /></figure>
+    <figure className={styles.illustration}><Image src="/guides/influencer-brand-inbox-review.webp" alt="A brand enquiry highlighted among messages on a phone beside a notebook" width={1600} height={900} sizes="(max-width: 768px) 100vw, 800px" /></figure>
     <h2>Give each enquiry somewhere to go</h2>
     <p>Try reviewing messages at a time you can usually stick to. Check your requests too. Start with anything that could hold up work you’ve already agreed to deliver, then move through new offers.</p>
     <p>For the offers you want to pursue, keep a short list outside your inbox. Four headings are enough: brand, campaign, waiting on, next action. “Waiting on” is especially useful. Are you waiting for their brief, or are they waiting for your rate card?</p>
@@ -89,7 +71,7 @@ export default function InfluencerBrandDmsReview() {
     <h2>How to identify the right brand collaboration</h2>
     <p>Would you use the product? Can you picture it appearing naturally in your content? If you’re already struggling to imagine a believable post, that’s worth paying attention to.</p>
     <p>What does “one Reel” involve on this campaign? You might be filming at home, or the brand might expect a location shoot. Find out how many edits they want and whether they’ll use the video in ads before you send your price.</p>
-    <figure className={styles.illustration}><Image src="/guides/influencer-brand-brief-review.png" alt="Illustration of a creator checking a campaign brief beside a phone" width={1672} height={941} sizes="(max-width: 768px) 100vw, 800px" /></figure>
+    <figure className={styles.illustration}><Image src="/guides/influencer-brand-brief-review.webp" alt="Illustration of a creator checking a campaign brief beside a phone" width={1600} height={900} sizes="(max-width: 768px) 100vw, 800px" /></figure>
     <p>Read the brief with the shoot in mind. What product are you showing, and what does the brand want the content to achieve? Check the formats and deadline, then look for the revision allowance. If the brand wants exclusivity or permission to use your video in ads, include that in the discussion too.</p>
     <p>You also need to know who you’re making the agreement with and when payment is due. For gifting or commission offers, ask exactly what you receive and what the brand expects in return.</p>
     <p>Accepting a product and agreeing to make a scripted video are separate decisions. If you’re happy to receive a gift but haven’t promised a post, say that before the brand sends it.</p>

@@ -39,3 +39,40 @@
   .faqItem summary { padding: 16px; font-size: 15px; gap: 12px; }
   .faqItem > p { padding: 0 16px 18px; }
 }
+
+/* End-of-article pilot card and related reading. Palette follows preview.module.css (.page tokens). */
+.pilot { margin: 52px 0 0; padding: 26px 26px 24px; border-radius: 14px; background: #191d1b; color: #f3f4ef; }
+.pilot h2 { margin: 0 0 10px; color: #f3f4ef; }
+.pilot p { color: #d6dbd2; }
+.pilotLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 16px; padding: 10px 18px; border-radius: 8px; background: #f9d84a; color: #191d1b; font-size: 15px; font-weight: 650; text-decoration: none !important; }
+.pilotLink:hover { background: #ffe57a; }
+.related { margin: 44px 0 0; }
+.related ul { list-style: none !important; padding: 0 !important; margin: 0 !important; border-top: 1px solid #cdd2c9; }
+.related li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid #cdd2c9; margin: 0 !important; }
+.related li a { font-weight: 600; color: #191d1b; }
+.related li span { flex: none; font-size: 12px; color: #59615b; }
+.allGuides { display: inline-flex; gap: 8px; margin-top: 18px; font-weight: 600; min-height: 44px; align-items: center; }
+
+/* Blog index */
+.intro { font-size: 18px !important; }
+.postList { list-style: none !important; padding: 0 !important; margin: 36px 0 0 !important; border-top: 1px solid #cdd2c9; }
+.postList li { margin: 0 !important; border-bottom: 1px solid #cdd2c9; }
+.postList a { display: grid; gap: 6px; padding: 24px 4px; text-decoration: none !important; color: inherit; border-radius: 8px; }
+.postList a:hover strong { text-decoration: underline; text-underline-offset: 4px; }
+.postList strong { font-size: 21px; line-height: 1.35; letter-spacing: -0.02em; font-weight: 650; color: #191d1b; }
+.postMeta { font-size: 12px; color: #59615b; }
+.postDescription { font-size: 15.5px; line-height: 1.7; color: #414941; }
+@media (max-width: 480px) {
+  .related li { flex-direction: column; gap: 4px; }
+  .postList strong { font-size: 19px; }
+}
+
+/* Copyable message templates and simple data tables inside articles. */
+.template { margin: 18px 0 22px; padding: 16px 18px; border-left: 3px solid #b49d1f; border-radius: 0 10px 10px 0; background: #e8ecdf; color: #191d1b; font-size: 15.5px; line-height: 1.75; white-space: pre-line; }
+.template + .template { margin-top: 12px; }
+.templateLabel { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #59615b; letter-spacing: 0.02em; }
+.tableWrap { margin: 24px 0; overflow-x: auto; border: 1px solid #cdd2c9; border-radius: 12px; background: #ffffff80; }
+.tableWrap table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14.5px; line-height: 1.55; }
+.tableWrap th, .tableWrap td { padding: 11px 14px; border-bottom: 1px solid #cdd2c9; text-align: left; vertical-align: top; color: #414941; }
+.tableWrap th { color: #191d1b; font-weight: 650; background: #e8ecdf80; }
+.tableWrap tr:last-child td { border-bottom: 0; }
