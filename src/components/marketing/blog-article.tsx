@@ -25,7 +25,7 @@ export function BlogArticle({ slug, faqs = [], children }: {
         description: post.description,
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
-        inLanguage: "en",
+        inLanguage: post.inLanguage ?? "en",
         url,
         mainEntityOfPage: url,
         image: shareImage(post).url,
