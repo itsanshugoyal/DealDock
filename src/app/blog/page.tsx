@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   title: `${title} | DealDock`,
   description,
   alternates: { canonical: `${MARKETING_ORIGIN}/blog` },
-  openGraph: { type: "website", url: `${MARKETING_ORIGIN}/blog`, title, description, siteName: "DealDock" },
+  openGraph: { type: "website", url: `${MARKETING_ORIGIN}/blog`, title, description, siteName: "DealDock", images: [{ url: `${MARKETING_ORIGIN}/opengraph-image`, width: 1200, height: 630, alt: "DealDock" }] },
+  twitter: { card: "summary_large_image", title, description, images: [`${MARKETING_ORIGIN}/opengraph-image`] },
   robots: { index: true, follow: true },
 };
 
