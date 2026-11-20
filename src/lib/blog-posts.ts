@@ -11,6 +11,8 @@ export type BlogPost = {
   updatedAt: string;
   /** Optional share image; defaults to the generated /og/<slug> card. */
   image?: ShareImage;
+  thumbnail?: string;
+  draft?: boolean;
 };
 
 type ShareImage = { url: string; width: number; height: number; alt: string };
@@ -19,15 +21,30 @@ type ShareImage = { url: string; width: number; height: number; alt: string };
 // Newest first. Add a post here before creating src/app/blog/<slug>/page.tsx.
 export const blogPosts: readonly BlogPost[] = [
   {
+    slug: "instagram-message-requests",
+    title: "Instagram message requests: where brand deals and buyers hide",
+    description: "Find Instagram message requests, hidden requests and overlooked brand enquiries. Learn what to check in Primary, General and Spam, plus a weekly inbox routine.",
+    topic: "Instagram DMs",
+    publishedAt: "2026-11-20",
+    updatedAt: "2026-11-20",
+    draft: true,
+    image: { url: "/blog/instagram-message-requests.webp", width: 1600, height: 900, alt: "An illustrated phone with Primary, General, Requests and Hidden requests folders" },
+    thumbnail: "/blog/instagram-message-requests.webp",
+  },
+  {
     slug: "influencer-brand-dms",
     title: "From Instagram DMs to Paid Brand Deals: An Influencer’s Guide",
     description: "Manage brand collaborations from the first Instagram DM to payment. Learn how to review offers, reply, follow up and keep track of each deal.",
     topic: "Brand deals",
     publishedAt: "2026-11-05",
     updatedAt: "2026-11-05",
-    image: { url: "/guides/influencer-brand-inbox-review.jpg", width: 1672, height: 941, alt: "A highlighted brand enquiry on a phone beside a notebook" },
+    image: { url: "/guides/influencer-brand-inbox-review.webp", width: 1600, height: 900, alt: "A highlighted brand enquiry on a phone beside a notebook" },
+    thumbnail: "/blog/creator-brand-dms.webp",
   },
 ];
+
+// Review drafts appear in local development, but stay out of public article lists.
+export const listedBlogPosts = blogPosts.filter((post) => !post.draft || process.env.NODE_ENV === "development");
 
 /** Free tools and templates listed on the blog index and in the sitemap. */
 export const freeTools: readonly { href: string; title: string; description: string; updatedAt: string }[] = [];
@@ -55,8 +72,8 @@ export function blogMetadata(slug: string): Metadata {
     title: `${post.title} | DealDock`,
     description: post.description,
     alternates: { canonical: url },
-    openGraph: { type: "article", url, title: post.title, description: post.description, siteName: "DealDock", publishedTime: post.publishedAt, modifiedTime: post.updatedAt, images },
-    twitter: { card: "summary_large_image", title: post.title, description: post.description, images: images.map((i) => i.url) },
-    robots: { index: true, follow: true },
+    openGraph: { type: "article", url, title: post.title, description: post.description, siteName: "DealDock", ...(!post.draft && { publishedTime: post.publishedAt }), modifiedTime: post.updatedAt, images },
+    twitter: { card: "summary_large_image", title: post.title, description: post.description, images },
+    robots: { index: !post.draft, follow: true },
   };
 }

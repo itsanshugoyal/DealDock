@@ -1,5 +1,7 @@
 .illustration { margin: 34px 0 42px; }
 .illustration img { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid #1d30231f; }
+.illustration figcaption { margin-top: 10px; color: #59615b; font-size: 12px; line-height: 1.6; }
+.editorNote { padding: 16px 18px; border-radius: 10px; background: #e8ecdf80; font-size: 14px !important; }
 .faq { margin: 44px 0 28px; }
 .faqList { display: grid; gap: 12px; }
 .faqItem {
@@ -47,10 +49,17 @@
 .pilotLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 16px; padding: 10px 18px; border-radius: 8px; background: #f9d84a; color: #191d1b; font-size: 15px; font-weight: 650; text-decoration: none !important; }
 .pilotLink:hover { background: #ffe57a; }
 .related { margin: 44px 0 0; }
-.related ul { list-style: none !important; padding: 0 !important; margin: 0 !important; border-top: 1px solid #cdd2c9; }
-.related li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid #cdd2c9; margin: 0 !important; }
-.related li a { font-weight: 600; color: #191d1b; }
-.related li span { flex: none; font-size: 12px; color: #59615b; }
+.related ul { list-style: none !important; padding: 0 !important; margin: 0 !important; display: grid; gap: 16px; }
+.related li { margin: 0 !important; }
+.relatedCard { display: grid; grid-template-columns: 160px minmax(0, 1fr) 30px; align-items: center; gap: 20px; padding: 16px; border: 1px solid #1d302326; border-radius: 14px; background: #fff9; text-decoration: none !important; color: #191d1b; }
+.relatedCard:hover { background: #fff; border-color: #8b956f; }
+.relatedCard:focus-visible { outline: 2px solid #1d3023; outline-offset: 4px; }
+.relatedCard img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; }
+.relatedCopy { display: grid; gap: 7px; min-width: 0; }
+.relatedTopic { font-size: 12px; color: #59615b; }
+.relatedCopy strong { font-size: 19px; line-height: 1.35; letter-spacing: -.025em; }
+.relatedDescription { font-size: 14px; line-height: 1.6; color: #59615b; }
+.relatedArrow { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f9d84a; }
 .allGuides { display: inline-flex; gap: 8px; margin-top: 18px; font-weight: 600; min-height: 44px; align-items: center; }
 
 /* Blog index */
@@ -63,7 +72,9 @@
 .postMeta { font-size: 12px; color: #59615b; }
 .postDescription { font-size: 15.5px; line-height: 1.7; color: #414941; }
 @media (max-width: 480px) {
-  .related li { flex-direction: column; gap: 4px; }
+  .relatedCard { grid-template-columns: minmax(0, 1fr) 30px; gap: 16px 12px; }
+  .relatedCard img { grid-column: 1 / -1; }
+  .relatedArrow { align-self: start; }
   .postList strong { font-size: 19px; }
 }
 

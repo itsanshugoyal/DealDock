@@ -1,17 +1,16 @@
 import Link from "next/link";
 import styles from "./preview.module.css";
 
-export function MarketingDocument({ title, updatedAt = "DealDock pilot · Updated 14 October 2026", children }: { title: string; updatedAt?: string; children: React.ReactNode }) {
+export function MarketingDocument({ title, updatedAt = "DealDock pilot · Updated 14 October 2026", children, intro, className }: { title: string; updatedAt?: string; children: React.ReactNode; intro?: React.ReactNode; className?: string }) {
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page}${className ? ` ${className}` : ""}`}>
       <a className={styles.skipLink} href="#document-main">Skip to content</a>
       <header className={styles.header}>
         <Link className={styles.brand} href="/" aria-label="DealDock home"><span className={styles.brandMark} aria-hidden="true">d<span /></span>DealDock</Link>
         <Link className={styles.secondaryLink} href="/#apply">Apply ↗</Link>
       </header>
       <main id="document-main" tabIndex={-1} className={styles.document}>
-        <p className={styles.documentDate}>{updatedAt}</p>
-        <h1>{title}</h1>
+        {intro ?? <><p className={styles.documentDate}>{updatedAt}</p><h1>{title}</h1></>}
         {children}
       </main>
       <footer className={styles.footer}>

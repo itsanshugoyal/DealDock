@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import Link from "next/link";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
 
-export const metadata: Metadata = { title: "Website privacy | DealDock", description: "How DealDock uses pilot application details and website analytics.", alternates: { canonical: "/privacy" } };
+export const metadata: Metadata = marketingPageMetadata("/privacy", "Website privacy | DealDock", "How DealDock uses pilot application details and website analytics.");
 
 export default function PrivacyPage() {
   return (

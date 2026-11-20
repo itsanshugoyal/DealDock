@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import Link from "next/link";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
 import { CurrencySelector, PilotCurrencyProvider, SoloPrice } from "@/components/design-preview/pilot-currency";
 
-export const metadata: Metadata = { title: "Pilot terms | DealDock", description: "The DealDock Solo pilot offer, application process, pricing and human-approval promise.", alternates: { canonical: "/pilot-terms" } };
+export const metadata: Metadata = marketingPageMetadata("/pilot-terms", "Pilot terms | DealDock", "The DealDock Solo pilot offer, application process, pricing and human-approval promise.");
 
 export default function PilotTermsPage() {
   return (

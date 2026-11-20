@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
-import { blogPost, blogPosts, blogUrl, formatDate, shareImage } from "@/lib/blog-posts";
+import { blogPost, listedBlogPosts, blogUrl, formatDate, shareImage } from "@/lib/blog-posts";
 import { MARKETING_ORIGIN } from "@/lib/marketing-config";
 import styles from "./blog-article.module.css";
 
@@ -14,7 +15,7 @@ export function BlogArticle({ slug, faqs = [], children }: {
 }) {
   const post = blogPost(slug);
   const url = blogUrl(slug);
-  const related = blogPosts.filter((p) => p.slug !== slug).slice(0, 3);
+  const related = listedBlogPosts.filter((p) => p.slug !== slug).slice(0, 3);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -23,7 +24,7 @@ export function BlogArticle({ slug, faqs = [], children }: {
         "@id": `${url}#article`,
         headline: post.title,
         description: post.description,
-        datePublished: post.publishedAt,
+        ...(!post.draft && { datePublished: post.publishedAt }),
         dateModified: post.updatedAt,
         inLanguage: "en",
         url,
@@ -40,7 +41,7 @@ export function BlogArticle({ slug, faqs = [], children }: {
   };
 
   return (
-    <MarketingDocument title={post.title} updatedAt={`DealDock guide · Updated ${formatDate(post.updatedAt)}`}>
+    <MarketingDocument title={post.title} updatedAt={`${post.draft ? "Draft for review" : "DealDock guide"} · Updated ${formatDate(post.updatedAt)}`}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       {children}
       {faqs.length > 0 && (
@@ -64,9 +65,19 @@ export function BlogArticle({ slug, faqs = [], children }: {
       </aside>
       {related.length > 0 && (
         <nav className={styles.related} aria-labelledby="article-related-heading">
-          <h2 id="article-related-heading">Keep reading</h2>
+          <h2 id="article-related-heading">Related articles</h2>
           <ul>
-            {related.map((p) => <li key={p.slug}><Link href={`/blog/${p.slug}`}>{p.title}</Link><span>{p.topic}</span></li>)}
+            {related.map((p) => <li key={p.slug}>
+              <Link href={`/blog/${p.slug}`} className={styles.relatedCard}>
+                <Image src={p.thumbnail ?? p.image?.url ?? `/og/${p.slug}`} alt="" width={320} height={180} sizes="(max-width: 480px) calc(100vw - 90px), 160px" />
+                <span className={styles.relatedCopy}>
+                  <span className={styles.relatedTopic}>{p.topic}</span>
+                  <strong>{p.title}</strong>
+                  <span className={styles.relatedDescription}>{p.description}</span>
+                </span>
+                <span className={styles.relatedArrow} aria-hidden="true">↗</span>
+              </Link>
+            </li>)}
           </ul>
           <Link className={styles.allGuides} href="/blog">All guides <span aria-hidden="true">→</span></Link>
         </nav>

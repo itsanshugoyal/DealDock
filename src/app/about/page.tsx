@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import Link from "next/link";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
 import { MarketingWebsiteStructuredData } from "@/components/marketing/structured-data";
 
-export const metadata: Metadata = {
-  title: "About DealDock",
-  description: "DealDock is a design-partner pilot for coaches, course creators and cohort hosts who sell through Instagram conversations.",
-  alternates: { canonical: "/about" },
-};
+export const metadata: Metadata = marketingPageMetadata("/about", "About DealDock", "DealDock is a design-partner pilot for coaches, course creators and cohort hosts who sell through Instagram conversations.");
 
 export default function AboutPage() {
   return (

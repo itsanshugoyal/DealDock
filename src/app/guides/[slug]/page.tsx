@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MARKETING_SHARE_IMAGE } from "@/lib/marketing-metadata";
 import { notFound } from "next/navigation";
 import { ArticleStructuredData } from "@/components/marketing/structured-data";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
@@ -17,7 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${guide.title} | DealDock`,
     description: guide.description,
     alternates: { canonical: `/guides/${guide.slug}` },
-    openGraph: { title: guide.title, description: guide.description, type: "article" },
+    openGraph: { title: guide.title, description: guide.description, type: "article", url: `/guides/${guide.slug}`, siteName: "DealDock", images: [MARKETING_SHARE_IMAGE] },
+    twitter: { card: "summary_large_image", title: guide.title, description: guide.description, images: [MARKETING_SHARE_IMAGE] },
   };
 }
 
