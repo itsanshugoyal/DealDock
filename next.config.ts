@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   reactStrictMode: true,
+  experimental: {
+    agentUpgrade: "security",
+  },
   async redirects() {
     return [{ source: "/global", destination: "/", permanent: true }];
   },
