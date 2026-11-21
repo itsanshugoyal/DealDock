@@ -1,13 +1,15 @@
 import { ImageResponse } from "next/og";
-import { blogPost, blogPosts } from "@/lib/blog-posts";
+import { getVisibleBlogPosts } from "@/lib/blog-posts";
 
 // Share card for each blog post, generated at build time (1200x630 PNG).
 export function generateStaticParams() {
-  return blogPosts.map(({ slug }) => ({ slug }));
+  return getVisibleBlogPosts().map(({ slug }) => ({ slug }));
 }
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const post = blogPost((await params).slug);
+  const { slug } = await params;
+  const post = getVisibleBlogPosts().find(post => post.slug === slug);
+  if (!post) return new Response("Not found", { status: 404 });
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", background: "#f3f4ef", color: "#191d1b", display: "flex", flexDirection: "column", padding: "58px 70px", fontFamily: "sans-serif" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 15, fontSize: 31, fontWeight: 700 }}>

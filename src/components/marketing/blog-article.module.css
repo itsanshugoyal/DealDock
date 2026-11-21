@@ -1,4 +1,6 @@
 .illustration { margin: 34px 0 42px; }
+.articleImage { width: 100%; height: auto; display: block; border-radius: 6px; margin: 34px 0; border: 1px solid #1d30231f; }
+.codeBlock { overflow-x: auto; padding: 18px; border-radius: 10px; background: #e8ecdf; font-size: 14px; }
 .illustration img { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid #1d30231f; }
 .illustration figcaption { margin-top: 10px; color: #59615b; font-size: 12px; line-height: 1.6; }
 .editorNote { padding: 16px 18px; border-radius: 10px; background: #e8ecdf80; font-size: 14px !important; }

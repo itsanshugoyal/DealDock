@@ -1,13 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
-import { blogPost, listedBlogPosts, blogUrl, formatDate, shareImage } from "@/lib/blog-posts";
+import { blogPost, getVisibleBlogPosts, blogUrl, formatDate, shareImage } from "@/lib/blog-posts";
 import { MARKETING_ORIGIN } from "@/lib/marketing-config";
 import styles from "./blog-article.module.css";
+import { toolsForTopic } from "@/lib/tools/catalog";
+import { ToolCards } from "@/components/tools/tool-cards";
+import toolStyles from "@/components/tools/tools.module.css";
 
 type BlogFaq = { question: string; answer: string };
 
-/** Article shell: title and dates come from src/lib/blog-posts.ts; structured data always matches the visible page. */
+/** Article shell: metadata and FAQs originate in content/blog/*.mdx. */
 export function BlogArticle({ slug, faqs = [], children }: {
   slug: string;
   faqs?: readonly BlogFaq[];
@@ -15,7 +18,8 @@ export function BlogArticle({ slug, faqs = [], children }: {
 }) {
   const post = blogPost(slug);
   const url = blogUrl(slug);
-  const related = listedBlogPosts.filter((p) => p.slug !== slug).slice(0, 3);
+  const related = getVisibleBlogPosts().filter((p) => p.slug !== slug).slice(0, 3);
+  const relevantTools = toolsForTopic(post.topic);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -24,7 +28,7 @@ export function BlogArticle({ slug, faqs = [], children }: {
         "@id": `${url}#article`,
         headline: post.title,
         description: post.description,
-        ...(!post.draft && { datePublished: post.publishedAt }),
+        ...(post.status === "published" ? { datePublished: post.publishedAt } : {}),
         dateModified: post.updatedAt,
         inLanguage: "en",
         url,
@@ -41,9 +45,10 @@ export function BlogArticle({ slug, faqs = [], children }: {
   };
 
   return (
-    <MarketingDocument title={post.title} updatedAt={`${post.draft ? "Draft for review" : "DealDock guide"} · Updated ${formatDate(post.updatedAt)}`}>
+    <MarketingDocument title={post.title} updatedAt={`DealDock guide · Updated ${formatDate(post.updatedAt)}`}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       {children}
+      {relevantTools.length > 0 && <aside className={toolStyles.relatedTools} aria-labelledby="article-tools-heading"><h2 id="article-tools-heading">Put this guide to work</h2><ToolCards tools={relevantTools} /></aside>}
       {faqs.length > 0 && (
         <section aria-labelledby="article-faq-heading" className={styles.faq}>
           <h2 id="article-faq-heading">A few questions you might still have</h2>
@@ -65,7 +70,7 @@ export function BlogArticle({ slug, faqs = [], children }: {
       </aside>
       {related.length > 0 && (
         <nav className={styles.related} aria-labelledby="article-related-heading">
-          <h2 id="article-related-heading">Related articles</h2>
+          <h2 id="article-related-heading">Keep reading</h2>
           <ul>
             {related.map((p) => <li key={p.slug}>
               <Link href={`/blog/${p.slug}`} className={styles.relatedCard}>

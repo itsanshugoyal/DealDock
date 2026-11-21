@@ -5,6 +5,7 @@ import { EnquiryExample } from "./enquiry-example";
 import { PilotApplication } from "./pilot-application";
 import { CurrencySelector, ExampleMoney, PilotCurrencyProvider, PricingAnswer, SoloPrice } from "./pilot-currency";
 import styles from "./preview.module.css";
+import navStyles from "@/components/shared/resource-nav.module.css";
 
 const faqItems = [
   ["Will DealDock ever send a message without me?", "Never. Every send requires human approval. A draft can be edited or left unsent. This is a product rule, not a setting you have to remember to switch on."],
@@ -25,13 +26,15 @@ export function MarketingDesignPreview() {
   return (
     <PilotCurrencyProvider><div className={styles.page}>
       <a className={styles.skipLink} href="#preview-main">Skip to content</a>
-      <header className={styles.header}>
+      <header className={`${styles.header} ${navStyles.header}`}>
         <a href="#preview-main" className={styles.brand} aria-label="DealDock home" translate="no">
           <span className={styles.brandMark} aria-hidden="true">d<span /></span>DealDock
         </a>
-        <nav aria-label="Main navigation" className={styles.nav}>
-          <a href="#your-approval" className={styles.navApproach}>How it works</a>
-          <a href="#pilot" className={styles.navApproach}>The pilot</a><a href="#questions" className={styles.navApproach}>FAQ</a><a href="#apply" data-marketing-cta="navigation" className={styles.navCta}>Apply for the pilot <ArrowUpRight size={16} aria-hidden="true" /></a>
+        <nav aria-label="Main navigation" className={`${styles.nav} ${navStyles.nav}`}>
+          <a href="#your-approval" className={`${styles.navApproach} ${navStyles.homeSectionLink}`}>How it works</a>
+          <a href="#pilot" className={`${styles.navApproach} ${navStyles.homeSectionLink}`}>The pilot</a><a href="#questions" className={`${styles.navApproach} ${navStyles.homeSectionLink}`}>FAQ</a>
+          <Link className={navStyles.guidesLink} href="/blog">Guides</Link><Link href="/tools">Free tools</Link>
+          <a href="#apply" data-marketing-cta="navigation" className={styles.navCta}><span className={navStyles.desktopText}>Apply for the pilot</span><span className={navStyles.mobileText}>Apply</span> <ArrowUpRight size={16} aria-hidden="true" /></a>
         </nav>
       </header>
 
@@ -161,7 +164,7 @@ export function MarketingDesignPreview() {
       </main>
       <footer className={styles.footer}>
         <span><strong>DealDock</strong> · Human-approved replies. Always.</span>
-        <nav aria-label="Footer navigation" className={styles.footerLinks}><Link href="/privacy">Privacy</Link><Link href="/pilot-terms">Pilot terms</Link><Link href="/contact">Contact</Link></nav>
+        <nav aria-label="Footer navigation" className={styles.footerLinks}><Link href="/blog">Guides</Link><Link href="/tools">Free tools</Link><Link href="/privacy">Privacy</Link><Link href="/pilot-terms">Pilot terms</Link><Link href="/contact">Contact</Link></nav>
       </footer>
     </div></PilotCurrencyProvider>
   );

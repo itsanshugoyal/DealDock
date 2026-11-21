@@ -2,12 +2,12 @@
 
 Write and verify posts with the project skills: `blog-research` → `blog-write` → `blog-verify` → `blog-publish` (start from `search-growth`). They hold the writing brief, subagent prompts and checks behind the November 2026 articles.
 
-Use the influencer brand-DM article in `influencer-brand-dms/page.tsx` as the current reference for future blog posts. Keep new copy original and specific to its topic.
+Use `content/blog/influencer-brand-dms.mdx` as an editorial reference. Read `content/blog/README.md` before adding posts.
 
 ## Routes and reusable layout
 
-- Put articles at `src/app/blog/<slug>/page.tsx`, giving each its own `/blog/<slug>` canonical URL.
-- Register the post in `src/lib/blog-posts.ts` first (slug, title, description, topic, dates, optional `inLanguage`). Use `<BlogArticle slug="<slug>" faqs={faqs}>` from `@/components/marketing/blog-article`; it renders the H1, the date, BlogPosting and FAQPage data, the FAQ accordion, the pilot card and related posts. Metadata: `export const metadata = blogMetadata("<slug>")`.
+- Put each article and its metadata in `content/blog/<slug>.mdx`. The shared `[slug]/page.tsx` route creates its `/blog/<slug>` URL automatically. Never add separate per-post routes or a manual post registry.
+- The shared dynamic route uses `BlogArticle` for layout and expandable FAQs. Put FAQ questions and answers in the MDX frontmatter.
 - Reuse `@/components/marketing/blog-article.module.css` for illustrations and shared article styling. The existing MarketingDocument supplies the DealDock header/footer, typography, colours and reading width.
 - Keep responsive images descriptive, sized correctly and styled with `illustration`. Preserve the shared FAQ keyboard focus treatment and native details/summary interaction.
 - Do not duplicate article CSS for each post. Keep common visual changes in the shared component and stylesheet.
