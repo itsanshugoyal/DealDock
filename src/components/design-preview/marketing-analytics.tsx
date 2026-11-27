@@ -6,11 +6,13 @@ import { track } from "@vercel/analytics";
 import { normalizeMarketingEvent, sanitizeAnalyticsEvent } from "@/lib/marketing-events.mjs";
 
 export function recordMarketingEvent(name: string, properties: Record<string, unknown> = {}) {
-  if (process.env.NEXT_PUBLIC_MARKETING_EVENTS_ENABLED !== "true") return;
   const event = normalizeMarketingEvent(name, properties);
-  if (event) {
-    try { track(event.name, event.data); } catch { /* Measurement must never block an application. */ }
-  }
+  if (!event) return;
+  // GTM exists only on the live site. It gets the event name and CTA location, never form content.
+  const layer = (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer;
+  try { layer?.push({ event: event.name, ...(event.data.location ? { cta_location: event.data.location } : {}) }); } catch { /* Measurement must never block an application. */ }
+  if (process.env.NEXT_PUBLIC_MARKETING_EVENTS_ENABLED !== "true") return;
+  try { track(event.name, event.data); } catch { /* Measurement must never block an application. */ }
 }
 
 export function MarketingAnalytics({ enabled }: { enabled: boolean }) {

@@ -46,6 +46,9 @@ const HEADERS = {
 };
 
 async function airtableFetch(pathAndQuery, options) {
+  if (fs.existsSync(path.join(__dirname, '..', '.crm-retired.json')) && (options?.method || 'GET') !== 'GET') {
+    throw new Error('Airtable is an archived source. Make CRM changes in Founder CRM (Supabase).');
+  }
   const res = await fetch(`${API_BASE}${pathAndQuery}`, { headers: HEADERS, ...options });
   const data = await res.json();
   if (!res.ok) {

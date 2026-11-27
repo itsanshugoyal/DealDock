@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DealDock site redesign plan</title>
+<style>
+  :root { --paper: #FBF8F2; --surface: #F3EEE4; --card: #fff; --ink: #14202C; --ink-2: #57514A; --ink-3: #8A8279; --line: rgba(20, 32, 44, .12); --accent: #FF7A1A; --accent-pale: #FFE9D6; --accent-ink: #9A3D06; --night: #1E1A16; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0 20px 80px; background: var(--paper); color: var(--ink); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; }
+  header { padding: 64px 0 28px; border-bottom: 1px solid var(--line); }
+  .eyebrow { margin: 0 0 10px; color: var(--accent-ink); font: 650 12px/1.2 ui-monospace, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; }
+  h1 { margin: 0; font: 400 clamp(2.4rem, 1.6rem + 3vw, 3.8rem)/1 Georgia, "Times New Roman", serif; letter-spacing: -.02em; }
+  h2 { margin: 56px 0 6px; font: 400 2rem/1.1 Georgia, serif; letter-spacing: -.01em; }
+  h3 { margin: 28px 0 6px; font-size: 1.1rem; }
+  p.lede { max-width: 46em; color: var(--ink-2); font-size: 1.1rem; }
+  .meta { margin-top: 14px; color: var(--ink-3); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14.5px; }
+  th, td { padding: 12px 12px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { color: var(--ink-3); font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+  .wrap-x { overflow-x: auto; }
+  code { padding: 1px 6px; border-radius: 6px; background: var(--surface); font-size: .88em; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+  .p1 { background: var(--accent); color: var(--ink); } .p2 { background: var(--accent-pale); color: var(--accent-ink); } .p3 { background: var(--surface); color: var(--ink-2); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 16px; }
+  .card { padding: 20px 22px; border-radius: 20px; background: var(--card); box-shadow: 0 0 0 1px var(--line), 0 20px 40px -32px rgba(40, 24, 10, .5); }
+  .card h3 { margin-top: 0; }
+  .card ul, .card ol { margin: 8px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 15px; }
+  .dark { background: var(--night); color: #F6F1E7; box-shadow: none; }
+  .dark h3 { color: #fff; } .dark ul, .dark p { color: rgba(246, 241, 231, .75); }
+  .note { margin-top: 18px; padding: 14px 18px; border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; background: var(--accent-pale); color: var(--accent-ink); font-size: 15px; }
+  ol.steps { counter-reset: s; list-style: none; padding: 0; }
+  ol.steps > li { counter-increment: s; position: relative; margin-top: 14px; padding: 18px 20px 18px 64px; border-radius: 18px; background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+  ol.steps > li::before { content: counter(s); position: absolute; left: 20px; top: 18px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 700; font-size: 14px; }
+  ol.steps b { display: block; margin-bottom: 2px; }
+  ol.steps span { color: var(--ink-2); font-size: 15px; }
+  .q { display: grid; gap: 10px; margin-top: 16px; }
+  .q div { padding: 14px 18px; border-radius: 14px; background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+  .q b { display: block; }
+  .q span { color: var(--ink-2); font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">Plan · not started · 28 November 2026</p>
+    <h1>Bringing every page onto the new design</h1>
+    <p class="lede">The home page (<code>/</code>) now has the new look. Every other public page still uses the earlier "pen and paper" design: yellow highlighter marks, hard yellow drop-shadows and heavy black grotesk type. This plan rebuilds each of them on the current design system. It does not recolour them.</p>
+    <p class="meta">Based on a walk-through of every route in <code>src/app</code> on the local build, with screenshots of each page. Design coding starts only after this plan is agreed.</p>
+  </header>
+
+  <h2>The design we are matching</h2>
+  <p class="lede">These are the choices the new home page settled on. Every rebuilt page uses the same tokens and components, not lookalikes.</p>
+  <div class="grid">
+    <div class="card"><h3>Look</h3><ul>
+      <li>Warm paper ground (<code>#FBF8F2</code>), ink text, one orange accent (<code>#FF7A1A</code>).</li>
+      <li>Instrument Serif for display headings, Geist sans for body, mono uppercase eyebrows.</li>
+      <li>Warm "stage" gradients behind product moments; one dark night band per page at most.</li>
+      <li>Soft lift shadows and hairlines. No hard offset shadows, no highlighter marks.</li></ul></div>
+    <div class="card"><h3>Components</h3><ul>
+      <li>Pill buttons with an arrow disc; the white pill link for secondary actions.</li>
+      <li>Lindy-style product cards: white, hairline, status chip, rows that tick.</li>
+      <li>The bento grid: grainy orange hero, photo tile with glass chips, stone, list and coral tiles.</li>
+      <li>Docky as the sender of private cards, with the Instagram and Gmail app logos.</li></ul></div>
+    <div class="card"><h3>Motion and honesty</h3><ul>
+      <li>Reveal on scroll, a status chip that works then flips, rows that tick, money that counts up.</li>
+      <li>Everything readable with motion off; motion respects reduced-motion.</li>
+      <li>Examples labelled as made up; no invented testimonials, logos or stats.</li>
+      <li>Plain writing: no em dashes and no hype words.</li></ul></div>
+  </div>
+
+  <h2>What exists today</h2>
+  <div class="wrap-x"><table>
+    <thead><tr><th>Route</th><th>Built from</th><th>Today</th><th>Plan</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code> and <code>/global</code></td><td><code>landing/landing-page.tsx</code></td><td>New design. <code>/global</code> re-exports it.</td><td>Keep. The template every other page follows.</td><td><span class="pill p3">done</span></td></tr>
+      <tr><td><code>/in</code></td><td><code>design-preview/marketing-design-preview.tsx</code> + <code>INDIA</code> content</td><td>Old design: yellow highlights, ₹ pricing, Hinglish examples, a Leak Scan section.</td><td>Render the new landing page with an India content set. Same design, same sections; content written for India (below).</td><td><span class="pill p1">first</span></td></tr>
+      <tr><td><code>/security</code></td><td><code>MarketingDocument</code></td><td>Old document template.</td><td>A "security" page: the control bento up top, then the detailed sections in the new document layout.</td><td><span class="pill p1">first</span></td></tr>
+      <tr><td><code>/privacy</code>, <code>/pilot-terms</code></td><td><code>MarketingDocument</code></td><td>Old document template.</td><td>A legal reading layout: "the short version" summary card, sticky contents, numbered sections.</td><td><span class="pill p2">second</span></td></tr>
+      <tr><td><code>/about</code></td><td><code>MarketingDocument</code></td><td>Old document template, written as one long page.</td><td>A real page: founders, why we are building it, the product rules as bento tiles, and the pilot status.</td><td><span class="pill p2">second</span></td></tr>
+      <tr><td><code>/contact</code></td><td><code>MarketingDocument</code></td><td>Old document template.</td><td>A short page: one big email with a copy button, cards for "pilot questions", "your data" and "already applied", and response times.</td><td><span class="pill p2">second</span></td></tr>
+      <tr><td><code>/guides/[slug]</code></td><td><code>MarketingDocument</code> + <code>marketing-guides.ts</code></td><td>No guides published yet; would render in the old template.</td><td>An article template: serif headline, author, reading time, contents, pull quotes, product cards in the text, related guides, closing band. Add a <code>/guides</code> index once there are three or more.</td><td><span class="pill p3">third</span></td></tr>
+      <tr><td>Shared header and footer</td><td><code>design-preview/site-chrome.tsx</code></td><td>The header is fine on the new page. The footer still says "Your DMs, sorted by money.", the old line.</td><td>A new footer: a night band with Docky, link columns, the new line, and the Meta notice.</td><td><span class="pill p1">first</span></td></tr>
+      <tr><td>Share images</td><td><code>app/opengraph-image.tsx</code>, <code>app/in/opengraph-image.tsx</code></td><td>Old design: yellow square logo, highlighter, "Your DMs, sorted by money."</td><td>New share images: the current logo, the serif headline and a product card on the warm stage, plus one per document page.</td><td><span class="pill p1">first</span></td></tr>
+      <tr><td>Apply sheet</td><td><code>landing/apply-sheet.tsx</code> + <code>design-preview/pilot-application.tsx</code></td><td>Partly restyled through <code>.landing</code> overrides.</td><td>Check every step and state (errors, success, offline) in the new style; remove the old-style overrides.</td><td><span class="pill p2">second</span></td></tr>
+      <tr><td>Not found (404)</td><td>none</td><td>Next.js default page.</td><td>A small branded page: Docky looking lost, links home and to contact.</td><td><span class="pill p3">third</span></td></tr>
+      <tr><td><code>/original</code>, <code>/design-preview</code></td><td>Older landing components</td><td>Earlier designs, still live.</td><td>Retire: redirect to <code>/</code> (or <code>/in</code>) and keep them out of the sitemap. Delete the unused components afterwards.</td><td><span class="pill p3">third</span></td></tr>
+      <tr><td><code>/docky</code>, <code>/dashboard</code></td><td>Mascot sheet, founder CRM</td><td>Internal tools.</td><td>Out of scope.</td><td><span class="pill p3">skip</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>/in: the same page, written for India</h2>
+  <p class="lede">The India page uses the same design and the same sections as the home page. Only the content changes, and it should read like it was written by people who know Indian creators, not like a translation with flags on it.</p>
+  <div class="grid">
+    <div class="card"><h3>How it is built</h3><ul>
+      <li>One landing component, two content sets: <code>LANDING_GLOBAL</code> (today) and a new <code>LANDING_IN</code>.</li>
+      <li>Prices come from <code>PLAN_PRICES</code> in INR, already supported by the pricing code.</li>
+      <li>The phone story, inbox section, roster and bento all read from the content set, so nothing is hard-coded to the US example.</li>
+      <li>The "India" bar on the global page links to <code>/in</code>; <code>/in</code> gets the reverse link.</li></ul></div>
+    <div class="card"><h3>What changes in the content</h3><ul>
+      <li>Amounts in rupees, written as Indian creators write them (₹18K, ₹1.2L–₹2.5L).</li>
+      <li>Fictional Indian brands and creators, with natural names and niches (skincare, food, fitness, finance, fashion).</li>
+      <li>Times in IST; a festive-season brand brief where it fits the story.</li>
+      <li>English with light, real Hinglish only where a DM would actually use it. Never in our own voice.</li></ul></div>
+    <div class="card dark"><h3>What to avoid</h3><ul>
+      <li>No "yaar", "bhai" or Bollywood references in our copy.</li>
+      <li>No festival clichés, flags or saffron colour accents.</li>
+      <li>No made-up local stats or "Trusted by Indian creators" claims.</li>
+      <li>No promises about payments or tax features we have not built (for example GST invoices or UPI collection) until they are confirmed.</li></ul></div>
+  </div>
+  <h3>Research before writing</h3>
+  <ol class="steps">
+    <li><b>Read real creator DMs and briefs</b><span>Collect anonymised examples from the pilot and from public creator posts about brand outreach in India: how brands open, what they ask for, how rates and usage are phrased.</span></li>
+    <li><b>Check rate ranges against public reports</b><span>Use published Indian influencer-pricing reports and agency rate cards to set believable example ranges per follower band. Label them as examples, as today.</span></li>
+    <li><b>Draft LANDING_IN, then review</b><span>Write the India content set section by section and review it with a creator before it ships. Page copy goes to a branch for founder review; it is not merged without it.</span></li>
+  </ol>
+
+  <h2>Shared pieces to build once</h2>
+  <div class="grid">
+    <div class="card"><h3>Tokens out of <code>.landing</code></h3><p>Move the colour, type and shadow tokens from <code>landing.module.css</code> into one shared marketing stylesheet, so document pages use exactly the same values.</p></div>
+    <div class="card"><h3>Page parts</h3><p>Eyebrow, section head, white pill link, product card, Docky avatar, app logos and bento tiles become small shared components, reused by every page.</p></div>
+    <div class="card"><h3>Document layout</h3><p>One new template for long pages: a header on the warm stage, an optional summary card, sticky contents on wide screens, and comfortable 68-character lines.</p></div>
+  </div>
+
+  <h2>Order of work</h2>
+  <ol class="steps">
+    <li><b>Foundation</b><span>Shared tokens and page parts, the new footer, share images for <code>/</code> and <code>/in</code>, and a 404 page.</span></li>
+    <li><b>/in</b><span>India content research, <code>LANDING_IN</code>, the new landing at <code>/in</code>, and the old India page removed.</span></li>
+    <li><b>Security, privacy and pilot terms</b><span>The new document layout, with the control bento on the security page.</span></li>
+    <li><b>About and contact</b><span>Rebuilt as real pages, not documents.</span></li>
+    <li><b>Guides</b><span>The article template, ready for the first reviewed guide.</span></li>
+    <li><b>Clean-up</b><span>Retire <code>/original</code> and <code>/design-preview</code>, delete the unused design-preview components, and update the sitemap.</span></li>
+  </ol>
+  <p class="note">Every step is checked the same way: desktop and phone screenshots of each page section by section, lint, the type check, and the existing <code>scripts/test-marketing-*.mjs</code> tests.</p>
+
+  <h2>Decisions needed</h2>
+  <div class="q">
+    <div><b>Leak Scan</b><span>The old India page had a "what your last 30 days missed" section. Should both pages get a Leak Scan section in the new design, or does the line in the story band cover it?</span></div>
+    <div><b>About page photos</b><span>Real founder photos make the page. Can Anshu and Nahush provide them, or should the page lead with Docky and the product instead?</span></div>
+    <div><b>Contact</b><span>Email only, as today, or a short form that sends to the shared inbox?</span></div>
+    <div><b>Old routes</b><span>OK to redirect <code>/original</code> and <code>/design-preview</code> to the home page?</span></div>
+    <div><b>Guides index</b><span>Build the <code>/guides</code> listing now, or wait for the first three reviewed guides?</span></div>
+  </div>
+</main>
+</body>
+</html>

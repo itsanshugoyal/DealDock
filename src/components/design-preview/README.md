@@ -6,7 +6,7 @@ The visual direction uses bold Geist typography, cool paper, signal yellow, a cu
 
 The initial audience is explicitly coaches, course sellers and cohort hosts selling their own offers through Instagram. Brand-deal-only creators have a separate future-interest option. Example conversations, estimated values and ledger entries are illustrative. No messages are sent by the example.
 
-Applications use three required fields and one optional note. Preparing an application creates an unsent mailto draft for itsanshugoyal2@gmail.com; the visitor reviews and sends it through their email app. Copy/manual-paste and edit options are available. No server submission, email delivery confirmation or analytics service is configured. Only bounded utm_source and utm_campaign tags are carried into the email.
+Applications use three required fields and one optional note. Preparing an application creates an unsent mailto draft for hello@dealdock.io; the visitor reviews and sends it through their email app. Copy/manual-paste and edit options are available. No server submission, email delivery confirmation or analytics service is configured. Only bounded utm_source and utm_campaign tags are carried into the email.
 
 ## Review deployment
 

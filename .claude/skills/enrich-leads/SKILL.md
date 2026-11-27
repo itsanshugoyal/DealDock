@@ -13,7 +13,13 @@ node scripts/at.js list Leads "OR({enrichment_status}='pending',{enrichment_stat
 
 ## Step 2 — Deep-scrape each profile
 
-Use `mcp__Apify__call-actor` with actor `apify/instagram-profile-scraper`, `usernames: [<handles>]`, `resultsType: "details"`, `scrapeHighlights: true`. Fetch with `mcp__Apify__get-dataset-items`.
+**Preferred (when the Apify MCP server is connected):** use `mcp__Apify__call-actor` with actor `apify/instagram-profile-scraper`, `usernames: [<handles>]`, `resultsType: "details"`, `scrapeHighlights: true`. Fetch with `mcp__Apify__get-dataset-items`.
+
+**Fallback (Apify disconnected or out of credits):** `WebFetch` on `https://www.instagram.com/<handle>/` returns follower count, following count, and bio text — verified accurate to within ~1% of Apify's numbers. One call per handle, no API cost, no credits. Ask it: *"What is the follower count, following count, post count, and bio text on this profile?"* A 404 or empty result means the handle doesn't exist — mark `enrichment_status=failed`.
+
+Note: Firecrawl does **not** support instagram.com (returns an explicit "we do not support this site" error), so don't reach for it here. WebFetch is the working path.
+
+This fallback returns fewer fields than Apify (no `highlightReelCount`, `latestPosts`, or `ig_avg_likes`) — leave those blank rather than guessing, and note the reduced data in the qualification step.
 
 Field mapping (from [apify-configs/instagram-profile-scraper.json](../../../apify-configs/instagram-profile-scraper.json)):
 - `followersCount` → `ig_followers`

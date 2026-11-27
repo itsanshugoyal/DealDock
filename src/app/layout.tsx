@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif, Noto_Sans_Devanagari } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { MARKETING_SITE_LIVE } from "@/lib/marketing-config";
@@ -21,30 +21,39 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  preload: true, // Section labels on every page.
 });
 
-// Editorial accent — used italic for the emphasized word in display headlines.
+// Hindi examples only: unicode-range means it downloads when Devanagari is on screen.
+const devanagari = Noto_Sans_Devanagari({
+  variable: "--font-devanagari",
+  subsets: ["devanagari"],
+  display: "swap",
+  preload: false,
+});
+
+// Serif accent for the original design archive only.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
   weight: "400",
   style: ["normal", "italic"],
   display: "swap",
-  preload: false, // Used only by the original design archive.
+  preload: false,
 });
 
 // Default/fallback metadata — each locale route (/, /global) overrides
 // title, description, openGraph, twitter, and alternates with its own values.
 export const metadata: Metadata = {
-  title: "DealDock — Revenue Recovery for Instagram Creators",
+  title: "DealDock: your Instagram DMs, sorted by money",
   description:
-    "DealDock prioritizes Instagram buyer enquiries by estimated deal value, drafts replies in your voice, and records closed sales. You approve every send.",
+    "DealDock sorts your Instagram DMs by what they're worth, drafts each reply in your voice, and tracks deals until you're paid. Nothing sends until you approve.",
   keywords: [
-    "Instagram DM management",
-    "creator revenue recovery",
-    "coaching and course enquiries",
-    "DM sorting by value",
-    "creator commerce",
+    "Instagram DM inbox for creators",
+    "brand deal inbox",
+    "creator payment reminders",
+    "coaching leads Instagram",
+    "talent manager tools India",
   ],
   robots: {
     index: MARKETING_SITE_LIVE,
@@ -56,7 +65,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f3f4ef",
+  themeColor: "#f4f3ee",
 };
 
 export default function RootLayout({
@@ -67,7 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${devanagari.variable}`}
     >
       <head>
         {GOOGLE_TAG_MANAGER_ID ? (

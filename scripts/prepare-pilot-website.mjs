@@ -9,7 +9,7 @@ const stage = process.argv[2] ? path.resolve(process.argv[2]) : await mkdtemp(pa
 assert.ok(stage.startsWith(path.resolve(tmpdir()) + path.sep) && path.basename(stage).startsWith("dealdock-pilot-website-"), "Use an isolated DealDock pilot directory under the system temp directory");
 const allowlist = [
   "package.json", "package-lock.json", "tsconfig.json", "postcss.config.mjs", "eslint.config.mjs",
-  "src/app/layout.tsx", "src/app/globals.css", "src/app/page.tsx", "src/app/global",
+  "src/app/layout.tsx", "src/app/globals.css", "src/app/page.tsx", "src/app/global", "src/app/in", "src/app/security",
   "src/app/about", "src/app/privacy", "src/app/pilot-terms", "src/app/contact", "src/app/original", "src/app/guides",
   "src/app/design-preview", "src/app/robots.ts", "src/app/sitemap.ts",
   "src/app/favicon.ico", "src/app/icon.svg", "src/app/apple-icon.png", "src/app/opengraph-image.tsx",

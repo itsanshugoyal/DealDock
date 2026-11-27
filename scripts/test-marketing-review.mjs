@@ -6,14 +6,10 @@ assert.ok(origin, "Set REVIEW_TEST_ORIGIN to the deployed marketing review origi
 const siteLive = process.env.REVIEW_SITE_LIVE === "true";
 const canonicalOrigin = new URL(process.env.REVIEW_CANONICAL_ORIGIN || origin).origin;
 
-test("both fixed Solo prices are readable before JavaScript and international eligibility is clear", async () => {
-  for (const route of ["/", "/design-preview", "/pilot-terms"]) {
-    const response = await fetch(new URL(route, origin));
-    const html = await response.text();
-    assert.match(html, /₹4,000/);
-    assert.match(html, /USD \$49/);
-    assert.match(html, /international validation pilots/);
-    assert.match(html, /Show pricing in/);
+test("pilot prices are readable before JavaScript, in each homepage's currency", async () => {
+  for (const [route, prices] of [["/", [/\$49/, /\$99/, /\$179/, /USD per month/]], ["/in", [/₹4,000/, /₹8,000/, /₹15,000/]], ["/pilot-terms", [/USD \$49/, /₹4,000/, /First 30 days free|first 30 days are free/i]]]) {
+    const html = await (await fetch(new URL(route, origin))).text();
+    for (const price of prices) assert.match(html, price, `${route} shows ${price}`);
   }
 });
 
@@ -29,7 +25,7 @@ test("the currency hint is bounded, private, uncached and has no mutation method
 });
 
 test("public pages follow launch indexing and comparison pages stay excluded", async () => {
-  for (const route of ["/", "/design-preview", "/original", "/privacy", "/pilot-terms", "/contact"]) {
+  for (const route of ["/", "/in", "/design-preview", "/original", "/privacy", "/pilot-terms", "/security", "/about", "/contact"]) {
     const response = await fetch(new URL(route, origin));
     assert.equal(response.status, 200, route);
     const html = await response.text();
@@ -51,9 +47,9 @@ test("public pages follow launch indexing and comparison pages stay excluded", a
       }
     }
     assert.equal((html.match(/<main[\s>]/g) || []).length, 1);
-    if (["/", "/design-preview"].includes(route)) {
-      assert.match(html, /DealDock never auto-sends messages/);
-      assert.match(html, /No payment or Instagram connection required/);
+    if (["/", "/in", "/design-preview"].includes(route)) {
+      assert.match(html, /Auto-send: off\. Always\./);
+      assert.match(html, /First 30 days free/);
       assert.doesNotMatch(html, /review-notice"/);
     } else if (route === "/original") {
       assert.match(html, /Claims, figures and testimonials are unverified/);
@@ -82,22 +78,25 @@ test("legacy locale links preserve attribution and the intake exposes no read ro
 
 test("launch SEO files list only public canonical routes", async () => {
   const sitemap = await (await fetch(new URL("/sitemap.xml", origin))).text();
+  assert.match(sitemap, /\/in<\/loc>/);
+  assert.match(sitemap, /\/security<\/loc>/);
   assert.match(sitemap, /\/about<\/loc>/);
   assert.match(sitemap, /\/privacy<\/loc>/);
   assert.match(sitemap, /\/pilot-terms<\/loc>/);
   assert.doesNotMatch(sitemap, /original|design-preview|dashboard|api\//);
   const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-  assert.equal(locations.length, 5);
+  assert.equal(locations.length, 7);
   assert.ok(locations.every(location => new URL(location).origin === canonicalOrigin));
   const robots = await (await fetch(new URL("/robots.txt", origin))).text();
   assert.match(robots, /Disallow: \/api\//);
   assert.ok(robots.includes(`Sitemap: ${canonicalOrigin}/sitemap.xml`));
 });
 
-test("social preview references this deployment and returns a real PNG", async () => {
-  const html = await (await fetch(new URL("/design-preview/", origin))).text();
+test("social previews reference this deployment and return real PNGs", async () => {
+  for (const route of ["/", "/in", "/design-preview/"]) {
+  const html = await (await fetch(new URL(route, origin))).text();
   const image = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
-  assert.ok(image, "an Open Graph image is present");
+  assert.ok(image, `${route} has an Open Graph image`);
   const url = new URL(image.replaceAll("&amp;", "&"));
   assert.equal(url.origin, new URL(process.env.REVIEW_CANONICAL_ORIGIN || origin).origin);
   const response = await fetch(new URL(url.pathname + url.search, origin));
@@ -105,6 +104,7 @@ test("social preview references this deployment and returns a real PNG", async (
   assert.match(response.headers.get("content-type"), /image\/png/);
   const bytes = Buffer.from(await response.arrayBuffer());
   assert.equal(bytes.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
+  }
 });
 
 test("the review page CSS and JavaScript assets resolve", async () => {

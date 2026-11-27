@@ -1,0 +1,122 @@
+/* The control section bento (control-bento.tsx), after Replit's: each tile has its own ground and a mono eyebrow,
+   and its picture is made of type and interface. Tokens come from .landing (landing.module.css). Motion runs only once
+   the grid is shown ([data-reveal-ready] [data-shown], motion.tsx); without it every tile rests on a readable state. */
+.head { display: grid; justify-items: center; text-align: center; }
+.more { margin-top: 36px; text-align: center; }
+.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(40px, 5vw, 60px); }
+.bento article { position: relative; overflow: hidden; border-radius: 30px; transition: transform 0.45s var(--ease), box-shadow 0.45s; }
+.bento article:hover { transform: translateY(-4px); }
+.eyebrow { font: 650 12.5px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+
+/* hero: a grainy, smoky orange ground (gradients under an SVG noise layer), the promise in white, Docky waiting */
+.hero { grid-column: span 2; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); min-height: 400px; isolation: isolate; color: #fff; background: radial-gradient(55% 75% at 12% 18%, #FF9A45 0%, transparent 62%), radial-gradient(60% 70% at 88% 12%, #D9530F 0%, transparent 65%), radial-gradient(70% 80% at 70% 105%, #7A2606 0%, transparent 62%), radial-gradient(50% 60% at 30% 95%, #B23C08 0%, transparent 70%), linear-gradient(135deg, #F06A14, #C0440A); box-shadow: 0 40px 80px -50px rgba(150, 50, 0, 0.75); }
+.hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; opacity: 0.55; }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 30%, rgba(255, 220, 190, 0.18) 45%, transparent 60%), linear-gradient(200deg, transparent 50%, rgba(60, 20, 0, 0.25)); }
+.heroText { align-self: end; padding: 40px 0 40px 40px; }
+.hero .eyebrow { color: rgba(255, 255, 255, 0.9); }
+.hero h3 { margin-top: 16px; font-family: var(--font-instrument-serif), Georgia, serif; font-size: clamp(2.6rem, 1.6rem + 2.4vw, 3.9rem); font-weight: 400; letter-spacing: -0.02em; line-height: 0.98; text-wrap: balance; }
+.heroText > p:last-child { max-width: 30em; margin-top: 16px; color: rgba(255, 255, 255, 0.86); font-size: 16.5px; line-height: 1.55; }
+.heroArt { position: relative; display: grid; align-content: end; justify-items: center; }
+.heroArt img { width: min(100%, 240px); height: auto; filter: drop-shadow(0 30px 30px rgba(80, 20, 0, 0.45)); translate: 0 18px; }
+.heroChip { position: absolute; top: 56px; right: 26px; z-index: 1; display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px 9px 11px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 13.5px; font-weight: 650; box-shadow: 0 16px 30px -14px rgba(80, 20, 0, 0.6); white-space: nowrap; }
+.heroChip svg { color: #1E9E57; }
+
+/* the four tiles: eyebrow, a short headline and one line, and a picture */
+.tile { display: flex; flex-direction: column; min-height: 400px; padding: 32px 30px; }
+.tile .eyebrow { color: var(--ink-2); }
+.copy h3 { margin-top: 12px; font-size: clamp(1.45rem, 1.1rem + 0.7vw, 1.8rem); font-weight: 560; letter-spacing: -0.03em; line-height: 1.12; text-wrap: balance; }
+.copy > p:last-child { margin-top: 10px; color: var(--ink-2); font-size: 15.5px; line-height: 1.5; }
+
+
+/* the follow-up tile: a creator texting in warm light, darkened top and bottom so the chat and copy read */
+.photo { justify-content: space-between; isolation: isolate; background: #3A2618; color: #fff; }
+.photoBg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 62% 30%; transition: transform 1.2s var(--ease); }
+.photo::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(30, 18, 10, 0.55) 0%, rgba(30, 18, 10, 0.1) 38%, rgba(30, 18, 10, 0.25) 55%, rgba(30, 18, 10, 0.88) 100%); }
+.photo:hover .photoBg { transform: scale(1.04); }
+.photo .eyebrow { color: rgba(255, 255, 255, 0.85); }
+.photo .copy > p:last-child { color: rgba(255, 255, 255, 0.84); }
+/* the chat: her last exchange with the brand, Docky's follow-up drafted in her voice, waiting for her slide */
+.chat { display: grid; gap: 8px; }
+.chat span { max-width: 86%; padding: 9px 13px; font-size: 13.5px; line-height: 1.4; }
+.them { justify-self: start; border-radius: 16px 16px 16px 5px; background: rgba(255, 255, 255, 0.16); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.me { justify-self: end; border-radius: 16px 16px 5px 16px; background: rgba(255, 255, 255, 0.24); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4); -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3); }
+.me small { display: block; margin-bottom: 2px; color: rgba(255, 255, 255, 0.78); font-size: 11px; font-weight: 650; }
+.chat .wait { justify-self: end; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); font-size: 12px; font-weight: 650; }
+.wait i { width: 7px; height: 7px; border-radius: 50%; background: #FF9A45; }
+[data-reveal-ready] [data-shown] .chat span { animation: rise 0.5s var(--ease) both; }
+[data-reveal-ready] [data-shown] .chat span:nth-child(1) { animation-delay: 0.3s; }
+[data-reveal-ready] [data-shown] .chat span:nth-child(2) { animation-delay: 0.8s; }
+[data-reveal-ready] [data-shown] .chat span:nth-child(3) { animation-delay: 1.3s; }
+[data-reveal-ready] [data-shown] .wait i { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.35; transform: scale(0.7); } }
+
+/* stone: a message, its encrypted form, and the dashed line between them, cropped by the tile's bottom edge */
+.stone { background: #ECEAE6; }
+.stack { display: grid; gap: 10px; margin: auto -4px -64px; padding-top: 24px; transition: transform 0.6s var(--ease); }
+.stone:hover .stack { transform: translateY(-10px); }
+.card { display: block; padding: 14px 16px; border-radius: 16px; background: #fff; box-shadow: 0 10px 24px -18px rgba(30, 20, 10, 0.45); color: var(--ink-2); font-size: 14px; line-height: 1.4; }
+.card b { display: flex; justify-content: space-between; margin-bottom: 4px; color: var(--ink); font-size: 13px; font-weight: 650; }
+.card small { color: var(--ink-3); font-weight: 500; }
+.dashed { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; height: 62px; overflow: hidden; border: 1.5px dashed rgba(150, 90, 200, 0.45); border-radius: 16px; background: radial-gradient(80% 140% at 50% 110%, #F4D9F4, #FBEEF8 55%, #FFF5EC); color: #3B2A55; font: 650 12.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+.dashed::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, 0.75) 50%, transparent 65%); transform: translateX(-100%); }
+.cipher code { display: block; color: #9AA3B5; font: 500 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.06em; }
+[data-reveal-ready] [data-shown] .dashed::after { animation: shine 3.6s 1s ease-in-out infinite; }
+
+/* list: how each account connects, one row lit at a time (Replit's Free / Power / Max list) */
+.list { background: #F4F1EC; }
+.rows { position: relative; display: grid; margin: auto -30px 0 0; padding-top: 22px; }
+.rows li { position: relative; isolation: isolate; display: flex; align-items: center; gap: 12px; height: 52px; padding: 0 30px 0 14px; color: rgba(20, 32, 44, 0.3); font-size: 23px; font-weight: 520; letter-spacing: -0.03em; }
+.rowLogo { flex: none; width: 22px; height: 22px; }
+.rows li em { margin-left: auto; font-size: 12px; font-style: normal; font-weight: 650; letter-spacing: 0; opacity: 0.85; }
+.rows li::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 13px 0 0 13px; background: linear-gradient(90deg, #FF7A1A, #F05A0E); box-shadow: 0 14px 26px -14px rgba(240, 90, 14, 0.7); opacity: 0; transform: translateX(14px); }
+.rows li:first-child { color: #fff; }
+.rows li:first-child::before { opacity: 1; transform: none; }
+[data-reveal-ready] [data-shown] .rows li { animation: rowOn 7.5s calc(0.6s + var(--i) * 2.5s) infinite backwards; }
+[data-reveal-ready] [data-shown] .rows li::before { animation: barOn 7.5s calc(0.6s + var(--i) * 2.5s) infinite backwards; }
+
+/* coral: a soft gradient with drifting light bands, and the three ways out */
+.coral { isolation: isolate; background: linear-gradient(115deg, #F8A688 0%, #F4805C 48%, #EE6440 100%); color: #fff; }
+.coral::before { content: ""; position: absolute; inset: -20%; z-index: -1; background: linear-gradient(90deg, transparent 0 50%, rgba(255, 222, 208, 0.6) 57%, rgba(255, 150, 110, 0.12) 67%, rgba(255, 226, 212, 0.5) 75%, transparent 85%); filter: blur(22px); }
+.coral::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(55% 55% at 78% 78%, rgba(255, 96, 40, 0.55), transparent 70%); }
+.coral .eyebrow, .coral .copy > p:last-child { color: rgba(255, 255, 255, 0.9); }
+.export { display: grid; margin-top: auto; overflow: hidden; border-radius: 18px; background: rgba(255, 255, 255, 0.18); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.export p { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); font-size: 13.5px; font-weight: 650; }
+.export p small { margin-left: auto; color: rgba(255, 255, 255, 0.8); font-size: 12px; font-weight: 550; }
+.export span { display: flex; align-items: center; gap: 8px; padding: 7px 14px; font: 600 12.5px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.export span em { margin-left: auto; color: rgba(255, 255, 255, 0.78); font-style: normal; font-weight: 500; }
+.export span svg { color: #fff; }
+.export span:last-child { padding-bottom: 11px; }
+[data-reveal-ready] [data-shown] .export span { animation: rise 0.45s var(--ease) both; }
+[data-reveal-ready] [data-shown] .export span:nth-of-type(1) { animation-delay: 0.5s; }
+[data-reveal-ready] [data-shown] .export span:nth-of-type(2) { animation-delay: 0.75s; }
+[data-reveal-ready] [data-shown] .export span:nth-of-type(3) { animation-delay: 1s; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.pills span { display: inline-flex; align-items: center; gap: 5px; padding: 8px 11px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 13px; font-weight: 650; transition: background 0.25s, transform 0.3s var(--spring); }
+.pills span:hover { background: rgba(255, 255, 255, 0.32); transform: translateY(-2px); }
+[data-reveal-ready] [data-shown] .coral::before { animation: drift 10s ease-in-out infinite alternate; }
+
+[data-reveal-ready] [data-shown] .heroArt img { animation: floatHero 6s ease-in-out infinite; }
+[data-reveal-ready] [data-shown] .heroChip { animation: chipIn 0.6s 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+@keyframes floatHero { 50% { translate: 0 8px; } }
+@keyframes chipIn { from { opacity: 0; transform: translateY(10px) scale(0.9); } }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes shine { 0% { transform: translateX(-100%); } 45%, 100% { transform: translateX(100%); } }
+/* one row lit for a third of the 7.5s loop; text and highlight share the keyframe times */
+@keyframes rowOn { 0% { color: rgba(20, 32, 44, 0.3); } 4%, 30% { color: #fff; } 34%, 100% { color: rgba(20, 32, 44, 0.3); } }
+@keyframes barOn { 0% { opacity: 0; transform: translateX(14px); } 4%, 30% { opacity: 1; transform: none; } 34%, 100% { opacity: 0; transform: translateX(-6px); } }
+@keyframes drift { to { transform: translateX(-12%); } }
+
+@media (max-width: 960px) {
+  .bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hero { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .heroText { padding: 32px 26px 0; }
+  .heroArt { height: 250px; }
+  .heroArt img { width: 190px; }
+  .heroChip { top: 18px; right: auto; left: 26px; }
+  .tile { min-height: 380px; padding: 28px 26px; }
+  .rows { margin-right: -26px; }
+}

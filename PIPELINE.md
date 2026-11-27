@@ -1,5 +1,13 @@
 # DealDock Manual-Mode Pipeline
 
+## Cofounder CRM (current)
+
+Use `/dashboard` for the authenticated shared CRM. See [CRM.md](CRM.md) for setup, data storage, tasks, marketing experiments and operation. Both cofounders have full access. Airtable remains the source of truth; the CRM adds `CRM Operations` for tasks and campaigns. Existing leads are preserved.
+
+All sending, posting and ad launches are manual. AI qualification, drafting and reply classification happen in chat from copied evidence packets, with no paid LLM APIs. The CRM's n8n controls are retired and activation endpoints return 410. The workflow files below are legacy reference, not an activation plan. Do not reactivate them. Legacy drafts need fresh evidence and explicit review before use. Brand-deal experiments remain excluded until a separate offer is approved.
+
+Production CRM: https://dealdock-crm.vercel.app/dashboard. Access remains locked until the shared password is privately configured and synced to Vercel. Credentials must never be pasted into chat.
+
 **Status: running with $0 API budget.** The n8n workflows in [n8n-workflows/](n8n-workflows/) are the original design (documented in [automation.md](automation.md)) but 3 of the 7 need a paid Anthropic/Gemini key we don't currently have (03-ai-qualification, 05-reply-monitor, 06-slack-outreach-drafts). Instead of paying for those API calls, **Claude Code chat sessions do the thinking** — the subscription is already paid for, so this is free.
 
 n8n itself stays dormant. Reactivate it (see [start-n8n.ps1](start-n8n.ps1) + [import-n8n-workflows.js](import-n8n-workflows.js)) once there's budget for an LLM API key — nothing here needs to be undone, it's a parallel manual path over the same Airtable data.
@@ -48,6 +56,33 @@ The dashboard at `/dashboard` (localhost:3456) reads the same Airtable data via 
 ## Manual steps `/classify-replies` can't automate
 
 There's no Gmail/IG API wired up — the founder pastes reply text into chat when one arrives, and manually sends whatever the skill drafts (DMs, LinkedIn notes, reply emails). Nothing in this mode sends messages on your behalf.
+
+## Enrichment without Apify (2026-08-09)
+
+The Apify MCP server disconnects periodically and the free credits are finite. **`WebFetch` on `https://www.instagram.com/<handle>/` is a working, zero-cost fallback** — it returns follower count, following count, and bio text, verified accurate to within ~1% of Apify's numbers on the same handle. Firecrawl explicitly does *not* support instagram.com, so don't try it there (Firecrawl is still the right tool for everything else — directories, case studies, podcast pages).
+
+## Highest-yield sourcing channels (ranked by observed hit rate)
+
+1. **Manually curated / researched candidate lists** — ~53% qualification rate (10 of 19 verified). Best return by far.
+2. **Creator-platform directories & course-platform case studies** (Topmate, Superprofile, Exly, Graphy, TagMango, Kajabi customer stories) — creators featured there are by definition people who sell courses online. Highest-signal automated source.
+3. **Podcast guest lists** — pre-qualified: established enough to be booked, usually still solo.
+4. **Blind hashtag scraping** — ~0% qualification rate across 3 live runs. Surfaces test-prep institutions and sub-1K accounts. **Deprioritized.**
+
+## The search pattern that actually works (2026-09-06)
+
+Instagram profile pages are indexed by Google with the bio in the meta description. So **searching the bio text itself is the highest-precision discovery method** — no scraping tools needed:
+
+```
+site:instagram.com <niche> India "DM" <offer language>
+```
+
+Search snippets frequently return the follower count and bio verbatim, which means many candidates can be pre-filtered before spending a single verification call. Verify survivors with `WebFetch` on the profile URL.
+
+**Niches that skew SOLO creators (good hunting):** fitness/transformation coaching, life & mindset coaching, manifestation/tarot/astrology, career & leadership coaching, yoga, nutrition, communication/confidence coaching, Instagram/content coaching.
+
+**Niches that skew INSTITUTIONAL in India (avoid — they return academies with staff):** digital marketing, stock-market/trading, IELTS & study-abroad, makeup artistry, dance & music, baking. These return "Institute"/"Academy"/"School" accounts that fail the solo-operator ICP test.
+
+**Also avoid:** generic "top influencer" listicles (Favikon, Modash, Ainfluencer, Feedspot). They rank by follower count, so they surface celebrity-tier accounts (1M+) that hit the too-big anti-signal.
 
 ## Sourcing findings (2026-07-06 live test)
 

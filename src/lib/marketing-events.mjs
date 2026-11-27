@@ -1,9 +1,8 @@
-const routes = new Set(["/", "/design-preview", "/privacy", "/pilot-terms", "/contact"]);
-const eventNames = new Set(["pilot_cta_clicked", "form_started", "application_attempted", "application_received", "application_failed", "email_fallback_prepared", "enquiry_example_selected", "currency_selected"]);
+const routes = new Set(["/", "/in", "/design-preview", "/privacy", "/pilot-terms", "/security", "/about", "/contact"]);
+const eventNames = new Set(["pilot_cta_clicked", "form_started", "application_attempted", "application_received", "application_failed", "email_fallback_prepared", "demo_sent"]);
 const categories = {
-  location: new Set(["navigation", "hero", "outcomes", "pilot"]),
-  offer: new Set(["coaching", "course", "cohort", "mixed", "brand_interest", "other"]),
-  example: new Set(["course", "coaching", "cohort"]),
+  location: new Set(["navigation", "hero", "leak_scan", "agencies", "pricing_solo", "pricing_studio", "pricing_roster", "sticky_bar"]),
+  offer: new Set(["brand", "coaching", "course", "cohort", "mixed", "agency", "other"]),
   reason: new Set(["validation", "network", "unavailable", "rate_limited", "unconfirmed"]),
   currency: new Set(["INR", "USD"]),
 };

@@ -6,19 +6,19 @@ import { APPLICATION_EMAIL, OFFER_LABELS, clearCorrectedFieldError, normalizeApp
 import { recordMarketingEvent } from "./marketing-analytics";
 import styles from "./preview.module.css";
 import { usePilotCurrency } from "./pilot-currency";
-import { soloPriceLabel } from "@/lib/marketing-pricing.mjs";
 
-type Receipt = { reference: string; interest: "pilot" | "future_interest" };
+type Receipt = { reference: string };
 type Prepared = { body: string; href: string };
 
-export function PilotApplication({ online = false }: { online?: boolean }) {
+/** The pilot application. `compact` is the hero's second step: the handle is already known, so it asks only for
+ * email and offer. `prefix` keeps element ids unique when a second copy is on the page. */
+export function PilotApplication({ online = false, compact = false, handle = "", prefix = "pilot-" }: { online?: boolean; compact?: boolean; handle?: string; prefix?: string }) {
   const { selection } = usePilotCurrency();
   const [prepared, setPrepared] = useState<Prepared | null>(null);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState("");
-  const [offer, setOffer] = useState("");
   const form = useRef<HTMLFormElement>(null);
   const resultHeading = useRef<HTMLHeadingElement>(null);
   const pendingErrorFocus = useRef<string | null>(null);
@@ -31,7 +31,7 @@ export function PilotApplication({ online = false }: { online?: boolean }) {
 
   useEffect(() => {
     if (!submitting && pendingErrorFocus.current) {
-      document.getElementById("pilot-" + pendingErrorFocus.current)?.focus();
+      document.getElementById(prefix + pendingErrorFocus.current)?.focus();
       pendingErrorFocus.current = null;
     }
   }, [errors, submitting]);
@@ -43,13 +43,13 @@ export function PilotApplication({ online = false }: { online?: boolean }) {
     setErrors(validated.errors);
     if (!validated.valid) {
       recordMarketingEvent("application_failed", { reason: "validation" });
-      document.getElementById("pilot-" + Object.keys(validated.errors)[0])?.focus();
+      document.getElementById(prefix + Object.keys(validated.errors)[0])?.focus();
       return null;
     }
     const query = new URLSearchParams(window.location.search);
     return {
       ...validated.fields, company: String(data.get("company") || ""),
-      ...(selection.currency && validated.fields.offer !== "brand_interest" ? { pricingCurrency: selection.currency } : {}),
+      ...(selection.currency ? { pricingCurrency: selection.currency } : {}),
       attribution: { source: query.get("utm_source") || "", campaign: query.get("utm_campaign") || "" },
     };
   }
@@ -107,8 +107,8 @@ export function PilotApplication({ online = false }: { online?: boolean }) {
 
   return (
     <div className={styles.applicationPanel}>
-      <noscript><style>{"#pilot-application-form{display:none}"}</style><p className={styles.formPrivacy}>To apply without JavaScript, email your offer and Instagram username to <a href={"mailto:" + APPLICATION_EMAIL}>{APPLICATION_EMAIL}</a>. No account password or payment is required.</p></noscript>
-      <form id="pilot-application-form" ref={form} method="post" action="/api/pilot-application" onSubmit={apply} noValidate hidden={Boolean(prepared || receipt)} aria-busy={submitting}
+      <noscript><style>{`#${prefix}application-form{display:none}`}</style><p className={styles.formPrivacy}>To apply without JavaScript, email what you sell and your Instagram username to <a href={"mailto:" + APPLICATION_EMAIL}>{APPLICATION_EMAIL}</a>. Never send a password or payment details.</p></noscript>
+      <form id={prefix + "application-form"} ref={form} method="post" action="/api/pilot-application" onSubmit={apply} noValidate hidden={Boolean(prepared || receipt)} aria-busy={submitting}
         onChangeCapture={(event) => {
           const field = event.target;
           if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
@@ -118,77 +118,76 @@ export function PilotApplication({ online = false }: { online?: boolean }) {
         onFocusCapture={() => {
           if (!started.current) { started.current = true; recordMarketingEvent("form_started"); }
         }}>
-        <p className={styles.formIntro}>{online ? "Three required details. No payment or Instagram connection required." : "Three required details. Prepare an email for Anshu to review."}</p>
-        {offer !== "brand_interest" && <p className={styles.applicationOffer}>Solo pilot: {soloPriceLabel(selection.currency)}/month. Availability and billing terms are confirmed before onboarding.</p>}
+        {!compact && <p className={styles.formIntro}>{online ? "Three quick details. No password, payment or Instagram connection needed." : "Three quick details. We’ll prepare an email for you to send."}</p>}
         <p className={styles.fieldError} role="alert">{Object.keys(errors).length > 0 ? "Please check the highlighted fields. Your details are still here." : ""}</p>
         <fieldset className={styles.formFields} disabled={submitting}>
           <legend className="sr-only">Pilot application details</legend>
           <div>
-            <label htmlFor="pilot-email">Your email</label>
-            <input id="pilot-email" name="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required maxLength={254} placeholder="you@example.com"
-              aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "pilot-email-error" : undefined} />
-            {errors.email && <p id="pilot-email-error" className={styles.fieldError}>{errors.email}</p>}
+            <label htmlFor={prefix + "email"}>Your email</label>
+            <input id={prefix + "email"} name="email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required maxLength={254} placeholder="you@example.com"
+              aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? prefix + "email-error" : undefined} />
+            {errors.email && <p id={prefix + "email-error"} className={styles.fieldError}>{errors.email}</p>}
           </div>
           <div>
-            <label htmlFor="pilot-instagram">Instagram username</label>
-            <input id="pilot-instagram" name="instagram" type="text" autoComplete="off" autoCapitalize="none" spellCheck={false} required maxLength={31} placeholder="@yourusername"
-              aria-invalid={Boolean(errors.instagram)} aria-describedby={errors.instagram ? "pilot-instagram-error" : "pilot-instagram-help"} />
-            {errors.instagram ? <p id="pilot-instagram-error" className={styles.fieldError}>{errors.instagram}</p> : <p id="pilot-instagram-help" className={styles.fieldHint}>Your username is enough. We won’t ask for your password.</p>}
+            <label htmlFor={prefix + "instagram"}>Instagram username</label>
+            <input id={prefix + "instagram"} name="instagram" type="text" autoComplete="off" autoCapitalize="none" spellCheck={false} required maxLength={31} placeholder="@yourusername" defaultValue={handle}
+              aria-invalid={Boolean(errors.instagram)} aria-describedby={errors.instagram ? prefix + "instagram-error" : undefined} />
+            {errors.instagram && <p id={prefix + "instagram-error"} className={styles.fieldError}>{errors.instagram}</p>}
           </div>
           <div>
-            <label htmlFor="pilot-offer">What do you sell?</label>
-            <select id="pilot-offer" name="offer" required defaultValue="" onChange={event => setOffer(event.target.value)} aria-invalid={Boolean(errors.offer)} aria-describedby={errors.offer ? "pilot-offer-error" : offer === "brand_interest" ? "pilot-offer-help" : undefined}>
-              <option value="" disabled>Choose your offer</option>
+            <label htmlFor={prefix + "offer"}>What do you sell?</label>
+            <select id={prefix + "offer"} name="offer" required defaultValue="" aria-invalid={Boolean(errors.offer)} aria-describedby={errors.offer ? prefix + "offer-error" : undefined}>
+              <option value="" disabled>Choose one</option>
               {Object.entries(OFFER_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
-            {errors.offer && <p id="pilot-offer-error" className={styles.fieldError}>{errors.offer}</p>}
-            {offer === "brand_interest" && <p id="pilot-offer-help" className={styles.fieldHint} role="status">Brand-deal-only creators are a separate future audience. This registers interest rather than applying to the first cohort.</p>}
+            {errors.offer && <p id={prefix + "offer-error"} className={styles.fieldError}>{errors.offer}</p>}
           </div>
-          <div>
-            <label htmlFor="pilot-note">What tends to get missed? <span>Optional</span></label>
-            <textarea id="pilot-note" name="note" rows={3} maxLength={600} autoComplete="off" placeholder="For example, coaching enquiries after a busy story day."
-              aria-invalid={Boolean(errors.note)} aria-describedby={errors.note ? "pilot-note-error" : "pilot-note-help"} />
-            {errors.note && <p id="pilot-note-error" className={styles.fieldError}>{errors.note}</p>}
-            <p id="pilot-note-help" className={styles.fieldHint}>A sentence is enough. Up to 600 characters.</p>
-          </div>
+          {!compact && <div>
+            <label htmlFor={prefix + "note"}>What gets missed today? <span>Optional</span></label>
+            <textarea id={prefix + "note"} name="note" rows={3} maxLength={600} autoComplete="off" placeholder="For example: brand emails get lost, or coaching leads go cold after a story."
+              aria-invalid={Boolean(errors.note)} aria-describedby={errors.note ? prefix + "note-error" : prefix + "note-help"} />
+            {errors.note && <p id={prefix + "note-error"} className={styles.fieldError}>{errors.note}</p>}
+            <p id={prefix + "note-help"} className={styles.fieldHint}>A sentence is enough. Up to 600 characters.</p>
+          </div>}
           <div className={styles.honeypot} aria-hidden="true">
-            <label htmlFor="pilot-company">Leave this field empty</label>
-            <input id="pilot-company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+            <label htmlFor={prefix + "company"}>Leave this field empty</label>
+            <input id={prefix + "company"} name="company" type="text" tabIndex={-1} autoComplete="off" />
           </div>
         </fieldset>
-        <button className={styles.primaryLink} type="submit" disabled={submitting}>
-          {submitting ? "Saving your details…" : online ? offer === "brand_interest" ? "Register future-pilot interest" : "Apply for the pilot" : "Prepare email application"}
-          <span aria-hidden="true">{submitting ? "…" : "↗"}</span>
+        <button className={styles.primaryButton} type="submit" disabled={submitting}>
+          {submitting ? "Sending your application…" : online ? "Apply for the pilot" : "Prepare my email application"}
         </button>
-        {online && <button className={styles.emailAlternative} type="button" disabled={submitting} onClick={prepareEmail}>Prefer email? Prepare an email draft</button>}
-        <p className={styles.formPrivacy}>By sending your details, you ask Anshu to contact you about the pilot. <Link href="/privacy" target="_blank" rel="noopener noreferrer" aria-label="How we use your details (opens in a new tab)">How we use your details ↗</Link>. Please leave out passwords, private DMs and payment information.</p>
+        {online && !compact && <button className={styles.emailAlternative} type="button" disabled={submitting} onClick={prepareEmail}>Prefer email? Prepare an email instead</button>}
+        {compact
+          ? <p className={styles.formPrivacy}>Only used to reply about the pilot. <Link href="/privacy" target="_blank" rel="noopener noreferrer" aria-label="Privacy (opens in a new tab)">Privacy ↗</Link></p>
+          : <p className={styles.formPrivacy}>We use these details only to reply about the pilot. <Link href="/privacy" target="_blank" rel="noopener noreferrer" aria-label="How we use your details (opens in a new tab)">How we use your details ↗</Link> Please leave out passwords, payment details and private DMs.</p>}
       </form>
       {receipt && (
         <div className={styles.applicationReview}>
           <span className={styles.reviewCheck} aria-hidden="true">✓</span>
-          <h3 ref={resultHeading} tabIndex={-1}>{receipt.interest === "future_interest" ? "Your interest is recorded." : "Your application is received."}</h3>
-          <p>{receipt.interest === "future_interest" ? "Your details are saved for the separate brand-deal use case. This first pilot remains focused on coaching, courses and cohorts; a future place and timing are not confirmed." : "Anshu will review your offer and reply by email to discuss fit, Instagram access and pilot timing."}</p>
-          {receipt.interest === "future_interest" ? <p className={styles.formPrivacy}>No account connection is needed. You can contact Anshu to discuss the use case or ask for your details to be removed.</p> : <ol className={styles.receiptSteps}><li>Look out for a personal reply from Anshu.</li><li>We’ll confirm the workflow and terms together.</li><li>Connect an account only after you’re accepted.</li></ol>}
-          <p className={styles.formPrivacy}>No subscription has started and no payment has been taken.</p>
+          <h3 ref={resultHeading} tabIndex={-1}>Application received.</h3>
+          <p>Anshu or Nahush will reply by email within two working days to set up a short call.</p>
+          <ol className={styles.receiptSteps}><li>Look out for a personal email from one of us.</li><li>On the call, we check fit and connect your account together.</li><li>Your Leak Scan runs as soon as you connect.</li></ol>
+          <p className={styles.formPrivacy}>Nothing has been connected and no payment has been taken.</p>
           <p className={styles.reference}>Reference: DD-{receipt.reference.slice(0, 8).toUpperCase()}</p>
-          <Link className={styles.secondaryLink} href="/contact">A question about your application? ↗</Link>
+          <Link className={styles.textLink} href="/contact">A question about your application? ↗</Link>
         </div>
       )}
       {prepared && (
         <div className={styles.applicationReview}>
           <span className={styles.reviewCheck} aria-hidden="true">↗</span>
-          <h3 ref={resultHeading} tabIndex={-1}>Your email draft is ready.</h3>
-          <p>This email has <strong>not been sent</strong>. Open the draft, review it, and press Send in your email app.</p>
-          <a className={styles.primaryLink} href={prepared.href}>Open email draft <span aria-hidden="true">↗</span></a>
+          <h3 ref={resultHeading} tabIndex={-1}>Your email is ready to send.</h3>
+          <p>It has <strong>not been sent yet</strong>. Open it, check it, and press Send in your email app.</p>
+          <a className={styles.primaryButton} href={prepared.href}>Open email draft</a>
           <div className={styles.reviewTools}>
             <button type="button" onClick={copyApplication}>Copy application</button>
-            <button type="button" onClick={() => { setPrepared(null); setNotice(""); requestAnimationFrame(() => document.getElementById("pilot-email")?.focus()); }}>Edit details</button>
+            <button type="button" onClick={() => { setPrepared(null); setNotice(""); requestAnimationFrame(() => document.getElementById(prefix + "email")?.focus()); }}>Edit details</button>
           </div>
-          <details><summary>View the application text</summary><label htmlFor="application-copy" className="sr-only">Prepared application text</label><textarea id="application-copy" readOnly value={prepared.body} rows={10} /></details>
+          <details><summary>View the application text</summary><label htmlFor={prefix + "copy"} className="sr-only">Prepared application text</label><textarea id={prefix + "copy"} readOnly value={prepared.body} rows={10} /></details>
           <p className={styles.formPrivacy}>No email app? Copy the text and send it to <a href={"mailto:" + APPLICATION_EMAIL}>{APPLICATION_EMAIL}</a>.</p>
         </div>
       )}
-      <p className={styles.formStatus} role="status" aria-live="polite">{submitting ? "Saving your details…" : notice}</p>
+      <p className={styles.formStatus} role="status" aria-live="polite">{submitting ? "Sending your application…" : notice}</p>
     </div>
   );
 }

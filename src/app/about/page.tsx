@@ -4,22 +4,22 @@ import { MarketingDocument } from "@/components/design-preview/marketing-documen
 
 export const metadata: Metadata = {
   title: "About DealDock",
-  description: "DealDock is a design-partner pilot for coaches, course creators and cohort hosts who sell through Instagram conversations.",
+  description: "DealDock sorts creators’ Instagram DMs and brand emails by what they’re worth, drafts replies in their voice, and tracks deals until they’re paid.",
   alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
-    <MarketingDocument title="An inbox that keeps the creator in control." updatedAt="DealDock · Updated 27 October 2026">
-      <p className="documentIntro">DealDock is a design-partner pilot for coaches, course creators and cohort hosts who sell their own offers through Instagram conversations.</p>
+    <MarketingDocument title="An inbox that keeps the creator in control.">
+      <p>DealDock is for creators whose DMs and inbox hold real money: brand deals, coaching clients, and course and cohort buyers. It is in a private pilot.</p>
       <h2>What we are building</h2>
-      <p>DealDock helps a creator find buyer enquiries, sort them by estimated deal value, review a draft reply in their voice, and record what actually closes. Estimated value is a prioritisation aid, not a promised sale.</p>
+      <p>DealDock reads your Instagram DMs and Gmail, puts brand deals and paying clients first with an estimate of what each is worth, drafts each reply in your voice, and tracks every deal until you’re paid. Estimates help decide what to answer first. They are not promised sales.</p>
       <h2>Human approval is the product rule</h2>
-      <p>DealDock never auto-sends messages. Every reply stays editable and waits for the creator or an authorised person to approve it. It is not a bulk-outreach tool, a content scheduler or a replacement for a creator&apos;s judgment.</p>
-      <h2>Why a design-partner pilot</h2>
-      <p>The first cohort is deliberately small. The team works with creators who already receive buyer conversations through Instagram and can share candid feedback about where their current follow-through breaks down.</p>
+      <p>DealDock never sends a message on its own. Every reply stays editable and waits for the creator or someone they authorise to approve it. It is not a bulk-outreach tool, a content scheduler or a replacement for a creator’s judgment.</p>
+      <h2>Why a pilot</h2>
+      <p>We onboard a few creators at a time, set up every account with them, and shape the product around what they tell us. Pilot members get their first 30 days free.</p>
       <h2>Who is building it</h2>
-      <p>Anshu is building DealDock with design partners. If you sell coaching, courses or cohorts and want to discuss fit, you can <Link href="/#apply">apply for the pilot</Link> or <Link href="/contact">ask a question first</Link>.</p>
+      <p>Anshu and Nahush are building DealDock. If brand deals or paying clients reach you through DMs or email, <Link href="/#apply">apply for the pilot</Link> or <Link href="/contact">ask us a question first</Link>.</p>
     </MarketingDocument>
   );
 }

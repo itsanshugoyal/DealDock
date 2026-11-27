@@ -1,0 +1,161 @@
+/* Phone screens for the story section. Markup is static HTML in phone-screens.ts; every rule is scoped under .ps.
+   The app screens follow Lindy's phones: white, a top bar with a status chip, message rows, hairline cards. */
+.ps :global(.screen) { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 42px; background: #fff; color: #18212B; font-family: var(--font-geist-sans), system-ui, sans-serif; font-size: 12px; line-height: 1.42; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+.ps :global(.screen *) { box-sizing: border-box; margin: 0; padding: 0; }
+.ps :global(.screen p) { color: inherit; }
+.ps :global(.screen svg) { display: block; flex: none; }
+.ps :global(.island) { position: absolute; z-index: 9; top: 10px; left: 50%; width: 90px; height: 26px; border-radius: 20px; background: #000; transform: translateX(-50%); }
+.ps :global(.home) { position: absolute; z-index: 9; bottom: 7px; left: 50%; width: 104px; height: 4px; border-radius: 4px; background: #18212B; transform: translateX(-50%); }
+.ps :global(.sb) { position: relative; z-index: 8; display: flex; justify-content: space-between; align-items: center; height: 46px; padding: 4px 24px 0 30px; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.ps :global(.sb svg) { height: 11px; }
+.ps :global(.col) { position: absolute; inset: 46px 0 0; display: flex; flex-direction: column; }
+
+/* 1 · lock screen */
+.ps :global(.lock) { background: #12151F; color: #fff; }
+/* a smooth night wallpaper: indigo sky warming to plum and the brand orange low down, like iOS's gradient walls */
+.ps :global(.wall) { position: absolute; inset: 0; background: radial-gradient(110% 55% at 100% 104%, rgba(255, 122, 26, 0.62), transparent 62%), radial-gradient(95% 55% at 0% 88%, rgba(184, 64, 112, 0.5), transparent 66%), radial-gradient(120% 60% at 50% -8%, rgba(74, 86, 150, 0.55), transparent 70%), linear-gradient(180deg, #151A2E 0%, #1B1730 52%, #2A1527 100%); }
+.ps :global(.lock .sb) { color: #fff; }
+.ps :global(.lock .home) { background: #fff; }
+/* after the current iOS lock screen: the date small over a tall, heavy glass clock */
+.ps :global(.lockTop) { position: relative; margin-top: 14px; text-align: center; }
+.ps :global(.lockTop small) { display: block; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; opacity: 0.9; }
+.ps :global(.lockTop strong) { display: block; margin-top: 2px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 236, 222, 0.72)); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: system-ui, -apple-system, sans-serif; font-size: 80px; font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; transform: scaleY(1.32); transform-origin: top; filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.3)); }
+/* notifications sit under the clock; DealDock's alert drops in at the top of the list */
+.ps :global(.stack) { position: absolute; left: 9px; right: 9px; top: 158px; display: flex; flex-direction: column; gap: 7px; }
+.ps :global(.nfSlot) { display: grid; grid-template-rows: 1fr; }
+.ps :global(.nfSlot > .nf) { min-height: 0; }
+/* glass cards: translucent, blurred, a light rim, white type */
+.ps :global(.nf) { position: relative; z-index: 2; display: flex; align-items: flex-start; gap: 10px; padding: 11px 13px; border-radius: 22px; background: rgba(40, 34, 52, 0.42); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); color: #fff; box-shadow: inset 0 0 0 0.8px rgba(255, 255, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 18px 40px -22px rgba(0, 0, 0, 0.7); }
+.ps :global(.nf.alert) { padding: 13px 14px; background: rgba(60, 36, 30, 0.5); box-shadow: inset 0 0 0 1px rgba(255, 150, 70, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 14px -6px rgba(255, 122, 26, 0.4), 0 18px 40px -22px rgba(0, 0, 0, 0.7); }
+.ps :global(.nf.alert .nfIcon) { width: 38px; height: 38px; border-radius: 9px; }
+.ps :global(.nf.alert h5) { font-size: 14.5px; }
+.ps :global(.nf.alert p) { font-size: 13px; }
+.ps :global(.nf.alert .nfVal b) { font-size: 15px; }
+.ps :global(.nf.q p) { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* other apps' notifications collapse into an iOS stack: two slivers peek out under the front card */
+.ps :global(.nfGroup) { position: relative; }
+.ps :global(.nfGroup.stacked) { padding-bottom: 14px; }
+.ps :global(.nfGroup.stacked::before) { content: ""; position: absolute; left: 7%; right: 7%; bottom: 6px; height: 10px; border-radius: 0 0 14px 14px; background: rgba(255, 255, 255, 0.13); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: inset 0 0 0 0.8px rgba(255, 255, 255, 0.2); }
+.ps :global(.nfGroup.stacked::after) { content: ""; position: absolute; left: 14%; right: 14%; bottom: 0; z-index: -1; height: 9px; border-radius: 0 0 12px 12px; background: rgba(255, 255, 255, 0.08); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: inset 0 0 0 0.8px rgba(255, 255, 255, 0.2); }
+.ps :global(.nfApp svg) { width: 34px; height: 34px; border-radius: 8px; }
+.ps :global(.nfIcon) { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: #fff; }
+.ps :global(.nfIcon svg) { width: 21px; height: 17px; }
+.ps :global(.nfBody) { flex: 1; min-width: 0; }
+.ps :global(.nfTop) { display: flex; align-items: baseline; gap: 6px; }
+.ps :global(.nfTop span) { margin-left: auto; font-size: 11px; color: rgba(255, 255, 255, 0.6); }
+.ps :global(.nf h5) { font-size: 13.5px; font-weight: 650; }
+.ps :global(.nf p) { margin-top: 1px; font-size: 12.5px; line-height: 1.3; color: rgba(255, 255, 255, 0.86); text-wrap: pretty; }
+.ps :global(.nf .nfVal) { margin-top: 3px; font-size: 11.5px; color: rgba(255, 255, 255, 0.65); }
+.ps :global(.nfVal b) { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; color: #FFB27A; white-space: nowrap; }
+.ps :global(.lockFoot) { position: absolute; left: 34px; right: 34px; bottom: 30px; display: flex; justify-content: space-between; }
+.ps :global(.lockFoot span) { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 0, 0, 0.28); }
+
+/* app screens: header, feed, message rows */
+.ps :global(.bar) { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 42px; padding: 0 12px 0 14px; border-bottom: 1px solid #EFECE7; }
+.ps :global(.bar > b) { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 650; }
+.ps :global(.bar > b svg) { width: 16px; height: 16px; }
+.ps :global(.feed) { flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 0; padding: 12px 14px 0; overflow: hidden; }
+.ps :global(.av) { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 9px; font-weight: 700; letter-spacing: 0.02em; }
+.ps :global(.av.you) { background: #18212B; color: #fff; }
+.ps :global(.dky) { flex: none; width: 24px; height: 24px; overflow: hidden; border-radius: 50%; background: #FFE8D2; }
+.ps :global(.dky img) { display: block; width: 132%; max-width: none; height: auto; margin: -1px 0 0 -16%; }
+.ps :global(.msg) { display: flex; gap: 9px; }
+.ps :global(.msg.mine) { margin-top: 4px; padding: 10px 11px 11px; border-radius: 14px; background: #F5F3EF; }
+.ps :global(.bd) { flex: 1; min-width: 0; }
+.ps :global(.who) { display: flex; align-items: baseline; gap: 5px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+.ps :global(.who small) { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 500; color: #9A938A; }
+.ps :global(.who small svg) { width: 8px; height: 10px; }
+.ps :global(.bd > p:not(.who)) { margin-top: 1px; color: #2C3138; text-wrap: pretty; }
+.ps :global(.tagY) { display: inline-block; margin-top: 8px; padding: 3px 9px; border-radius: 999px; background: #FFF3CC; box-shadow: inset 0 0 0 1px #EFD687; color: #765300; font-size: 10.5px; font-weight: 600; }
+
+/* the status chip and the deal status: stacked states that change in place, one shown at a time */
+.ps :global(.chip) { display: inline-grid; align-self: center; font-size: 11px; font-weight: 600; }
+.ps :global(.chip > span) { grid-area: 1 / 1; justify-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 999px; background: #F1EEE9; color: #4A453F; white-space: nowrap; }
+.ps :global(.bar .chip > span) { justify-self: end; }
+.ps :global(.chip .d.ok) { background: #E3F3E9; color: #17784B; }
+.ps :global(.chip .d.wait) { background: #FFF1E2; color: #A15C07; }
+.ps :global(.chip .dot) { width: 7px; height: 7px; border-radius: 50%; background: #F47721; }
+.ps :global(.w), .ps :global(.was) { visibility: hidden; }
+.ps :global(.spin) { flex: none; display: block; width: 11px; height: 11px; border: 1.8px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.ps :global(.tk) { display: grid; flex: none; }
+.ps :global(.tk > *) { grid-area: 1 / 1; align-self: center; justify-self: center; }
+.ps :global(.tk .spin) { visibility: hidden; color: #8B847B; }
+
+/* Docky's cards in the creator's thread (2 · brief, 4 · deal progress), visible only to her */
+.ps :global(.ddc) { margin-top: 6px; overflow: hidden; border: 1px solid #ECE9E4; border-radius: 14px; background: #fff; }
+.ps :global(.ddh) { display: flex; align-items: center; gap: 6px; padding: 8px 11px 7px; border-bottom: 1px solid #F0EDE8; font-size: 11.5px; white-space: nowrap; }
+.ps :global(.ddh b) { font-weight: 650; }
+.ps :global(.rows) { display: grid; gap: 7px; padding: 9px 11px; }
+.ps :global(.row) { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.ps :global(.row > span:nth-child(2)) { color: #6B655E; }
+.ps :global(.row b) { margin-left: auto; font-weight: 600; }
+.ps :global(.row.ask > span:nth-child(2)), .ps :global(.row.ask b) { color: #8A5A00; }
+.ps :global(.val) { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 11px; border-top: 1px solid #F0EDE8; }
+.ps :global(.ddh + .val) { border-top: 0; }
+.ps :global(.val b) { display: block; font-size: 24px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; }
+.ps :global(.val small) { display: block; font-size: 10.5px; color: #8B847B; white-space: nowrap; }
+.ps :global(.window), .ps :global(.mo) { display: flex; align-items: center; gap: 8px; padding: 8px 11px 9px; border-top: 1px solid #F0EDE8; background: #FAF8F5; font-size: 10.5px; color: #6B655E; white-space: nowrap; }
+.ps :global(.window i) { flex: 1; height: 4px; border-radius: 4px; background: linear-gradient(#18212B, #18212B) 0 0 / 66% 100% no-repeat, #E8E2D8; }
+.ps :global(.window b) { font-weight: 600; color: #18212B; }
+.ps :global(.mo) { justify-content: space-between; }
+.ps :global(.mo b) { font-size: 13.5px; font-weight: 650; color: #18212B; }
+.ps :global(.st) { display: inline-grid; justify-items: end; }
+.ps :global(.st > span) { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 650; white-space: nowrap; }
+.ps :global(.st .was) { background: #FFF1D6; color: #8A5A00; }
+.ps :global(.st .d) { background: #E3F3E9; color: #17784B; }
+.ps :global(.st .due) { background: #FFF1D6; color: #8A5A00; }
+
+/* 3 · reply: the approval tray */
+.ps :global(.approve) { margin-top: auto; padding: 10px 14px 26px; border-top: 1px solid #EFECE7; }
+.ps :global(.tone) { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8B847B; }
+.ps :global(.tone span) { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 999px; box-shadow: inset 0 0 0 1px #E6E2DC; color: #3A3733; font-weight: 600; }
+.ps :global(.tone span:first-of-type) { margin-left: auto; }
+.ps :global(.tone .on) { box-shadow: inset 0 0 0 1.5px #18212B; color: #18212B; }
+.ps :global(.send) { position: relative; display: grid; place-items: center; height: 46px; margin-top: 10px; overflow: hidden; border-radius: 23px; background: #18212B; color: #fff; font-size: 13.5px; font-weight: 650; }
+.ps :global(.send .knob) { position: absolute; left: 4px; top: 4px; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: #18212B; }
+.ps :global(.send .chev) { position: absolute; right: 18px; display: flex; gap: 1px; opacity: 0.6; }
+.ps :global(.note) { margin-top: 8px; text-align: center; font-size: 10.5px; color: #8B847B; }
+
+/* Motion, after Lindy's phones: the chip works through its stages with a spinner and flips to its result, rows tick
+   one by one (~0.35s apart), the draft types out at ~13ms a character, money counts up (story-phone.tsx).
+   Each screen plays once when it becomes active; per-element times are set in phone-screens.ts. Without motion
+   every screen shows its final state. */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 · lock screen: other apps' notifications are there, then DealDock's alert drops in at the top, pushing them down,
+     and they dim */
+  .ps :global([data-on] .nfGroup) { animation: rise 0.5s cubic-bezier(0.3, 0.7, 0.3, 1) var(--t) both, dim 0.5s 2s forwards; }
+  .ps :global([data-on] .nfSlot) { animation: slot 0.5s cubic-bezier(0.3, 0.7, 0.3, 1) var(--t) both; }
+  .ps :global([data-on] .nf.alert) { animation: nfDrop 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.2) var(--t) both; }
+  /* the chip and the deal status: each working stage takes its turn, then the result flips in */
+  .ps :global([data-on] .chip) { animation: rise 0.35s var(--a) both; }
+  .ps :global([data-on] .w) { animation: stage var(--len) var(--w0) both; }
+  .ps :global([data-on] .was) { animation: work 0.2s var(--x) both; }
+  .ps :global([data-on] .chip .d), .ps :global([data-on] .st .d) { animation: flip 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) var(--b) both; }
+  /* messages and card parts arrive at their --t; the DealDock card opens at --g; card rows tick --k after arriving */
+  .ps :global([data-on] .msg), .ps :global([data-on] .row), .ps :global([data-on] .val), .ps :global([data-on] .window), .ps :global([data-on] .mo) { animation: rise 0.35s cubic-bezier(0.3, 0.7, 0.3, 1) var(--t) both; }
+  .ps :global([data-on] .ddc) { animation: grow 0.45s cubic-bezier(0.3, 0.7, 0.3, 1) var(--g) both; }
+  .ps :global([data-on] .tk .spin) { animation: spin 0.7s linear infinite, work 0.2s calc(var(--t) + var(--k)) both; }
+  .ps :global([data-on] .tk svg) { animation: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) calc(var(--t) + var(--k)) both; }
+  .ps :global([data-on] .window i) { animation: fill 0.9s cubic-bezier(0.3, 0.7, 0.3, 1) calc(var(--t) + 0.2s) both; }
+  .ps :global([data-on] .tw > span) { animation: ch 1ms calc(var(--s) + var(--i) * 13ms) both; }
+  /* 3 · once the draft has typed out: its tag, then the approval tray */
+  .ps :global([data-on] .tagY) { animation: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) 3.5s both; }
+  .ps :global([data-on] .approve) { animation: rise 0.45s cubic-bezier(0.3, 0.7, 0.3, 1) var(--ap, 3.65s) both; }
+  .ps :global([data-on] .send .knob) { animation: nudge 2.4s ease-in-out 4.4s infinite; }
+  .ps :global([data-on] .send .chev) { animation: chev 1.4s linear infinite; }
+}
+@keyframes grow { from { opacity: 0; transform: translateY(8px) scale(0.97); clip-path: inset(0 0 60% 0 round 14px); } to { clip-path: inset(0 0 0 0 round 14px); } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+@keyframes fill { from { background-size: 0 100%; } }
+@keyframes nudge { 0%, 60%, 100% { transform: none; } 75% { transform: translateX(10px); } }
+@keyframes chev { from { transform: translateX(-4px); opacity: 0.3; } to { transform: translateX(4px); opacity: 0.9; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.5); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes work { from { visibility: visible; opacity: 1; } to { visibility: hidden; opacity: 0; } }
+@keyframes stage { 0% { visibility: visible; opacity: 0; } 12%, 88% { visibility: visible; opacity: 1; } 100% { visibility: hidden; opacity: 0; } }
+@keyframes flip { from { opacity: 0; transform: scale(0.85); } }
+/* display as well, where supported, so the text box grows with the text */
+@keyframes ch { from { opacity: 0; display: none; } }
+@keyframes slot { from { grid-template-rows: 0fr; margin-bottom: -7px; } }
+@keyframes nfDrop { from { opacity: 0; transform: translateY(-34px) scale(0.95); filter: blur(4px); } }
+@keyframes dim { to { opacity: 0.62; } }
