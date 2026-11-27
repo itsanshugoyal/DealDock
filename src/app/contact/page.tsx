@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import Link from "next/link";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
 
-export const metadata: Metadata = { title: "Contact | DealDock", description: "Contact DealDock’s founders about pilot fit, an application or your data.", alternates: { canonical: "/contact" } };
+export const metadata: Metadata = marketingPageMetadata("/contact", "Contact | DealDock", "Contact DealDock’s founders about pilot fit, an application or your data.");
 
 export default function ContactPage() {
   return (

@@ -1,0 +1,77 @@
+{
+  "generator": "Built-in image_gen tool",
+  "createdAt": "2026-11-22",
+  "purpose": "Editorial illustrations for existing DealDock blogs; interfaces are illustrative, not product screenshots or customer evidence.",
+  "assets": [
+    {
+      "slug": "ai-instagram-dm-tools",
+      "hero": "public/blog/ai-instagram-dm-tools/hero.webp",
+      "thumbnail": "public/blog/ai-instagram-dm-tools/card.webp",
+      "heroDimensions": [
+        1600,
+        900
+      ],
+      "thumbnailDimensions": [
+        768,
+        384
+      ],
+      "prompt": "Use case: photorealistic-natural. Asset type: DealDock editorial blog hero and card image. Generate a polished photorealistic landscape image, 16:9 composition. Warm natural window light, pale cream desk, muted sage and warm beige accents, subtle yellow stationery, true-to-life materials and gentle shadows, contemporary independent creator workspace. Central storytelling objects must remain legible in a wide 2.1:1 thumbnail crop; keep generous breathing room. No headline overlay, no watermark, no readable private data, no company logos, no robots, no neon sci-fi graphics. Any visible messages are generic illustrative interface shapes, not real customer evidence. Show a close three-quarter view of a phone on a small stand displaying a tasteful generic messaging interface with an unsent draft bubble and a distinct outlined confirmation control below it, beside a laptop with a similarly understated draft panel. A human hand rests near the phone, poised to review rather than automatically sending. The visual idea is AI assistance with human approval. Main focal point: the pending draft and human decision. Keep on-screen text to abstract grey lines, no words."
+    },
+    {
+      "slug": "brand-hasnt-paid",
+      "hero": "public/blog/brand-hasnt-paid/hero.webp",
+      "thumbnail": "public/blog/brand-hasnt-paid/card.webp",
+      "heroDimensions": [
+        1600,
+        900
+      ],
+      "thumbnailDimensions": [
+        768,
+        384
+      ],
+      "prompt": "Use case: photorealistic-natural. Asset type: DealDock editorial blog hero and card image. Generate a polished photorealistic landscape image, 16:9 composition. Warm natural window light, pale cream desk, muted sage and warm beige accents, subtle yellow stationery, true-to-life materials and gentle shadows, contemporary independent creator workspace. Central storytelling objects must remain legible in a wide 2.1:1 thumbnail crop; keep generous breathing room. No headline overlay, no watermark, no readable private data, no company logos, no robots, no neon sci-fi graphics. Any visible messages are generic illustrative interface shapes, not real customer evidence. Show an overhead editorial still life about following up on an unpaid creator invoice: a paper invoice with clear but abstract line items, a single amber pending-status dot, a desk calendar with four discreet yellow tabs, a pen, and a phone showing an unfinished payment reminder represented by grey message lines. Neat and calm, practical business administration rather than distress. No money piles, no invented paid amounts, no legal emblems, no readable text."
+    },
+    {
+      "slug": "dm-enquiry-tracker-template",
+      "hero": "public/blog/dm-enquiry-tracker-template/hero.webp",
+      "thumbnail": "public/blog/dm-enquiry-tracker-template/card.webp",
+      "heroDimensions": [
+        1600,
+        900
+      ],
+      "thumbnailDimensions": [
+        768,
+        384
+      ],
+      "prompt": "Use case: photorealistic-natural. Asset type: DealDock editorial blog hero and card image. Generate a polished photorealistic landscape image, 16:9 composition. Warm natural window light, pale cream desk, muted sage and warm beige accents, subtle yellow stationery, true-to-life materials and gentle shadows, contemporary independent creator workspace. Central storytelling objects must remain legible in a wide 2.1:1 thumbnail crop; keep generous breathing room. No headline overlay, no watermark, no readable private data, no company logos, no robots, no neon sci-fi graphics. Any visible messages are generic illustrative interface shapes, not real customer evidence. Show an angled close-up laptop displaying a clean, realistic spreadsheet enquiry tracker with about eight rows and six columns, muted coloured stage chips in pale yellow and sage, date-like abstract entries and a few highlighted due rows. A phone beside it shows generic message bubbles, illustrating messages organised into a spreadsheet. An open notebook and pencil are secondary. No floating dashboards, no holograms. No readable text or financial totals."
+    },
+    {
+      "slug": "follow-up-coaching-enquiry",
+      "hero": "public/blog/follow-up-coaching-enquiry/hero.webp",
+      "thumbnail": "public/blog/follow-up-coaching-enquiry/card.webp",
+      "heroDimensions": [
+        1600,
+        900
+      ],
+      "thumbnailDimensions": [
+        768,
+        384
+      ],
+      "prompt": "Use case: photorealistic-natural. Asset type: DealDock editorial blog hero and card image. Generate a polished photorealistic landscape image, 16:9 composition. Warm natural window light, pale cream desk, muted sage and warm beige accents, subtle yellow stationery, true-to-life materials and gentle shadows, contemporary independent creator workspace. Central storytelling objects must remain legible in a wide 2.1:1 thumbnail crop; keep generous breathing room. No headline overlay, no watermark, no readable private data, no company logos, no robots, no neon sci-fi graphics. Any visible messages are generic illustrative interface shapes, not real customer evidence. Show a close-up of a phone held naturally by a single hand over a warm cream desk, with a generic conversation of three restrained chat bubbles and a new unsent follow-up draft at the bottom. Next to it is an open appointment planner with one loosely circled slot and a yellow page marker. A second hand lightly holds a pen near the planner. The feeling is thoughtful and patient: checking in about a coaching session without pressure. No legible message text, no urgency symbols."
+    },
+    {
+      "slug": "manage-instagram-dms-coach",
+      "hero": "public/blog/manage-instagram-dms-coach/hero.webp",
+      "thumbnail": "public/blog/manage-instagram-dms-coach/card.webp",
+      "heroDimensions": [
+        1600,
+        900
+      ],
+      "thumbnailDimensions": [
+        768,
+        384
+      ],
+      "prompt": "Use case: photorealistic-natural. Asset type: DealDock editorial blog hero and card image. Generate a polished photorealistic landscape image, 16:9 composition. Warm natural window light, pale cream desk, muted sage and warm beige accents, subtle yellow stationery, true-to-life materials and gentle shadows, contemporary independent creator workspace. Central storytelling objects must remain legible in a wide 2.1:1 thumbnail crop; keep generous breathing room. No headline overlay, no watermark, no readable private data, no company logos, no robots, no neon sci-fi graphics. Any visible messages are generic illustrative interface shapes, not real customer evidence. Show a calm organised coaching workspace from a three-quarter desk angle: laptop with a generic messaging inbox divided into two visually simple columns of message rows, a phone face up with a few conversation indicators, and a small notebook with a morning/evening routine depicted by a simple sun and crescent icon and short checklists. A chair is just out of focus, no person needed. Emphasize a twice-daily inbox routine, not inbox overload. No legible text, no excessive floating UI."
+    }
+  ]
+}

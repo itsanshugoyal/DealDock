@@ -1,0 +1,23 @@
+{
+  "updates": [
+    {
+      "title": "SEO, GEO and AI content plan plus first six briefs — 2026 launch",
+      "append": "Update <date> (Claude): <n> more articles drafted, fact-checked and pushed to origin/seo/<batch> for review. See the 'Review and merge <batch>' task."
+    }
+  ],
+  "creates": [
+    {
+      "title": "Review and merge <batch>",
+      "status": "to_do",
+      "ownerId": "c32246c7-04f9-4046-a6e6-f1eff7f3e895",
+      "dueAt": "<YYYY-MM-DD>T06:30:00.000Z",
+      "data": {
+        "owner": "Anshu",
+        "channel": "Content",
+        "priority": "P0",
+        "scope": "Public marketing website only",
+        "notes": "Branch origin/seo/<batch> (pushed, no PR). Preview, logged in as deltaod: https://dealdock-website-git-<branch-with-dashes>-delta-7460.vercel.app/blog. Decisions to make before publishing: <worktree>/REVIEW-NOTES.md. After merging, ask Claude to finish publishing (IndexNow, verification, queue)."
+      }
+    }
+  ]
+}

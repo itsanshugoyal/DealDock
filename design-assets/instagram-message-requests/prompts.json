@@ -1,0 +1,13 @@
+{
+  "method": "Built-in image generation",
+  "assets": [
+    {
+      "file": "public/blog/instagram-message-requests.webp",
+      "prompt": "Create a wide 16:9 minimalist editorial illustration for a creator education blog about finding Instagram message requests and overlooked brand enquiries. Warm ivory background, soft sage green, charcoal ink and muted butter-yellow highlights, tasteful subtle paper texture. Center a clean smartphone beside three floating inbox folders; the ONLY readable labels are 'Primary', 'General', and 'Requests', with a small nested folder labeled 'Hidden requests'. An understated yellow dot draws attention to the Requests folder, one small brand brief envelope peeking out. Crisp legible elegant flat/vector-inspired raster illustration, generous breathing room, refined magazine art, no people, no hands, no logo, no watermark. This is an illustrative concept, not a screenshot or precise Instagram UI."
+    },
+    {
+      "file": "public/blog/weekly-inbox-review.webp",
+      "prompt": "Create a wide 16:9 minimalist editorial illustration for a blog section about a weekly Instagram message-request review routine. Overhead tidy ivory desk with a smartphone showing simple abstract conversation rows, an open notebook with three small checkbox marks but NO readable words, a pencil, small calendar card and single green leaf. One warm yellow highlighted message card and a small sage folder suggest finding an overlooked enquiry. Soft natural shadows, warm off-white and pale sage palette with dark charcoal details and butter yellow accents, sophisticated quiet magazine illustration with slight paper texture, faceless, no people, no hands, no logos, no text, no watermark. Visually coherent and restrained rather than busy."
+    }
+  ]
+}

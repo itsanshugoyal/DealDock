@@ -18,16 +18,22 @@ export function MarketingWebsiteStructuredData() {
         "@context": "https://schema.org",
         "@graph": [
           {
+            // Several unrelated companies share the DealDock name; the descriptor and topics keep this entity distinct.
             "@type": "Organization",
             "@id": `${MARKETING_ORIGIN}#organization`,
             name: "DealDock",
+            alternateName: "DealDock for creators",
             url: MARKETING_ORIGIN,
+            logo: `${MARKETING_ORIGIN}/apple-icon.png`,
             description: MARKETING_DESCRIPTION,
+            disambiguatingDescription: "DealDock (dealdock.io) is an Instagram DM inbox for creators who sell coaching, courses and brand collaborations. It is not affiliated with other companies that use the DealDock name.",
+            knowsAbout: ["Instagram direct messages", "Creator brand deals", "Coaching and course sales", "Human-approved AI reply drafts"],
           },
           {
             "@type": "WebSite",
             "@id": `${MARKETING_ORIGIN}#website`,
             name: "DealDock",
+            alternateName: "DealDock for creators",
             url: MARKETING_ORIGIN,
             description: MARKETING_DESCRIPTION,
             publisher: { "@id": `${MARKETING_ORIGIN}#organization` },

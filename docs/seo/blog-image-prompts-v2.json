@@ -1,0 +1,44 @@
+{
+  "generator": "Built-in image_gen tool",
+  "createdAt": "2026-11-22",
+  "direction": "Distinct editorial subjects, layouts and colours per article, selected using user feedback. Supersedes the repeated desk photography and rejected purple 3D AI image.",
+  "assets": [
+    {
+      "slug": "brand-hasnt-paid",
+      "hero": "public/blog/brand-hasnt-paid/hero-v2.webp",
+      "thumbnail": "public/blog/brand-hasnt-paid/card-v2.webp",
+      "prompt": "Generate a wide 16:9 high-end editorial cover image about a creator chasing overdue brand payment. Bold graphic still life of one large ivory invoice sheet curling upward, with a conspicuous red rubber-stamp mark reading 'OVERDUE', against a rich coral-red background. Along the lower central area four small calendar tiles clearly read '1', '7', '14', '30', implying staged reminders. Strong raking light, tactile paper fibres, restrained black typography, subtle dimensional folds, clean magazine art direction. Distinctive close crop focused entirely on unpaid paperwork and elapsed time. Keep the entire story in central 75% for wide thumbnails. No desk scene, phone, laptop, plant, coffee, money piles, logos, personal details or watermark. No additional words or numbers."
+    },
+    {
+      "slug": "dm-enquiry-tracker-template",
+      "hero": "public/blog/dm-enquiry-tracker-template/hero-v2.webp",
+      "thumbnail": "public/blog/dm-enquiry-tracker-template/card-v2.webp",
+      "prompt": "Create a wide 16:9 editorial mixed-media paper-cut illustration for a free Instagram enquiry-tracking spreadsheet template. An organised ledger seen straight overhead fills the composition on a pale cool blue background: broad clean column divisions, rows of small lead cards, colour-coded circular stage markers, small date squares and one checked completed row. A few loose chat-bubble cutouts at one edge become orderly rows. Hand-cut paper edges, cobalt blue, turquoise, mint and crisp white with subtle real paper shadows; lively but precise and useful like a modern stationery editorial. No computers or phones, no office desk props, no plants, no coffee. Do not render tiny fake words or financial values, just abstract lines and simple stage icons. No headline or logos. Central ledger must remain recognizable in 2.1:1 thumbnail crop."
+    },
+    {
+      "slug": "follow-up-coaching-enquiry",
+      "hero": "public/blog/follow-up-coaching-enquiry/hero-v2.webp",
+      "thumbnail": "public/blog/follow-up-coaching-enquiry/card-v2.webp",
+      "prompt": "Generate a wide 16:9 warm hand-drawn editorial illustration specifically about a patient coaching follow-up conversation. Composition: two expressive illustrated adult bust portraits at opposite ends, a friendly coach and a potential client, connected by three distinct rounded conversation bubbles following a gently curved dotted path with small pauses. Last bubble contains a simple calendar invitation icon; the client has an interested, relaxed expression. Gouache and coloured-pencil texture, warm terracotta, peach, cream and forest green, natural ink contours. Strong human conversational storytelling, elegant generous negative space, cropped portraits and bubbles all readable in a wide 2.1:1 blog thumbnail. No laptop, phone, desk, plants, coffee, spreadsheet, invoice, notification clutter or text. No logos, no watermark."
+    },
+    {
+      "slug": "manage-instagram-dms-coach",
+      "hero": "public/blog/manage-instagram-dms-coach/hero-v2.webp",
+      "thumbnail": "public/blog/manage-instagram-dms-coach/card-v2.webp",
+      "prompt": "Create a wide 16:9 sophisticated editorial illustration about managing coaching DMs with a twice-daily routine. A balanced day-to-night composition: golden sun with rays over one inbox tray on one side; crescent moon with a few stars over a second inbox tray on the other. Each tray contains a short orderly stack of distinct message cards, with simple checkmarks for reviewed messages. A single flowing line connects the two routine checkpoints. Dark midnight-navy background transitioning subtly to golden-ochre daylight, bright amber and icy pale blue accents. Risograph grain, screenprint textures and subtle dimensional paper layers, graphic poster-quality composition. No actual text, no laptop, smartphone, desk, plants, coffee, calendar or people. Keep key symbols in central band so 2.1:1 crop works. No logos, no watermark."
+    },
+    {
+      "slug": "ai-instagram-dm-tools",
+      "hero": "public/blog/ai-instagram-dm-tools/hero-v2.webp",
+      "thumbnail": "public/blog/ai-instagram-dm-tools/card-v2.webp",
+      "prompt": "Use case: illustration-story. Create a NEW wide 16:9 DealDock editorial cover for 'AI tools for Instagram DMs: auto-replies vs human-approved drafts'. The provided reference is STYLE ONLY: preserve its hand-painted gouache and coloured-pencil texture, natural lively ink outlines, warm textured paper and human warmth. New subject and composition: an illustrated creator seen in three-quarter profile at the lower right, thoughtfully checking a large paper-like message draft that occupies the centre-left. Her pencil corrects a line in the draft, and a clear hand-drawn green approval check is nearby. A tiny mustard sparkle on the draft suggests AI assistance; the human reviews it before it is sent. Use dusty cobalt blue, parchment white, muted mustard and dark ink. Bold single-subject composition, generous negative space, no collage of repeated portraits. Central story must fit a 2.1:1 thumbnail crop. No text except simple abstract handwritten lines. No photorealism, 3D render, glossy plastic, glass bubbles, purple, neon, laptop, smartphone, plants or coffee. This should feel like an illustration commissioned for a thoughtful print magazine.",
+      "colourRevisionPrompt": "Edit the supplied AI-message-review illustration. Keep exactly the existing subject, woman, composition, paper draft, pencil, approval check, pictorial details, facial identity, and hand-painted gouache/coloured-pencil textures. Change the colour direction to make this cover distinctly different from warm cream-and-ochre brand-deal illustrations: replace the entire cream background with a rich dusty cobalt-blue painted paper field; keep the draft itself a very light cool ivory so it contrasts strongly with the blue background. Shift the woman's cardigan to muted burgundy so her silhouette is distinct against blue. Keep skin tones natural and warm; the approval check stays green. Keep the paper's dark ink outlines clear, and soften yellow accents into pale blue-grey where appropriate. No new objects, no new text, no 3D, no neon, no glossy finish. Final image wide landscape; preserve all subjects and framing."
+    },
+    {
+      "slug": "influencer-brand-dms",
+      "hero": "public/blog/influencer-brand-dms/hero-v2.webp",
+      "thumbnail": "public/blog/influencer-brand-dms/card-v2.webp",
+      "prompt": "Use case: illustration-story. Create a NEW wide 16:9 editorial blog illustration about taking an influencer brand collaboration from brief to agreement to payment. Input reference is STYLE ONLY: retain its hand-painted gouache, coloured pencil, tactile warm paper texture and imperfect expressive ink contours, while using a different subject and arrangement. A diagonal campaign brief with a simple hand-drawn camera and three deliverable checkboxes is the focal object; beside it an opened brand envelope, a fountain pen completing a signature on a small agreement, and a compact receipt with a single completion check. One expressive human hand holds the pen, no faces. The three items form a visually clear progression of an organised paid collaboration. Olive green and warm ochre fields, charcoal outlines, ivory paper, small brick-red accents. Close overhead graphic composition, generous breathing room, all meaningful objects within central 75% for a 2.1:1 thumbnail crop. Only readable text may be 'BRIEF' on the brief and 'AGREED' on the agreement, large and accurately spelled. No amounts, real brands, customer claims, logos, watermark, desk photography, laptop, smartphone, plants, coffee, glossy 3D objects, purple or neon."
+    }
+  ]
+}

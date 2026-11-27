@@ -15,6 +15,7 @@ import { Story } from "./story";
 import { VoiceToggle } from "./voice-toggle";
 import { DealReceipts, DraftStage, LeakTotal, PaidStage, RosterDesk, SlideStage, SortStage, TrustCards, WorksWith } from "./visuals";
 import styles from "./preview.module.css";
+import navStyles from "@/components/shared/resource-nav.module.css";
 
 function Arrow() {
   return <span className={styles.btnArrow} aria-hidden="true"><ArrowRight size={18} weight="bold" /></span>;

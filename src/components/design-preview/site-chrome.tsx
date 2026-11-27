@@ -38,6 +38,7 @@ export function SiteHeader({ home = "/", onPage = false }: { home?: "/" | "/in";
           <a href={base + "#how-it-works"} className={styles.navLink}>How it works</a>
           <a href={base + "#pricing"} className={styles.navLink} data-keep="">Pricing</a>
           <a href={base + "#faq"} className={styles.navLink}>FAQ</a>
+          <Link href="/blog" className={styles.navLink}>Guides</Link>
           <a href={base + "#apply"} className={styles.navCta} data-marketing-cta="navigation">Apply<ArrowRight size={15} weight="bold" aria-hidden="true" /></a>
         </nav>
       </div>
@@ -50,8 +51,10 @@ export function SiteFooter() {
     <footer className={styles.footer}>
       <div className={styles.footerInner}>
         <div className={styles.footerTop}>
-          <p className={styles.footerLine}>Your DMs, sorted by money.</p>
+          <p className={styles.footerLine}>Never miss a DM that could pay you.</p>
           <nav aria-label="Footer" className={styles.footerLinks}>
+            <Link href="/blog">Guides</Link>
+            <Link href="/tools">Free tools</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/pilot-terms">Pilot terms</Link>
             <Link href="/security">Security</Link>

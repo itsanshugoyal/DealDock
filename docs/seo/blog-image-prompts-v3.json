@@ -1,0 +1,42 @@
+{
+  "generator": "Built-in image_gen tool",
+  "createdAt": "2026-11-22",
+  "assets": [
+    {
+      "slug": "influencer-brand-dms",
+      "hero": "public/blog/influencer-brand-dms/hero-v3.webp",
+      "thumbnail": "public/blog/influencer-brand-dms/card-v3.webp",
+      "prompt": "Use case: illustration-story. Create a wide landscape editorial illustration for an article titled 'From Instagram DMs to Paid Brand Deals: An Influencer’s Guide'. Main subject: a large natural handshake between two people sealing a creative brand partnership, one arm in a muted burnt-coral sleeve and the other in pale ice-blue, shown as a strong central silhouette. Beside and slightly behind the hands is a small distinctive hand-drawn creator camera with its lens facing us. Two small warm copper coin circles near the camera suggest the paid collaboration. Rich deep teal background fills the whole frame edge to edge. Hand-painted gouache and coloured-pencil texture, expressive charcoal contours, natural imperfect brushwork, sophisticated print-magazine illustration. Small soft coral/ice-blue accents. The handshake, camera and coins must be readable as three simple large shapes at thumbnail size. Strong diagonal composition, substantial negative space, everything important inside central 75% for a wide 2.1:1 crop. No text, no writing, no logos, no watermark. Absolutely no paper sheets, documents, campaign briefs, envelopes, receipts, folders, phones, laptop, plants, beige/cream background, yellow/ochre background, neon, glossy 3D, photorealism or extra objects. Hands anatomically plausible, five fingers each, one coherent handshake. Single image, not a collage."
+    },
+    {
+      "slug": "ai-instagram-dm-tools",
+      "role": "Second body illustration",
+      "path": "public/blog/ai-instagram-dm-tools/reply-methods.webp",
+      "prompt": "Create a wide landscape raster editorial illustration for the interior of a DealDock blog article. Hand-painted paper, gouache and coloured-pencil textures, crisp large symbols, generous spacing and restrained readable labels. This explains the article section, rather than being a decorative generic desk scene. All labels specified must be large, accurately spelled, and the only readable text. No tiny filler text, no logos, no watermark, no glossy 3D, no photorealistic computer mockups. Show four separate illustrated reply-method cards in a spacious 2-by-2 grid on a very pale cool blue background. Card one: a key-shaped trigger alongside a fixed message bubble; label 'KEYWORD'. Card two: a simple friendly hand-drawn mechanical helper sending a message bubble; label 'AI AGENT'. Card three: a pencil and human hand checking a draft before a green approval tick; label 'APPROVE FIRST'. Card four: two message notes with copy-and-paste arrows between them; label 'COPY & PASTE'. Dusty navy, burgundy, sage and pale blue palette, warm skin on the human hand. Equal visual hierarchy, four clearly distinct methods. No claims of product capabilities or safety."
+    },
+    {
+      "slug": "brand-hasnt-paid",
+      "role": "Second body illustration",
+      "path": "public/blog/brand-hasnt-paid/payment-checklist.webp",
+      "prompt": "Create a wide landscape raster editorial illustration for the interior of a DealDock blog article. Hand-painted paper, gouache and coloured-pencil textures, crisp large symbols, generous spacing and restrained readable labels. This explains the article section, rather than being a decorative generic desk scene. All labels specified must be large, accurately spelled, and the only readable text. No tiny filler text, no logos, no watermark, no glossy 3D, no photorealistic computer mockups. An expressive pre-payment-chase checklist illustration: an open red ledger on a pale warm white background, with five big clean rows illustrated using a clock, envelope, PO tag, two-person agreement and completed content tick. Large exact row labels: 'DUE DATE', 'RIGHT INBOX', 'PO NUMBER', 'WHO OWES YOU', 'WORK APPROVED'. A simple coral pencil lies beside the ledger and a single hand has just ticked a checkbox. Restrained black, cream and red graphic palette, real paper texture. A practical checklist rather than an overdue-stamp image. No legal symbols, amounts or payment guarantees."
+    },
+    {
+      "slug": "dm-enquiry-tracker-template",
+      "role": "Second body illustration",
+      "path": "public/blog/dm-enquiry-tracker-template/agreed-to-paid.webp",
+      "prompt": "Create a wide landscape raster editorial illustration for the interior of a DealDock blog article. Hand-painted paper, gouache and coloured-pencil textures, crisp large symbols, generous spacing and restrained readable labels. This explains the article section, rather than being a decorative generic desk scene. All labels specified must be large, accurately spelled, and the only readable text. No tiny filler text, no logos, no watermark, no glossy 3D, no photorealistic computer mockups. Show the important difference between agreeing a sale, issuing an invoice, and receiving payment. Three large paper-cut panels on a pale icy blue background, arranged horizontally with small linking arrows. First panel: a handshake inside a chat bubble, label 'AGREED'. Second: a simple invoice sheet and pen, label 'INVOICED'. Third: coins beside a clear green completion tick, label 'PAID'. Cobalt, turquoise, mint and white textured paper, strong silhouettes and clear spacious editorial layout. No faces, computer, spreadsheet grid, monetary amounts, dates or extra writing. Agreement is visibly separate from payment."
+    },
+    {
+      "slug": "follow-up-coaching-enquiry",
+      "role": "Second body illustration",
+      "path": "public/blog/follow-up-coaching-enquiry/follow-up-rhythm.webp",
+      "prompt": "Create a wide landscape raster editorial illustration for the interior of a DealDock blog article. Hand-painted paper, gouache and coloured-pencil textures, crisp large symbols, generous spacing and restrained readable labels. This explains the article section, rather than being a decorative generic desk scene. All labels specified must be large, accurately spelled, and the only readable text. No tiny filler text, no logos, no watermark, no glossy 3D, no photorealistic computer mockups. A gentle hand-drawn coaching follow-up rhythm as a spacious path with four checkpoints. Three rounded speech bubbles along the path followed by a calm pause icon at the end, with increasing gaps between the first three. Exact labels under checkpoints: 'GENTLE NUDGE', 'ADD SOMETHING USEFUL', 'CLOSE THE LOOP', 'THEN STOP'. Small calendar and leaf motifs, light sky blue and pale peach background with terracotta and forest green ink. Clearly a helpful suggested communication routine, without repeated pings or pressure. No faces, portraits, phones, desks, numbered day promises or any other text. Keep all labels legible with generous space."
+    },
+    {
+      "slug": "manage-instagram-dms-coach",
+      "role": "Second body illustration",
+      "path": "public/blog/manage-instagram-dms-coach/inbox-priorities.webp",
+      "prompt": "Create a wide landscape raster editorial illustration for the interior of a DealDock blog article. Hand-painted paper, gouache and coloured-pencil textures, crisp large symbols, generous spacing and restrained readable labels. This explains the article section, rather than being a decorative generic desk scene. All labels specified must be large, accurately spelled, and the only readable text. No tiny filler text, no logos, no watermark, no glossy 3D, no photorealistic computer mockups. A clear four-level DM priority stack on a pale warm background, each layer an illustrated message tray with a distinct symbol and one large exact label. Top tray: payment link icon, label 'READY TO PAY'. Second tray: existing client portrait icon, label 'CURRENT CLIENTS'. Third tray: camera and partnership icon, label 'BRAND ENQUIRIES'. Fourth tray: a heart reaction bubble, label 'EVERYONE ELSE'. A subtle downward arrow alongside the stack indicates work from top to bottom. Navy, amber, pale blue and warm paper textures; wide landscape layout with the four trays staggered horizontally enough that labels are not crowded. No day/night sun or moon, since those are already in the article cover. No smartphone, laptop, plants, coffee, financial amounts or extra writing."
+    }
+  ]
+}
