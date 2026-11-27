@@ -2,20 +2,27 @@ import type { Metadata } from "next";
 import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import Link from "next/link";
 import { MarketingDocument } from "@/components/design-preview/marketing-document";
+import { LEGAL } from "@/lib/legal";
 
-export const metadata: Metadata = marketingPageMetadata("/contact", "Talk to Anshu | DealDock", "Contact the DealDock founder about pilot fit, an application or website privacy.");
+export const metadata: Metadata = marketingPageMetadata("/contact", "Contact | DealDock", "Contact DealDock about the pilot, your account, billing, your data or a grievance.");
 
 export default function ContactPage() {
   return (
-    <MarketingDocument title="Talk to the person building it.">
-      <p>I’m Anshu, building DealDock. If you sell coaching, courses or cohorts through Instagram, I’d like to understand where your buying conversations get stuck.</p>
+    <MarketingDocument title="Talk to the people building it.">
+      <p>I’m Anshu, building DealDock. If brand deals or paying clients reach you through Instagram DMs or email, I’d like to understand where they get lost.</p>
       <h2>Get in touch</h2>
-      <p><a href="mailto:itsanshugoyal2@gmail.com?subject=DealDock%20pilot%20question">itsanshugoyal2@gmail.com ↗</a></p>
-      <p>If a mail app does not open, copy the address into the email service you normally use.</p>
-      <h2>A useful starting point</h2>
-      <p>Tell me what you sell and what tends to get missed. You can ask about pilot timing, the workflow, pricing, account compatibility or application data. Please leave out passwords and private DM screenshots.</p>
-      <h2>Already applied?</h2>
-      <p>Include your reference, if you have one. Applying does not start a subscription; we discuss fit and terms before onboarding.</p>
+      <ul>
+        <li>Email: <a href={`mailto:${LEGAL.email}?subject=DealDock%20question`}>{LEGAL.email}</a></li>
+        <li>Phone: {LEGAL.phone}</li>
+        <li>Support hours: {LEGAL.supportHours}. We reply to email within 2 business days.</li>
+      </ul>
+      <p>Ask about pilot timing, how it works, pricing, Instagram or Gmail setup, billing or your data. Please leave out passwords and private DM screenshots. If you already applied, include your reference.</p>
+      <h2>Company details</h2>
+      <p>{LEGAL.entity}<br />{LEGAL.address}<br />{LEGAL.registration}<br />GSTIN: {LEGAL.gstin}</p>
+      <h2>Grievance officer</h2>
+      <p>For a complaint about the service or how we handle your personal data, contact our grievance officer, {LEGAL.grievanceOfficer}, at <a href={`mailto:${LEGAL.grievanceEmail}?subject=Grievance`}>{LEGAL.grievanceEmail}</a>. We acknowledge grievances within 72 hours and aim to resolve them within 30 days.</p>
+      <h2>Your data</h2>
+      <p>To delete your data, see <Link href="/data-deletion">data deletion</Link>. The <Link href="/privacy">privacy policy</Link> explains what we collect and why.</p>
       <p><Link href="/#apply">Send a pilot application ↗</Link></p>
     </MarketingDocument>
   );

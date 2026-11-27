@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FOOTER_LINKS } from "@/lib/legal";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr/ArrowUpRight";
 import { ArrowDown } from "@phosphor-icons/react/dist/ssr/ArrowDown";
 import { EnquiryExample } from "./enquiry-example";
@@ -164,7 +165,7 @@ export function MarketingDesignPreview() {
       </main>
       <footer className={styles.footer}>
         <span><strong>DealDock</strong> · Human-approved replies. Always.</span>
-        <nav aria-label="Footer navigation" className={styles.footerLinks}><Link href="/blog">Guides</Link><Link href="/tools">Free tools</Link><Link href="/privacy">Privacy</Link><Link href="/pilot-terms">Pilot terms</Link><Link href="/contact">Contact</Link></nav>
+        <nav aria-label="Footer navigation" className={styles.footerLinks}><Link href="/blog">Guides</Link><Link href="/tools">Free tools</Link><Link href="/pilot-terms">Pilot terms</Link>{FOOTER_LINKS.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}</nav>
       </footer>
     </div></PilotCurrencyProvider>
   );

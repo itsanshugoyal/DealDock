@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./preview.module.css";
 import navStyles from "@/components/shared/resource-nav.module.css";
+import { FOOTER_LINKS } from "@/lib/legal";
 
 export function MarketingDocument({ title, updatedAt = "DealDock pilot · Updated 14 October 2026", children, intro, className }: { title: string; updatedAt?: string; children: React.ReactNode; intro?: React.ReactNode; className?: string }) {
   return (
@@ -16,7 +17,7 @@ export function MarketingDocument({ title, updatedAt = "DealDock pilot · Update
       </main>
       <footer className={styles.footer}>
         <span><strong>DealDock</strong> · Human-approved replies. Always.</span>
-        <nav className={styles.footerLinks} aria-label="Footer navigation"><Link href="/">Home</Link><Link href="/blog">Guides</Link><Link href="/tools">Free tools</Link><Link href="/about">About</Link><Link href="/privacy">Privacy</Link><Link href="/pilot-terms">Pilot terms</Link><Link href="/contact">Contact</Link></nav>
+        <nav className={styles.footerLinks} aria-label="Footer navigation"><Link href="/">Home</Link><Link href="/blog">Guides</Link><Link href="/tools">Free tools</Link><Link href="/about">About</Link><Link href="/pilot-terms">Pilot terms</Link>{FOOTER_LINKS.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}</nav>
       </footer>
     </div>
   );

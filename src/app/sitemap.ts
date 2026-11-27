@@ -5,7 +5,7 @@ import { getPublishedBlogPosts, freeTools } from "@/lib/blog-posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogPosts = getPublishedBlogPosts();
-  const coreRoutes = ["/", "/about", "/privacy", "/pilot-terms", "/contact"];
+  const coreRoutes = ["/", "/about", "/pricing", "/privacy", "/terms", "/refunds", "/delivery", "/data-deletion", "/pilot-terms", "/contact"];
   const newest = [...blogPosts.map((p) => p.updatedAt), ...freeTools.map((t) => t.updatedAt)].sort().at(-1);
   return [
     ...coreRoutes.map((route) => ({ url: MARKETING_ORIGIN + route, lastModified: "2026-10-27", priority: route === "/" ? 1 : 0.3 })),
