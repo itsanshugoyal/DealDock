@@ -124,7 +124,7 @@ export function RosterSection({ creators }: { creators: Creator[] }) {
         ))}
         <div className={r.hub}>
           {/* eslint-disable-next-line @next/next/no-img-element -- small static mascot */}
-          <img src="/docky/docky.webp" alt="" width={64} height={64} />
+          <img src="/docky/docky-sm.webp" alt="" width={64} height={74} />
           <span><b>One queue</b><small>Biggest first, all five creators</small></span>
         </div>
         {creators.map((c, i) => (

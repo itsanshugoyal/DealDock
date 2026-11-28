@@ -10,11 +10,11 @@ import { GmailLogo as Gmail, IgLogo as Ig } from "./app-logos";
 import type { LandingContent } from "./content";
 import s from "./landing.module.css";
 
-type Phase = "hello" | "in" | "think" | "done" | "out";
+type Phase = "in" | "think" | "done" | "out";
 type Field = "idle" | "focus" | "typing" | "valid" | "error";
 
 // How long each step of the message loop lasts, in ms.
-const NEXT: Record<Phase, number> = { hello: 1800, in: 1100, think: 1400, done: 3600, out: 500 };
+const NEXT: Record<Phase, number> = { in: 1100, think: 1400, done: 3600, out: 500 };
 // Two faint messages behind the card, one per inbox Docky reads. Neither is worth money, so he leaves them.
 const AMBIENT = [
   { app: "ig", from: "lena.k", meta: "Instagram · 2m", text: "can you do a lighting Q&A?" },
@@ -33,7 +33,10 @@ const initials = (name: string) => name.replace(/[^A-Za-z ]/g, " ").trim().split
 export function Hero({ hero }: { hero: LandingContent["hero"] }) {
   const { examples } = hero;
   const [index, setIndex] = useState(0);
-  const [phase, setPhase] = useState<Phase>("hello");
+  // The first message is already in the card when the page loads (it is the largest thing in the hero, so it
+  // must paint at once for LCP); Docky waves hello while he reads it. Later ones drift in and get caught.
+  const [phase, setPhase] = useState<Phase>("think");
+  const [intro, setIntro] = useState(true);
   const [onScreen, setOnScreen] = useState(true);
   const [field, setField] = useState<Field>("idle");
   const [value, setValue] = useState("");
@@ -47,17 +50,17 @@ export function Hero({ hero }: { hero: LandingContent["hero"] }) {
   useEffect(() => {
     if (phase === "done" && (!onScreen || typing)) return;
     const t = setTimeout(() => {
-      if (phase === "hello") setPhase("in");
-      else if (phase === "in") setPhase("think");
+      if (phase === "in") setPhase("think");
       else if (phase === "think") setPhase("done");
       else if (phase === "done") setPhase("out");
       else {
+        setIntro(false);
         setIndex(i => (i + 1) % examples.length);
         setPhase("in");
       }
-    }, NEXT[phase]);
+    }, NEXT[phase] + (intro && phase === "think" ? 1000 : 0)); // a beat longer on the first card, for the wave
     return () => clearTimeout(t);
-  }, [phase, onScreen, typing, examples]);
+  }, [phase, onScreen, typing, examples, intro]);
 
   useEffect(() => {
     const el = cast.current;
@@ -117,8 +120,8 @@ export function Hero({ hero }: { hero: LandingContent["hero"] }) {
         </div>
 
         <figure ref={cast} className={s.cast} aria-label="Example with made-up messages: new messages drift past Docky, he catches the ones that could pay, estimates what each is worth and drafts a reply.">
-          <Docky mood={mood} wave={phase === "hello" || cheer} look={look} className={s.castDocky} />
-          <div className={s.ambient} data-dim={(phase !== "hello" && phase !== "in") || undefined} aria-hidden="true">
+          <Docky mood={mood} wave={(intro && phase === "think") || cheer} look={look} className={s.castDocky} />
+          <div className={s.ambient} data-dim={phase !== "in" || undefined} aria-hidden="true">
             {AMBIENT.map((m, i) => (
               <span key={m.app} className={s.bubble} data-app={m.app} style={{ "--i": i } as CSSProperties}>
                 <span className={s.bubbleHead}>{m.app === "ig" ? <IgLogo /> : <GmailLogo />}<b>{m.from}</b><small>{m.meta}</small></span>
@@ -134,8 +137,8 @@ export function Hero({ hero }: { hero: LandingContent["hero"] }) {
             )}
           </div>
           <div className={s.msgSlot}>
-          {phase !== "hello" && phase !== "in" && (
-            <div className={s.msg} key={index} data-phase={phase} data-label={ex.label} aria-hidden="true">
+          {phase !== "in" && (
+            <div className={s.msg} key={index} data-phase={phase} data-label={ex.label} data-still={intro || undefined} aria-hidden="true">
               <div className={s.msgHead}>
                 <span className={s.msgAv}>{initials(ex.from)}</span>
                 <span><b>{ex.from}</b><small>{ex.src}</small></span>

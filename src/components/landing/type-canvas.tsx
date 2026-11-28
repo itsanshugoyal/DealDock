@@ -73,7 +73,7 @@ export function TypeCanvas({ items }: { items: LandingContent["catches"] }) {
             {/* Docky sends what he read as a private card, like the phone story */}
             <div className={s.ibDocky}>
               {/* eslint-disable-next-line @next/next/no-img-element -- small static mascot */}
-              <span className={s.ibDockyAv}><img src="/docky/docky.webp" alt="" /></span>
+              <span className={s.ibDockyAv}><img src="/docky/docky-xs.webp" alt="" width={64} height={74} /></span>
               <div className={s.ibDockyBody}>
               <p className={s.ibDockyWho}><b>Docky</b><small><LockSimple size={11} weight="bold" aria-hidden="true" />Only you can see this</small></p>
             <div className={s.ibRead} data-tone={it.label === "scam" ? "bad" : it.label === "fan" ? "quiet" : undefined}>

@@ -11,7 +11,7 @@ import type { Story } from "./content";
 const SB = (time: string) => `<span class="island"></span><div class="sb"><span>${time}</span><svg viewBox="0 0 54 12" width="54"><use href="#pp-sig"/></svg></div>`;
 const ICON = (id: string, size = 15) => `<svg width="${size}" height="${size}"><use href="#pp-${id}"/></svg>`;
 const SPIN = `<i class="spin"></i>`;
-const DOCKY = `<span class="dky"><img src="/docky/docky.webp" alt=""></span>`;
+const DOCKY = `<span class="dky"><img src="/docky/docky-xs.webp" alt="" width="64" height="74"></span>`;
 
 /** Working stages, each shown with a spinner from its start time until the next one starts (or `end`). */
 const WORK = (stages: [string, number][], end: number) => stages.map(([text, t], i) =>
