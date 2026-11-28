@@ -28,6 +28,8 @@ export function MarketingWebsiteStructuredData() {
             description: MARKETING_DESCRIPTION,
             disambiguatingDescription: "DealDock (dealdock.io) is an Instagram DM inbox for creators who sell coaching, courses and brand collaborations. It is not affiliated with other companies that use the DealDock name.",
             knowsAbout: ["Instagram direct messages", "Creator brand deals", "Coaching and course sales", "Human-approved AI reply drafts"],
+            // DealDock's own profiles (the same ones as the footer icons); they tell search engines which DealDock this is.
+            sameAs: ["https://www.instagram.com/dealdock.io", "https://x.com/dealdock_io", "https://www.threads.com/@dealdock.io"],
           },
           {
             "@type": "WebSite",

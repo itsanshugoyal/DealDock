@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr/ArrowRight";
-import { CheckCircle } from "@phosphor-icons/react/dist/ssr/CheckCircle";
 import { CircleDashed } from "@phosphor-icons/react/dist/ssr/CircleDashed";
 import { Clock } from "@phosphor-icons/react/dist/ssr/Clock";
 import { LockSimple } from "@phosphor-icons/react/dist/ssr/LockSimple";
@@ -10,13 +9,14 @@ import { SealCheck } from "@phosphor-icons/react/dist/ssr/SealCheck";
 import { XCircle } from "@phosphor-icons/react/dist/ssr/XCircle";
 import { BrandMark } from "@/components/site/site-chrome";
 import { AppLogo } from "./app-logos";
+import { GreenTickIcon } from "./price-promise-icons";
 import { LABEL_TEXT, type LandingContent } from "./content";
 import s from "./landing.module.css";
 
 type Item = LandingContent["catches"][number];
 const CYCLE = 5600;
 const plural = (item: Item) => LABEL_TEXT[item.label] + (item.label === "fan" ? "s and spam" : "s");
-const CHECK = { ok: CheckCircle, miss: CircleDashed, bad: XCircle } as const;
+const CHECK = { ok: GreenTickIcon, miss: CircleDashed, bad: XCircle } as const;
 
 /**
  * Section 2: a small inbox app on a warm canvas. The list is sorted by value, the conversation shows the message as it

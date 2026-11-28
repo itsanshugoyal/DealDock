@@ -82,6 +82,11 @@
 .footerCta span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--accent); transition: transform 0.2s var(--ease); }
 .footerCta:hover { transform: translateY(-1px); }
 .footerCta:hover span { transform: translateX(2px); }
+/* social profiles: quiet round icons under the CTA; a profile without a URL yet shows dimmed and is not a link */
+.footerSocial { display: flex; gap: 10px; margin-top: 22px; padding: 0; list-style: none; }
+.footerSocial a, .footerSocial span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); color: var(--on-night); transition: background 0.2s, color 0.2s; }
+.footerSocial a:hover { background: var(--accent); color: var(--ink); box-shadow: none; }
+.footerSocial span { opacity: 0.55; cursor: default; }
 .footerCols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 24px; }
 @media (min-width: 600px) { .footerCols { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .footerCols h2 { color: var(--on-night-3); font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }

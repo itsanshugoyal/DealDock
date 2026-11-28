@@ -1,4 +1,4 @@
-import { photo, type LandingContent } from "./types";
+import type { LandingContent } from "./types";
 
 // The global (USD) page. Every person, brand, message and amount is made up and labelled as an example where it appears.
 export const LANDING_GLOBAL: LandingContent = {
@@ -6,7 +6,7 @@ export const LANDING_GLOBAL: LandingContent = {
     sub: "Docky finds buying intent hidden in your Instagram DMs and Gmail, prioritizes valuable leads, and drafts replies in your voice. Track every deal from the first conversation to payment. You stay in control. Nothing sends without your approval.",
     note: "30 days free · No card needed · You approve every reply",
     examples: [
-      { label: "brand", from: "Glowkind Skincare", src: "Message request · 11:48 PM", text: "Hi Maya! What’s your rate for 1 Reel + 3 Stories? Usage would be 30 days.",
+      { label: "brand", from: "Orilune Skincare", src: "Message request · 11:48 PM", text: "Hi Maya! What’s your rate for 1 Reel + 3 Stories? Usage would be 30 days.",
         status: "New brand deal", intent: "1 Reel + 3 Stories", value: "$2.5K–$5K", valueLabel: "Estimated value",
         draft: "Hi Mia! Thank you, I’ve honestly been living in vitamin C serums all winter lol…" },
       { label: "coaching", from: "Dani Brooks", src: "DM · 7:12 AM", text: "Is your 12-week program open for January? I’m ready to start.",
@@ -18,7 +18,7 @@ export const LANDING_GLOBAL: LandingContent = {
     ],
   },
   catches: [
-    { label: "brand", name: "Glowkind Skincare", ini: "GS", av: "#2F5D50", verified: true, app: "ig", sub: "Instagram · Message request · 48.2K followers",
+    { label: "brand", name: "Orilune Skincare", ini: "OS", av: "#3F4B3E", verified: true, app: "ig", sub: "Instagram · Message request · 48.2K followers",
       when: "Tue 11:48 PM", short: "11:48 PM", value: "$2.5K–$5K", snippet: "What's your rate for 1 Reel + 3 Stories?",
       text: "Hi Maya! We're launching a vitamin C serum in January and would love you on it. What's your rate for 1 Reel + 3 Stories? Usage would be 30 days organic.",
       worthLabel: "Could be worth", worth: "$2.5K–$5K", window: "16h left to reply",
@@ -56,30 +56,30 @@ export const LANDING_GLOBAL: LandingContent = {
       quiet: "No draft. Reply whenever you like." },
   ],
   story: {
-    creator: "Maya", handle: "maya.creates", brand: "Glowkind Skincare", brandIni: "GS", brandShort: "Glowkind", contact: "Mia",
+    creator: "Maya", handle: "maya.creates", brand: "Orilune Skincare", brandIni: "OS", brandShort: "Orilune", contact: "Mia",
     lockDate: "Tuesday 14 January",
     noise: [["ig", "Instagram", "sara.k: omg your last reel 😍 where is the top from??", "2m ago"], ["gm", "Shopify", "Your weekly store summary is ready.", "41m ago"]],
-    alert: "Glowkind Skincare wants 1 Reel + 3 Stories.",
-    message: "Hi Maya! It's Mia from Glowkind 🌿 We're launching a vitamin C serum in January. What's your rate for 1 Reel + 3 Stories? Usage would be 30 days organic.",
+    alert: "Orilune Skincare wants 1 Reel + 3 Stories.",
+    message: "Hi Maya! It's Mia from Orilune. We're launching a vitamin C serum in January. What's your rate for 1 Reel + 3 Stories? Usage would be 30 days organic.",
     rateAsk: "Hi Maya! What’s your rate for 1 Reel + 3 Stories?",
     asks: "1 Reel + 3 Stories", usage: "30 days organic", missing: "Posting dates", estimate: "$2.5K–$5K", window: "16h left",
     draft: "Hi Mia! Thank you, I've honestly been living in vitamin C serums all winter lol. 1 Reel + 3 Stories with 30 days organic would be $3,800. When are you hoping to go live?",
     rate: "$3,800", invoice: "MO-0042",
     reminder: "Hi Mia! Quick reminder that invoice MO-0042 ($3,800) is due tomorrow. Here's the link again: pay.maya.link/0042 🙂",
-    paidReply: "Paid! The Reel did so well for us 🌿",
+    paidReply: "Paid! The Reel did so well for us!",
     dates: { enquiry: "14 Jan", agreed: "16 Jan", invoiced: "12 Feb", seen: "13 Feb", reminded: "18 Feb", paid: "19 Feb" },
     month: { label: "Paid in February", total: "$7,445", from: "$3,645" },
   },
   creators: [
-    { id: "ana", name: "Ana Ruiz", first: "Ana", niche: "Cooking · 212K", img: photo("photo-1494790108377-be9c29b29330"), tone: "#B6542F",
+    { id: "ana", name: "Ana Ruiz", first: "Ana", niche: "Cooking · 212K", img: "/roster/ana.webp", tone: "#B6542F",
       voice: "Hi! Lumen pans are already all over my kitchen, so this is an easy yes. A 3-video series with 90 days of usage would be $5,200.", labels: ["brand", "other", "course"] },
-    { id: "sam", name: "Sam Okafor", first: "Sam", niche: "Travel · 120K", img: photo("photo-1507003211169-0a1dd7228f2d"), tone: "#2D6A8E",
+    { id: "sam", name: "Sam Okafor", first: "Sam", niche: "Travel · 120K", img: "/roster/sam.webp", tone: "#2D6A8E",
       voice: "Hey team! Tallmark has been on my list for ages. $3,000 works for 2 Reels and a carousel. Which dates were you thinking?", labels: ["brand", "brand", "course"] },
-    { id: "maya", name: "Maya Ortiz", first: "Maya", niche: "Lifestyle · 148K", img: photo("photo-1438761681033-6461ffad8d80"), tone: "#D06B3E",
+    { id: "maya", name: "Maya Ortiz", first: "Maya", niche: "Lifestyle · 148K", img: "/roster/maya.webp", tone: "#D06B3E",
       voice: "Hi Mia! Thank you, I’ve honestly been living in vitamin C serums all winter lol. 1 Reel + 3 Stories would be $3,800.", labels: ["brand", "coaching", "course"] },
-    { id: "theo", name: "Theo Park", first: "Theo", niche: "Fitness · 88K", img: photo("photo-1500648767791-00dcc994a43e"), tone: "#4F7A3A",
+    { id: "theo", name: "Theo Park", first: "Theo", niche: "Fitness · 88K", img: "/roster/theo.webp", tone: "#4F7A3A",
       voice: "Hey! Strideline has been my long-run shoe for a year. A running Reel and 2 Stories would be $2,000, does that fit?", labels: ["brand", "coaching", "scam"] },
-    { id: "jordan", name: "Jordan Lee", first: "Jordan", niche: "Tech · 64K", img: photo("photo-1534528741775-53994a69daeb"), tone: "#5A4FA8",
+    { id: "jordan", name: "Jordan Lee", first: "Jordan", niche: "Tech · 64K", img: "/roster/jordan.webp", tone: "#5A4FA8",
       voice: "yo! I’ve been eyeing the Keyform 75. One review Reel would be $1,600, want me to send my media kit?", labels: ["brand", "other", "course"] },
   ],
 };

@@ -61,7 +61,6 @@
 .heroFormNote:empty { display: none; }
 .heroNote { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 26px; padding: 0; list-style: none; color: var(--ink-2); font-size: 14px; font-weight: 500; }
 .heroNote li { display: inline-flex; align-items: center; gap: 8px; }
-.heroNote li > span { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #DDF3E5; color: #157A43; }
 
 /* The card he reads sits top-left; Docky stands below-right. The card is narrow enough to clear his tip and
    headphone, so the column stays short and Docky sits near the middle of the copy. */
@@ -86,12 +85,7 @@
 .msgTagRow { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line-2); }
 /* the read: what it is (coloured) over why, value on the right */
 .msgRead { display: grid; gap: 2px; min-width: 0; color: var(--ink-2); font-size: 13px; line-height: 1.35; }
-.msgStatus { display: inline-flex; align-items: center; gap: 6px; color: color-mix(in srgb, var(--c, var(--c-fan)) 85%, #000); font-size: 12px; font-style: normal; font-weight: 700; letter-spacing: 0.01em; }
-.msgStatus i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--c-fan)); }
 /* the value as a soft badge in the label's colour */
-.msgValue { display: grid; justify-items: end; flex: none; padding: 7px 11px 6px; border-radius: 12px; background: color-mix(in srgb, var(--c, var(--accent)) 9%, #fff); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c, var(--accent)) 20%, transparent); text-align: right; }
-.msgValue b { color: color-mix(in srgb, var(--c, var(--accent)) 78%, #000); font-size: 19px; font-weight: 750; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; white-space: nowrap; }
-.msgValue small { order: -1; color: color-mix(in srgb, var(--c, var(--accent)) 60%, #555); font-size: 10.5px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; }
 .msgDraft { margin-top: 12px; padding: 11px 12px; border-radius: 14px; background: #FBF8F3; box-shadow: inset 0 0 0 1px var(--line-2); }
 .msgDraftHead { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 650; }
 .msgDraftHead small { margin-left: auto; color: var(--ink-3); font-size: 11.5px; font-weight: 550; }
@@ -259,10 +253,15 @@
 .tell .storyDocky { width: 116px; margin: 22px 0 0 auto; translate: 3vw 44px; }
 .phoneWrap::before { content: ""; position: absolute; inset: -10% -45%; z-index: -1; background: radial-gradient(45% 45% at 50% 50%, rgba(255, 122, 26, 0.22), transparent 70%); }
 /* the phone: 300×620 frame around 278×598 screens (phone-screens.module.css); zoom keeps layout and size in step */
-.pd { position: relative; width: 300px; height: 620px; padding: 11px; border-radius: 52px; background: linear-gradient(145deg, #4a4744, #1c1b1a 18%, #0d0d0d 60%, #2e2c2a); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 0 1px #000, 0 60px 100px -40px rgba(0, 0, 0, 0.85); zoom: var(--pz, 1.06); }
+/* the phone: a polished titanium rim (bright where light catches the corners), a thin black bezel, then the screen */
+.pd { position: relative; width: 300px; height: 620px; padding: 8px; border: 3px solid transparent; border-radius: 52px; background: linear-gradient(#050505, #050505) padding-box, linear-gradient(150deg, #E9E4DC 0%, #8C867E 9%, #3A3733 22%, #6E6862 38%, #2C2A27 55%, #8E8880 74%, #3B3835 88%, #D6D0C7 100%) border-box; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.85), 0 60px 100px -40px rgba(0, 0, 0, 0.85); zoom: var(--pz, 1.06); }
+/* side buttons: action button and volume rocker on the left, side button on the right, in the rim's metal */
+.pd::before, .pd::after { content: ""; position: absolute; width: 3px; border-radius: 2px; pointer-events: none; }
+.pd::before { left: -6px; top: 98px; height: 158px; background: linear-gradient(90deg, #4A4641, #A9A39A 55%, #6A655F) 0 0 / 100% 26px no-repeat, linear-gradient(90deg, #4A4641, #A9A39A 55%, #6A655F) 0 48px / 100% 50px no-repeat, linear-gradient(90deg, #4A4641, #A9A39A 55%, #6A655F) 0 108px / 100% 50px no-repeat; }
+.pd::after { right: -6px; top: 160px; height: 78px; background: linear-gradient(270deg, #4A4641, #A9A39A 55%, #6A655F); }
 @media (max-height: 820px) { .pd { --pz: 0.96; } }
 @media (max-height: 720px) { .pd { --pz: 0.86; } }
-.pdPane { position: absolute; inset: 11px; opacity: 0; pointer-events: none; }
+.pdPane { position: absolute; inset: 8px; opacity: 0; pointer-events: none; }
 .pdPane[data-on] { opacity: 1; animation: fadeIn 0.4s ease both; }
 @keyframes liftIn { from { opacity: 0; transform: translateY(14px) scale(0.9); } }
 
@@ -271,12 +270,12 @@
 .co b { display: block; font-size: 14.5px; font-weight: 650; }
 .co small { display: block; margin-top: 2px; color: var(--ink-2); font-size: 12px; line-height: 1.4; }
 .coIcon { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; }
+.coIcon[data-bare] { background: none; } /* the icon brings its own orange disc */
 .storySection > .wrap:last-child { padding-bottom: clamp(88px, 10vw, 140px); }
 
 @keyframes progress { to { width: 100%; } }
 
 /* ---------------- pricing ---------------- */
-.pricePill { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; padding: 6px 12px; border-radius: 999px; background: var(--accent-pale); color: var(--accent-ink); font-size: 13px; font-weight: 650; }
 .planGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; margin-top: clamp(36px, 4.5vw, 52px); }
 .planCard { position: relative; isolation: isolate; display: flex; flex-direction: column; padding: 24px 24px 22px; border-radius: 24px; background: var(--card); box-shadow: var(--lift-shadow); transition: transform 0.4s var(--ease), box-shadow 0.4s; }
 .planCard[data-featured] { background: var(--night); color: var(--on-night); box-shadow: 0 40px 80px -40px rgba(30, 26, 22, 0.7); }
@@ -327,7 +326,9 @@
 .faqList summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; font-size: 1.1rem; font-weight: 650; letter-spacing: -0.02em; list-style: none; cursor: pointer; }
 .faqList summary::-webkit-details-marker { display: none; }
 .faqList summary > span { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--surface); transition: transform 0.25s var(--ease), background 0.25s; }
-.faqList details[open] summary > span { background: var(--accent); transform: rotate(45deg); }
+.faqList summary > span svg:last-child { display: none; }
+.faqList details[open] summary > span svg:first-child { display: none; }
+.faqList details[open] summary > span svg:last-child { display: block; } /* open: the orange cross on the same light circle */
 .faqList details p { max-width: 62ch; padding: 0 48px 24px 0; color: var(--ink-2); font-size: 16px; }
 .landing :global(#safety) { padding-bottom: 0; }
 .landing :global(#apply) { background: radial-gradient(60% 70% at 50% 100%, rgba(240, 186, 102, 0.35), rgba(240, 186, 102, 0) 70%), var(--surface); }

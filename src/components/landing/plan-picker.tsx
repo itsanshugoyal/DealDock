@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr/ArrowRight";
-import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { User } from "@phosphor-icons/react/dist/ssr/User";
+import { TickIcon } from "./price-promise-icons";
 import s from "./landing.module.css";
 
 type Plan = { id: string; name: string; who: string; includes: string; features: string[]; price: string; unit: string; people: number; featured?: boolean };
@@ -26,7 +26,7 @@ export function PlanCards({ plans, perMonth }: { plans: Plan[]; perMonth: string
             Apply for {plan.name}<span className={s.btnArrow} aria-hidden="true"><ArrowRight size={16} weight="bold" /></span>
           </a>
           <p className={s.planIncludes}>{plan.includes}</p>
-          <ul className={s.planList}>{plan.features.map((f, i) => <li key={f} style={{ "--i": i } as CSSProperties}><Check size={15} weight="bold" aria-hidden="true" />{f}</li>)}</ul>
+          <ul className={s.planList}>{plan.features.map((f, i) => <li key={f} style={{ "--i": i } as CSSProperties}><TickIcon size={15} aria-hidden="true" />{f}</li>)}</ul>
         </article>
       ))}
     </div>

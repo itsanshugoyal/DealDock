@@ -1,11 +1,6 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr/ArrowRight";
-import { CreditCard } from "@phosphor-icons/react/dist/ssr/CreditCard";
-import { Gift } from "@phosphor-icons/react/dist/ssr/Gift";
-import { LockSimple } from "@phosphor-icons/react/dist/ssr/LockSimple";
-import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
-import { XCircle } from "@phosphor-icons/react/dist/ssr/XCircle";
 import { PILOT_OFFER, PLAN_PRICES, formatMoney } from "@/lib/marketing-pricing.mjs";
 import { IndiaBar } from "@/components/site/page-bars";
 import { PilotCurrencyProvider } from "@/components/site/pilot-currency";
@@ -17,6 +12,8 @@ import { ApplySheet } from "./apply-sheet";
 import { Hero } from "./hero";
 import { PlanCards } from "./plan-picker";
 import { RosterSection } from "./roster";
+import { PriceTagBadgeIcon, SectionBadge } from "./section-badge";
+import { CancelIcon, CardCrossedIcon, CrossIcon, GiftIcon, PlusIcon, PriceLockIcon } from "./price-promise-icons";
 import { RevealObserver } from "./motion";
 import { StoryPhone } from "./story-phone";
 import { ControlBento } from "./control-bento";
@@ -29,10 +26,10 @@ function Arrow() {
 
 // The pilot terms, said once under the plan cards.
 const PRICE_PROMISES = [
-  { icon: Gift, text: PILOT_OFFER.short },
-  { icon: CreditCard, text: "No card to start" },
-  { icon: XCircle, text: "Cancel anytime" },
-  { icon: LockSimple, text: "Pilot price kept while you stay" },
+  { icon: GiftIcon, text: PILOT_OFFER.short },
+  { icon: CardCrossedIcon, text: "No card to start" },
+  { icon: CancelIcon, text: "Cancel anytime" },
+  { icon: PriceLockIcon, text: "Pilot price kept while you stay" },
 ];
 
 // Solo carries the core features; each bigger plan lists only what it adds.
@@ -108,13 +105,13 @@ export function LandingPage({ site, c }: { site: SiteContent; c: LandingContent 
           <section id="pricing" className={s.section} aria-labelledby="pricing-heading">
             <div className={s.wrap}>
               <div className={s.centerHead} data-reveal="">
-                <p className={s.pricePill}><LockSimple size={14} weight="bold" aria-hidden="true" />Pilot pricing</p>
+                <SectionBadge icon={<PriceTagBadgeIcon />}>Pilot pricing</SectionBadge>
                 <h2 id="pricing-heading" className={s.h2}>Free for your first 30 days.</h2>
                 <p className={s.lede}>Then one flat monthly price, with no cut of your deals.</p>
               </div>
               <div data-reveal=""><PlanCards plans={plans} perMonth={site.currency === "USD" ? "USD per month" : "per month"} /></div>
               <ul className={s.priceStrip} data-reveal="" style={{ "--d": 1 } as CSSProperties}>
-                {PRICE_PROMISES.map(({ icon: Icon, text }) => <li key={text}><Icon size={18} weight="bold" aria-hidden="true" />{text}</li>)}
+                {PRICE_PROMISES.map(({ icon: Icon, text }) => <li key={text}><Icon size={18} aria-hidden="true" />{text}</li>)}
               </ul>
             </div>
           </section>
@@ -141,7 +138,7 @@ export function LandingPage({ site, c }: { site: SiteContent; c: LandingContent 
               <div className={s.faqList} data-reveal="" style={{ "--d": 1 } as CSSProperties}>
                 {site.faq.map(item => (
                   <details key={item.q}>
-                    <summary>{item.q}<span aria-hidden="true"><Plus size={16} weight="bold" /></span></summary>
+                    <summary>{item.q}<span aria-hidden="true"><PlusIcon size={14} /><CrossIcon size={13} /></span></summary>
                     <p>{item.a}</p>
                   </details>
                 ))}
