@@ -14,7 +14,8 @@ import s from "./landing.module.css";
 import c from "./control.module.css";
 
 // Texting at night (Becca Tapert, free under the Unsplash License), the follow-up tile's photo.
-const TEXTING = "https://images.unsplash.com/photo-1506377711776-dbdc2f3c20d9?w=900&h=900&fit=crop&crop=faces&q=72";
+// sized by Unsplash: the tile is at most 400px wide
+const TEXTING = (w: number) => `https://images.unsplash.com/photo-1506377711776-dbdc2f3c20d9?w=${w}&h=${w}&fit=crop&crop=faces&q=70&auto=format`;
 
 // The sign-in tile's rows: one lit at a time, the way your accounts connect and what never leaves you.
 const SIGN_IN = [
@@ -51,7 +52,7 @@ export function ControlBento({ story: st, embedded = false }: { story: Story; em
         </article>
 
         <article className={`${c.tile} ${c.photo}`}>
-          <img className={c.photoBg} src={TEXTING} alt="" width={900} height={900} />
+          <img className={c.photoBg} src={TEXTING(480)} srcSet={`${TEXTING(480)} 480w, ${TEXTING(800)} 800w`} sizes="(max-width: 760px) 92vw, 400px" alt="" width={800} height={800} loading="lazy" decoding="async" />
           <div className={c.chat} aria-hidden="true">
             <span className={c.them}>Invoice received, thanks {st.creator}!</span>
             <span className={c.me}><small>Drafted by Docky · not sent</small>Hi {st.contact}! Just checking in on invoice {st.invoice} 🙂</span>

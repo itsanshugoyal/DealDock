@@ -65,7 +65,7 @@ export function BlogArticle({ slug, faqs = [], toc, minutes, children }: {
               <Link className={styles.pilotSecondary} href="/#how-it-works">See how it works</Link>
             </div>
           </div>
-          <Image className={styles.pilotDocky} src="/docky/docky.webp" alt="" width={880} height={1020} sizes="220px" />
+          <Image className={styles.pilotDocky} src="/docky/docky.webp" alt="" width={480} height={556} sizes="220px" />
         </aside>
         {related.length > 0 && (
           <nav className={styles.related} aria-labelledby="article-related-heading">

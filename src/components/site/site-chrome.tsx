@@ -9,7 +9,7 @@ const LEGAL_ENTITY = "";
 /** The DealDock D mark. The artwork lives in public/brand (scripts/build-brand-icons.mjs makes this copy and the site icons). */
 export function BrandMark({ className }: { className?: string }) {
   // eslint-disable-next-line @next/next/no-img-element -- a 26KB static mark; next/image would add a request for nothing
-  return <img className={className} src="/brand/d-mark-192.png" width={192} height={145} alt="" aria-hidden="true" />;
+  return <img className={className} src="/brand/d-mark-64.webp" width={64} height={48} alt="" aria-hidden="true" />;
 }
 
 /** `home` is the page to anchor into: "/" or "/in" on the homepages; other pages link back to "/". */
@@ -32,7 +32,7 @@ export function SiteHeader({ home = "/", onPage = false }: { home?: "/" | "/in";
 }
 
 const FOOTER_LINKS = (home: string) => [
-  { title: "Product", links: [["How it works", home + "#how-it-works"], ["Pricing", "/pricing"], ["FAQ", home + "#faq"], ["Security", "/security"]] },
+  { title: "Product", links: [["How it works", home + "#how-it-works"], ["Pricing details", "/pricing"], ["FAQ", home + "#faq"], ["Security", "/security"]] },
   { title: "Resources", links: [["Guides", "/blog"], ["Free tools", "/tools"], ["Rate calculator", "/tools/brand-deal-rate-calculator"], ["DM tracker", "/tools/dm-enquiry-tracker"]] },
   { title: "Company", links: [["About", "/about"], ["Contact", "/contact"], ["Pilot terms", "/pilot-terms"]] },
   // the policy pages Meta, Google, Razorpay and Paddle review (docs/policy-pages-review.md)

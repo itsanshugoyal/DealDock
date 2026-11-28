@@ -175,7 +175,7 @@ export function StoryPhone({ story }: { story: Story }) {
       </div>
 
       <div className={s.mStrip}>
-        <div className={s.mTrack} ref={strip} onScroll={e => {
+        <div className={s.mTrack} ref={strip} tabIndex={0} role="region" aria-label="How a day with DealDock goes" onScroll={e => {
           const el = e.currentTarget, w = (el.firstElementChild as HTMLElement | null)?.offsetWidth ?? 1;
           setSlide(Math.min(STEPS.length - 1, Math.round(el.scrollLeft / (w + 16))));
         }}>
