@@ -1,2 +1,1 @@
 @AGENTS.md
-@PIPELINE.md

@@ -18,6 +18,8 @@ for (const post of posts) {
     if (url.startsWith('/blog/') && !path.extname(url)) assert(slugs.has(url.slice(6)), `${post.slug}: missing article ${url}`);
     if (path.extname(url)) assert(fs.existsSync(path.join('public', url)), `${post.slug}: missing asset ${url}`);
   }
+  // Google shows about 60 characters of a title; a long headline gets a shorter seoTitle in its frontmatter
+  assert(`${post.seoTitle ?? post.title} | DealDock`.length <= 60, `${post.slug}: search title over 60 characters, add a shorter seoTitle`);
   console.log(`OK ${post.slug} (${post.status})`);
 }
 console.log(`${posts.length} articles validated and compiled.`);
@@ -38,7 +40,8 @@ if (base) {
     const $ = load(await response.text());
     assert.equal($('h1').length, 1);
     assert.equal($('h1').text(), post.title);
-    const bodyImages = $('main img').toArray();
+    // the pilot card (aside) and "Keep reading" thumbnails (nav) are decorative, with alt="" on purpose
+    const bodyImages = $('main img').not('main aside img, main nav img').toArray();
     assert(new Set(bodyImages.map(el => $(el).attr('src'))).size >= 2, `${post.slug}: fewer than two distinct rendered body images`);
     for (const el of bodyImages) {
       assert($(el).attr('alt')?.trim(), `${post.slug}: missing image alt text`);

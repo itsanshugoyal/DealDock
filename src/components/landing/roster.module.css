@@ -1,0 +1,50 @@
+/* The managers section: a flow diagram of five inboxes running into one queue and back out in each creator's
+   voice. Colours, type and easing come from the .landing tokens (landing.module.css) and the shared page styles. */
+.center { display: grid; justify-items: center; max-width: 800px; margin-inline: auto; text-align: center; }
+.flow { position: relative; height: 440px; margin-top: clamp(44px, 5vw, 68px); }
+.flow[data-tall] { height: 470px; }
+.flowSvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.flow::before { content: ""; position: absolute; left: var(--cx); top: var(--cy); width: 640px; height: 420px; translate: -50% -50%; background: radial-gradient(closest-side, rgba(255, 176, 110, 0.32), rgba(255, 176, 110, 0)); pointer-events: none; }
+.flowLine { fill: none; stroke: rgba(20, 32, 44, 0.2); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.6s var(--ease); }
+.flow[data-armed]:not([data-seen]) .flowLine { stroke-dashoffset: 1; }
+.flow[data-armed]:not([data-seen]) .moving { opacity: 0; }
+/* messages as beams of light along the lines, with a ping where each leaves and arrives */
+.moving { transition: opacity 0.6s 0.9s; }
+.beam { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+.ping { fill: none; stroke-width: 1.6; }
+.port { fill: var(--surface); stroke: rgba(20, 32, 44, 0.32); stroke-width: 1.4; }
+.in, .out { position: absolute; z-index: 1; top: var(--y); display: flex; align-items: center; gap: 12px; transform: translateY(-50%); }
+.in { left: 0; width: calc(var(--aL) - 16px); justify-content: flex-end; text-align: right; }
+.out { left: calc(var(--aR) + 16px); right: 0; }
+.in b, .out b { display: block; font-size: 15px; font-weight: 650; }
+.in small { display: block; color: var(--ink-2); font-size: 13px; }
+.out small { display: -webkit-box; overflow: hidden; color: var(--ink-2); font-size: 13.5px; line-height: 1.4; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.flowFace { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px rgba(20, 32, 44, 0.14); color: #fff; font-size: 13px; font-weight: 700; }
+.hub { position: absolute; z-index: 2; left: var(--cx); top: var(--cy); display: flex; align-items: center; gap: 12px; width: var(--hubW); height: var(--hubH); padding: 0 20px 0 10px; border-radius: 999px; background: var(--night); color: #fff; transform: translate(-50%, -50%); box-shadow: 0 0 0 8px rgba(255, 122, 26, 0.14), 0 30px 60px -28px rgba(40, 24, 10, 0.75); transition: opacity 0.6s 0.5s var(--ease), transform 0.7s 0.5s var(--spring); }
+.hub::before { content: ""; position: absolute; inset: -3px; padding: 3px; border-radius: inherit; background: conic-gradient(from var(--hub-a), transparent 0 62%, rgba(255, 154, 60, 0.95) 86%, transparent); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); animation: hubRun 3.6s linear infinite; pointer-events: none; }
+.hub img { flex: none; width: 64px; height: 64px; object-fit: contain; }
+.hub b { display: block; font-size: 17px; font-weight: 650; }
+.hub small { display: block; color: var(--on-night-2); font-size: 13px; }
+.flow[data-armed]:not([data-seen]) .hub { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+/* narrow: inboxes on top, the queue in the middle, replies at the bottom */
+.flow[data-tall] .in, .flow[data-tall] .out { left: var(--x); right: auto; width: 64px; flex-direction: column-reverse; gap: 6px; text-align: center; transform: translateX(-50%); }
+.flow[data-tall] .in { top: 0; }
+.flow[data-tall] .out { top: auto; bottom: 0; }
+.flow[data-tall] .in b, .flow[data-tall] .out b { font-size: 12.5px; font-weight: 600; }
+.flow[data-tall] .in small, .flow[data-tall] .out small, .flow[data-tall] .voiceWord { display: none; }
+
+/* closing row: three facts the diagram can't show, and the way to the plan; no boxes */
+.close { display: grid; justify-items: center; gap: 24px; margin-top: clamp(36px, 4vw, 52px); padding-top: 30px; border-top: 1px solid var(--line); }
+.close > a { margin-top: 0; }
+.facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 36px; }
+.facts li { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 15px; font-weight: 550; }
+.facts span { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px var(--line-2), 0 6px 14px -10px rgba(40, 24, 10, 0.5); color: #C2560B; }
+@media (max-width: 760px) {
+  .facts { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .moving { display: none; }
+  .hub::before { animation: none; }
+}
+@property --hub-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes hubRun { to { --hub-a: 360deg; } }

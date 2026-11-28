@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { normalizeApplication } from "../../components/design-preview/application.mjs";
+import { normalizeApplication } from "../../components/site/application.mjs";
 import { normalizeCurrency, pricingSnapshot } from "../marketing-pricing.mjs";
 
 const MAX_BYTES = 8192;
@@ -66,10 +66,10 @@ export function createPilotApplicationHandler({ configured, store, allow = () =>
     if (!body || typeof body !== "object" || Array.isArray(body) || body.company || typeof body.id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.id)) return json({ code: "invalid_application", message: "Please check your application and try again." }, 400);
     const result = normalizeApplication(body);
     if (!result.valid) return json({ code: "validation", message: "Please check the highlighted fields.", errors: result.errors }, 400);
-    if (body.pricingCurrency !== undefined && !normalizeCurrency(body.pricingCurrency)) return json({ code: "invalid_application", message: "Please choose INR or USD in the pilot pricing section and try again." }, 400);
+    if (body.pricingCurrency !== undefined && !normalizeCurrency(body.pricingCurrency)) return json({ code: "invalid_application", message: "The prices on this page could not be read. Reload the page and try again." }, 400);
     const clean = (value) => typeof value === "string" ? value.replace(/[\r\n]/g, " ").slice(0, 100) : "";
     const attribution = { source: clean(body.attribution?.source), campaign: clean(body.attribution?.campaign) };
-    const pricing = body.offer === "brand_interest" ? null : pricingSnapshot(body.pricingCurrency);
+    const pricing = pricingSnapshot(body.pricingCurrency);
     const data = { ...result.fields, attribution, ...(pricing ? { pricing } : {}) };
     const record = { id: body.id, ...data, submittedAt: new Date().toISOString(), fingerprint: createHash("sha256").update(JSON.stringify(data)).digest("hex") };
     try { await store.save(record); }
@@ -77,6 +77,6 @@ export function createPilotApplicationHandler({ configured, store, allow = () =>
       if (error?.code === "APPLICATION_CONFLICT") return json({ code: "application_conflict", message: "Your details changed. Please start a new application." }, 409);
       return json({ code: "storage_unavailable", message: "We couldn’t confirm receipt. Your details are still here. Try again or send them by email." }, 503);
     }
-    return json({ status: "received", reference: body.id, interest: body.offer === "brand_interest" ? "future_interest" : "pilot" }, 201);
+    return json({ status: "received", reference: body.id, interest: "pilot" }, 201);
   };
 }

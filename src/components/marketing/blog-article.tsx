@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MarketingDocument } from "@/components/design-preview/marketing-document";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr/ArrowRight";
+import { MarketingDocument, type TocItem } from "@/components/site/marketing-document";
 import { blogPost, getVisibleBlogPosts, blogUrl, formatDate, shareImage } from "@/lib/blog-posts";
 import { MARKETING_ORIGIN } from "@/lib/marketing-config";
 import styles from "./blog-article.module.css";
@@ -11,9 +12,12 @@ import toolStyles from "@/components/tools/tools.module.css";
 type BlogFaq = { question: string; answer: string };
 
 /** Article shell: metadata and FAQs originate in content/blog/*.mdx. */
-export function BlogArticle({ slug, faqs = [], children }: {
+export function BlogArticle({ slug, faqs = [], toc, minutes, children }: {
   slug: string;
   faqs?: readonly BlogFaq[];
+  /** The article's "##" headings (lib/blog/toc.ts). */
+  toc: TocItem[];
+  minutes: number;
   children: React.ReactNode;
 }) {
   const post = blogPost(slug);
@@ -45,7 +49,45 @@ export function BlogArticle({ slug, faqs = [], children }: {
   };
 
   return (
-    <MarketingDocument title={post.title} updatedAt={`DealDock guide · Updated ${formatDate(post.updatedAt)}`}>
+    <MarketingDocument
+      title={post.title}
+      crumbs={[{ label: "Guides", href: "/blog" }, { label: post.topic }]}
+      meta={[`Written ${formatDate(post.publishedAt)}`, ...(post.updatedAt !== post.publishedAt ? [`Updated ${formatDate(post.updatedAt)}`] : []), `${minutes} min read`]}
+      toc={faqs.length ? [...toc, { id: "article-faq-heading", label: "Questions" }] : toc}
+      after={<>
+        <aside className={styles.pilot} aria-labelledby="article-pilot-heading">
+          <div>
+            <p className={styles.pilotKicker}>DealDock private pilot</p>
+            <h2 id="article-pilot-heading">Try it on your own inbox.</h2>
+            <p>DealDock puts the conversations most likely to pay first, drafts each reply in your voice, and sends nothing until you approve it. The first 30 days are free.</p>
+            <div className={styles.pilotActions}>
+              <Link className={styles.pilotPrimary} href="/#apply">Apply for the pilot<span aria-hidden="true"><ArrowRight size={16} weight="bold" /></span></Link>
+              <Link className={styles.pilotSecondary} href="/#how-it-works">See how it works</Link>
+            </div>
+          </div>
+          <Image className={styles.pilotDocky} src="/docky/docky.webp" alt="" width={880} height={1020} sizes="220px" />
+        </aside>
+        {related.length > 0 && (
+          <nav className={styles.related} aria-labelledby="article-related-heading">
+            <div className={styles.relatedHead}>
+              <h2 id="article-related-heading">Keep reading</h2>
+              <Link className={styles.allGuides} href="/blog">All guides<span aria-hidden="true"><ArrowRight size={15} weight="bold" /></span></Link>
+            </div>
+            <ul>
+              {related.map(p => <li key={p.slug}>
+                <Link href={`/blog/${p.slug}`} className={styles.relatedCard}>
+                  <Image src={p.thumbnail ?? p.image?.url ?? `/og/${p.slug}`} alt="" width={640} height={360} sizes="(max-width: 760px) 100vw, 400px" />
+                  <span className={styles.relatedTopic}>{p.topic} · {formatDate(p.publishedAt)}</span>
+                  <strong>{p.title}</strong>
+                  <span className={styles.relatedDescription}>{p.description}</span>
+                  <span className={styles.relatedMore}>Read the guide<ArrowRight size={15} weight="bold" aria-hidden="true" /></span>
+                </Link>
+              </li>)}
+            </ul>
+          </nav>
+        )}
+      </>}
+    >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       {children}
       {relevantTools.length > 0 && <aside className={toolStyles.relatedTools} aria-labelledby="article-tools-heading"><h2 id="article-tools-heading">Put this guide to work</h2><ToolCards tools={relevantTools} /></aside>}
@@ -62,30 +104,6 @@ export function BlogArticle({ slug, faqs = [], children }: {
             </details>)}
           </div>
         </section>
-      )}
-      <aside className={styles.pilot} aria-labelledby="article-pilot-heading">
-        <h2 id="article-pilot-heading">Try it on your own inbox</h2>
-        <p>DealDock is a small, application-only pilot for creators who sell through Instagram DMs. It puts the conversations most likely to pay first, drafts each reply in your voice, and sends nothing until you approve it.</p>
-        <Link className={styles.pilotLink} href="/#apply">Apply for the pilot <span aria-hidden="true">→</span></Link>
-      </aside>
-      {related.length > 0 && (
-        <nav className={styles.related} aria-labelledby="article-related-heading">
-          <h2 id="article-related-heading">Keep reading</h2>
-          <ul>
-            {related.map((p) => <li key={p.slug}>
-              <Link href={`/blog/${p.slug}`} className={styles.relatedCard}>
-                <Image src={p.thumbnail ?? p.image?.url ?? `/og/${p.slug}`} alt="" width={320} height={180} sizes="(max-width: 480px) calc(100vw - 90px), 160px" />
-                <span className={styles.relatedCopy}>
-                  <span className={styles.relatedTopic}>{p.topic}</span>
-                  <strong>{p.title}</strong>
-                  <span className={styles.relatedDescription}>{p.description}</span>
-                </span>
-                <span className={styles.relatedArrow} aria-hidden="true">↗</span>
-              </Link>
-            </li>)}
-          </ul>
-          <Link className={styles.allGuides} href="/blog">All guides <span aria-hidden="true">→</span></Link>
-        </nav>
       )}
     </MarketingDocument>
   );

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { MarketingDocument } from "@/components/design-preview/marketing-document";
+import { MarketingDocument } from "@/components/site/marketing-document";
 import { ToolCards } from "@/components/tools/tool-cards";
-import styles from "@/components/tools/tools.module.css";
 import { MARKETING_ORIGIN } from "@/lib/marketing-config";
 
 export const metadata: Metadata = {
@@ -10,8 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${MARKETING_ORIGIN}/tools` }, robots: { index: true, follow: true },
 };
 export default function ToolsPage() {
-  return <MarketingDocument title="A little less admin. A little more momentum." updatedAt="Free tools for creators">
-    <p className={styles.intro}>Price your next brand collaboration or bring order to your DM enquiries. Practical tools you can use right now, with no account required.</p>
+  return <MarketingDocument title="A little less admin. A little more momentum." lede="Price your next brand collaboration or bring order to your DM enquiries. Practical tools you can use right now, with no account required." meta={["Free", "No sign-up"]}>
     <ToolCards />
     <section><h2>Built for the work between messages</h2><p>Use the calculator when a brand asks for a quote. Use the tracker to remember who needs a reply, what you agreed, and whether the money has arrived.</p><p>These resources work on their own. You don’t need to join the DealDock pilot to use them.</p></section>
   </MarketingDocument>;

@@ -1,12 +1,13 @@
-export const CURRENCY_PREFERENCE_KEY = "dealdock-marketing-currency";
-export const SOLO_PRICE_VERSION = "solo-pilot-2026-10-14";
-export const SOLO_PRICES = Object.freeze({ INR: 400000, USD: 4900 });
+export const PRICE_VERSION = "pilot-2026-11-05";
+/** Monthly pilot prices in minor units, published on the site and saved with applications. */
+export const PLAN_PRICES = Object.freeze({
+  solo: Object.freeze({ INR: 400000, USD: 4900 }),
+  studio: Object.freeze({ INR: 800000, USD: 9900 }),
+  roster: Object.freeze({ INR: 1500000, USD: 17900 }),
+});
+/** The pilot offer, worded once. If the founders choose different terms, change them here. */
+export const PILOT_OFFER = Object.freeze({ short: "First 30 days free" });
 const locales = { INR: "en-IN", USD: "en-US" };
-// Independent sample offer values, not FX conversions or customer results.
-const examples = {
-  INR: { course: 8500, coaching: 18000, cohort: 12000, recorded: 7500 },
-  USD: { course: 249, coaching: 599, cohort: 399, recorded: 229 },
-};
 
 /** @param {unknown} value @returns {"INR"|"USD"|null} */
 export function normalizeCurrency(value) {
@@ -22,28 +23,26 @@ export function currencyForCountry(country) {
   return code === "IN" ? "INR" : "USD";
 }
 
-/** @param {number} amount @param {"INR"|"USD"} currency */
-export function formatMoney(amount, currency) {
+/** "USD $49" keeps dollars unambiguous in sentences; `plain` drops the code for a price display.
+ * @param {number} amount @param {"INR"|"USD"} currency @param {boolean} [plain] */
+export function formatMoney(amount, currency, plain = false) {
   const formatted = new Intl.NumberFormat(locales[currency], { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
-  return currency === "USD" ? "USD " + formatted : formatted;
+  return currency === "USD" && !plain ? "USD " + formatted : formatted;
 }
 
-/** @param {"INR"|"USD"|null} currency */
-export function soloPriceLabel(currency) {
-  return currency ? formatMoney(SOLO_PRICES[currency] / 100, currency) : "₹4,000 / USD $49";
+/** @param {keyof typeof PLAN_PRICES} plan @param {"INR"|"USD"|null} currency */
+export function planPriceLabel(plan, currency) {
+  const prices = PLAN_PRICES[plan];
+  return currency ? formatMoney(prices[currency] / 100, currency) : formatMoney(prices.INR / 100, "INR") + " / " + formatMoney(prices.USD / 100, "USD");
 }
 
-/** @param {keyof typeof examples.INR} kind @param {"INR"|"USD"|null} currency */
-export function exampleValue(kind, currency) {
-  const selected = currency || "INR";
-  return formatMoney(examples[selected][kind], selected);
-}
-
-/** Server-owned offer snapshot. Browser-supplied amounts are never trusted.
+/** Server-owned snapshot of the price list a visitor saw. Browser-supplied amounts are never trusted.
  * @param {unknown} currency */
 export function pricingSnapshot(currency) {
   const selected = normalizeCurrency(currency);
-  return selected ? { plan: "solo", currency: selected, monthlyMinor: SOLO_PRICES[selected], version: SOLO_PRICE_VERSION } : null;
+  if (!selected) return null;
+  const monthlyMinor = Object.fromEntries(Object.entries(PLAN_PRICES).map(([plan, prices]) => [plan, prices[selected]]));
+  return { currency: selected, version: PRICE_VERSION, monthlyMinor };
 }
 
 /** @param {Request} request */
@@ -53,25 +52,12 @@ export function currencySuggestionResponse(request) {
   });
 }
 
-/** @typedef {{currency:"INR"|"USD"|null,source:"unknown"|"location"|"choice"}} CurrencySelection */
-/** @param {CurrencySelection} current @param {CurrencySelection} suggestion */
-export function mergeCurrencySuggestion(current, suggestion) {
-  return current.source === "choice" ? current : suggestion;
-}
-
-/** Stored visitor choices take precedence; failure leaves both prices visible.
- * @param {{readPreference:()=>unknown,fetcher?:typeof fetch,signal?:AbortSignal}} options
- * @returns {Promise<CurrencySelection>} */
-export async function loadCurrencySuggestion({ readPreference, fetcher = fetch, signal }) {
-  try {
-    const saved = normalizeCurrency(readPreference());
-    if (saved) return { currency: saved, source: "choice" };
-  } catch { /* Storage can be unavailable in private browsing. */ }
+/** The visitor's likely currency from the hosting country hint, or null when unknown, blocked or slow.
+ * @param {{fetcher?:typeof fetch,signal?:AbortSignal}} [options] @returns {Promise<"INR"|"USD"|null>} */
+export async function loadCurrencySuggestion({ fetcher = fetch, signal } = {}) {
   try {
     const response = await fetcher("/api/marketing-currency", { cache: "no-store", signal });
     if (!response.ok) throw new Error("Unavailable currency hint");
-    const body = await response.json();
-    const currency = normalizeCurrency(body?.currency);
-    return { currency, source: currency ? "location" : "unknown" };
-  } catch { return { currency: null, source: "unknown" }; }
+    return normalizeCurrency((await response.json())?.currency);
+  } catch { return null; }
 }

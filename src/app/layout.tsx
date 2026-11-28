@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif, Noto_Sans_Devanagari } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { MARKETING_SITE_LIVE } from "@/lib/marketing-config";
 import { marketingGtmId } from "@/lib/marketing-analytics-config.mjs";
-import { MarketingAnalytics } from "@/components/design-preview/marketing-analytics";
-import { MARKETING_SHARE_IMAGE } from "@/lib/marketing-metadata";
+import { MarketingAnalytics } from "@/components/site/marketing-analytics";
 
 // This public container is loaded only on the live marketing site. Tags and
 // conversion destinations are configured in GTM; form fields must never be
@@ -22,44 +21,51 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  preload: true, // Section labels on every page.
 });
 
-// Editorial accent — used italic for the emphasized word in display headlines.
+// Hindi examples only: unicode-range means it downloads when Devanagari is on screen.
+const devanagari = Noto_Sans_Devanagari({
+  variable: "--font-devanagari",
+  subsets: ["devanagari"],
+  display: "swap",
+  preload: false,
+});
+
+// The display serif for every headline.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
   weight: "400",
-  style: ["normal", "italic"],
   display: "swap",
-  preload: false, // Used only by the original design archive.
 });
 
-// Default/fallback metadata — each locale route (/, /global) overrides
+// Default/fallback metadata: each page overrides
 // title, description, openGraph, twitter, and alternates with its own values.
 export const metadata: Metadata = {
-  title: "DealDock — Revenue Recovery for Instagram Creators",
+  title: "DealDock: your Instagram DMs, sorted by money",
   description:
-    "DealDock prioritizes Instagram buyer enquiries by estimated deal value, drafts replies in your voice, and records closed sales. You approve every send.",
+    "DealDock sorts your Instagram DMs by what they're worth, drafts each reply in your voice, and tracks deals until you're paid. Nothing sends until you approve.",
   keywords: [
-    "Instagram DM management",
-    "creator revenue recovery",
-    "coaching and course enquiries",
-    "DM sorting by value",
-    "creator commerce",
+    "Instagram DM inbox for creators",
+    "brand deal inbox",
+    "creator payment reminders",
+    "coaching leads Instagram",
+    "talent manager tools India",
   ],
   robots: {
     index: MARKETING_SITE_LIVE,
     follow: MARKETING_SITE_LIVE,
   },
   metadataBase: new URL(process.env.SITE_URL || "https://dealdock.io"),
-  openGraph: { type: "website", siteName: "DealDock", title: "DealDock | Some DMs mean business", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
-  twitter: { card: "summary_large_image", title: "DealDock | Some DMs mean business", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
+  openGraph: { type: "website", siteName: "DealDock", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send." },
+  twitter: { card: "summary_large_image", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send." },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f3f4ef",
+  themeColor: "#FBF8F2",
 };
 
 export default function RootLayout({
@@ -70,7 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${devanagari.variable}`}
     >
       <head>
         {GOOGLE_TAG_MANAGER_ID ? (
@@ -79,7 +85,7 @@ export default function RootLayout({
           </Script>
         ) : null}
       </head>
-      <body className="bg-[#050505] text-[#fafafa] antialiased">
+      <body>
         {GOOGLE_TAG_MANAGER_ID ? (
           <noscript>
             <iframe

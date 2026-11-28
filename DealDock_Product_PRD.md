@@ -6,6 +6,10 @@
 **Status:** Active, pre-launch
 **Audience:** Founding team, design, eng, ops, GTM
 
+**Marketing decision — 2026-10-13:** The first public pilot targets creators selling their own coaching, courses and cohorts. Brand-deal-only creators can register separate future-pilot interest. Product brand classification remains in scope. The maintained product specification is [the product repository PRD](../dealdock-app/DealDock_Product_PRD.md); this copy is the older marketing reference.
+
+**Permanent invariant:** DealDock never auto-sends messages. Every send requires human approval, including follow-ups and any future message class.
+
 ---
 
 ## 1. Product overview
@@ -53,7 +57,7 @@ DealDock is the tool that does all five.
 
 ### 3.3 Non-goals (explicitly out of scope, even if requested)
 
-- **Fully autonomous reply mode.** No "auto-pilot" that sends messages without creator approval. Ever, in pilot. Possibly later, only for low-stakes message classes, only opt-in.
+- **Fully autonomous reply mode.** DealDock never auto-sends messages. Human approval is required for every send in the pilot and beyond; there is no opt-in exception.
 - **Customer-support ticketing features** (SLAs, ticket queues, agent assignments, CSAT surveys). Not the wedge.
 - **Generic creator CRM.** No deal pipelines, contact records, or sales-stage tracking beyond what the Revenue Ledger needs.
 - **Content scheduling, post analytics, or audience analytics.** Not in scope. Plenty of tools do this already.
@@ -266,6 +270,8 @@ Listed by feature area. Each item is something the product must do for the pilot
 
 ## 8. Pricing & packaging
 
+**Public marketing decision approved 2026-10-14:** the first own-offer cohort advertises one Solo card at fixed ₹4,000/month in INR or USD $49/month for selected international validation pilots. International fit, compatibility, language, timing and billing availability are confirmed before acceptance. Studio and Roster below are broader product packaging proposals; their readiness was not verified by this website milestone and they are not public purchasable plans. Currency selection is a display preference, not product ledger currency or a subscription agreement. First-week charge treatment and first-invoice coverage are confirmed in writing before onboarding; a delayed invoice does not establish a free trial.
+
 | Tier | ₹/month (pilot) | Connected IG accounts | User seats | Notable extras |
 |---|---|---|---|---|
 | Solo | ₹4,000 | 1 | 1 (creator) | Full Revenue Inbox, voice drafting, Revenue Ledger |
@@ -282,7 +288,7 @@ Listed by feature area. Each item is something the product must do for the pilot
 
 ### V0 — Pilot (current scope of this PRD)
 
-Capped cohort. Manual onboarding by founding team. Instagram only. All three tiers available but Roster offered selectively. Web-only interface (responsive). No public signup.
+Capped cohort. Manual onboarding by founding team. Instagram only. The public marketing offer is Solo; broader Studio/Roster participation requires separate product-readiness verification. Web-only interface (responsive). No public signup.
 
 ### V1 — Open beta (post-pilot)
 
@@ -298,7 +304,7 @@ Stronger multi-account UX, agency-billing options, white-label considerations, c
 
 ### Beyond
 
-Other platforms (LinkedIn DMs for B2B coaches, email integration, etc.) evaluated based on demand. Autonomous-reply mode considered only for clearly low-stakes message classes, opt-in only.
+Other platforms (LinkedIn DMs for B2B coaches, email integration, etc.) evaluated based on demand. DealDock never auto-sends messages. Every send requires human approval, including future features; there is no opt-in exception.
 
 ---
 
@@ -319,7 +325,7 @@ Other platforms (LinkedIn DMs for B2B coaches, email integration, etc.) evaluate
 - Is there a "snooze until reply" state for threads waiting on the brand's response, distinct from open and closed?
 - For the Roster tier, do creators get visibility into what their manager is sending, or is it purely a manager-side tool?
 - How aggressive should onboarding "ignore list" defaults be? (e.g. auto-ignore verified accounts under a certain follower count?)
-- Do we ever support a "one-step-removed" autonomous mode for clearly unambiguous fan replies (a single emoji response to "love your work 🔥")?
+- How should low-stakes fan reply drafts be presented while preserving human approval before every send?
 
 ---
 
