@@ -20,8 +20,10 @@ export function articleToc(mdx: string) {
     if (line.trimStart().startsWith("```")) fenced = !fenced;
     const match = !fenced && /^##\s+(.+?)\s*#*\s*$/.exec(line);
     if (match) {
-      const label = match[1].replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/[*_`]/g, "");
-      items.push({ id: headingId(label), label });
+      // plain text as rendered: links to their text, emphasis marks and markdown escapes ("1\.") removed
+      const text = match[1].replace(/\[([^\]]+)\]\([^)]*\)/g, "$1").replace(/\\(.)/g, "$1").replace(/[*_`]/g, "");
+      // the contents list numbers itself, so a heading's own "1." is dropped from its label (not from its id)
+      items.push({ id: headingId(text), label: text.replace(/^\d+\.\s+/, "") });
     }
   }
   return items;

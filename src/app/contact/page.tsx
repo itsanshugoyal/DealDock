@@ -16,7 +16,7 @@ export const metadata: Metadata = marketingPageMetadata("/contact", "Contact | D
 const MAILTO = `mailto:${LEGAL.email}?subject=DealDock%20question`;
 
 const SECTIONS: DocSection[] = [
-  { id: "company", title: "Company details", body: <p>{LEGAL.entity}<br />{LEGAL.address}<br />{LEGAL.registration}<br />GSTIN: {LEGAL.gstin}</p> },
+  { id: "address", title: "Business address", body: <p>DealDock<br />{LEGAL.address}</p> },
   { id: "grievance", title: "Grievance officer", body: <p>For a complaint about the service or how we handle your personal data, contact our grievance officer, {LEGAL.grievanceOfficer}, at <a href={`mailto:${LEGAL.grievanceEmail}?subject=Grievance`}>{LEGAL.grievanceEmail}</a>. We acknowledge grievances within 72 hours and aim to resolve them within 30 days.</p> },
 ];
 
@@ -33,7 +33,7 @@ export default function ContactPage() {
             <a href={MAILTO}><EnvelopeSimple size={16} weight="bold" aria-hidden="true" />Write to us</a>
             <CopyEmail email={LEGAL.email} />
           </div>
-          <p>Phone: {LEGAL.phone}. Support hours: {LEGAL.supportHours}. We reply to email within 2 business days.</p>
+          <p>Support hours: {LEGAL.supportHours}. We reply to email within 2 business days.</p>
         </aside>
       }
       band={

@@ -30,7 +30,7 @@ const SECTIONS: DocSection[] = [
       <li>Your writing-style rules, voice recordings and the voice created from them (also deleted from our voice provider).</li>
       <li>Deals, revenue records, invoices, reminders, team seats and settings.</li>
     </ul>
-    <p>Razorpay and Paddle keep their own payment records as tax and payment laws require. Backups that may contain your data expire within {"[backup period]"}.</p>
+    <p>Razorpay and Paddle keep their own payment records as tax and payment laws require. Copies in our database backups are deleted when those backups expire.</p>
   </> },
   { id: "questions", title: "Questions", body: <>
     <p>See our <Link href="/privacy">privacy policy</Link> or email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.</p>

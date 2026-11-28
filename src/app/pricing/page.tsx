@@ -6,7 +6,7 @@ import styles from "@/components/site/site.module.css";
 import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import { planPriceLabel } from "@/lib/marketing-pricing.mjs";
 
-export const metadata: Metadata = marketingPageMetadata("/pricing", "Pricing | DealDock", "DealDock plans for creators, assistants and agencies: Solo ₹4,000 / $49, Studio ₹8,000 / $99, Roster ₹15,000 / $179 a month.");
+export const metadata: Metadata = marketingPageMetadata("/pricing", "Pricing for creators, assistants and agencies | DealDock", "DealDock plans for creators, assistants and agencies: Solo ₹4,000 / $49, Studio ₹8,000 / $99, Roster ₹15,000 / $179 a month.");
 
 // Prices come from the one price list (lib/marketing-pricing.mjs), in both currencies: India pays in rupees, everyone else in dollars.
 const PLANS = [

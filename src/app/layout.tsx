@@ -5,7 +5,6 @@ import "./globals.css";
 import { MARKETING_SITE_LIVE } from "@/lib/marketing-config";
 import { marketingGtmId } from "@/lib/marketing-analytics-config.mjs";
 import { MarketingAnalytics } from "@/components/site/marketing-analytics";
-import { MARKETING_SHARE_IMAGE } from "@/lib/marketing-metadata";
 
 // This public container is loaded only on the live marketing site. Tags and
 // conversion destinations are configured in GTM; form fields must never be
@@ -59,8 +58,8 @@ export const metadata: Metadata = {
     follow: MARKETING_SITE_LIVE,
   },
   metadataBase: new URL(process.env.SITE_URL || "https://dealdock.io"),
-  openGraph: { type: "website", siteName: "DealDock", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
-  twitter: { card: "summary_large_image", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
+  openGraph: { type: "website", siteName: "DealDock", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send." },
+  twitter: { card: "summary_large_image", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send." },
 };
 
 export const viewport: Viewport = {

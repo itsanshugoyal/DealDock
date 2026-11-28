@@ -4,7 +4,6 @@ import { LANDING_GLOBAL } from "@/components/landing/content";
 import { LandingPage as Landing } from "@/components/landing/landing-page";
 import { MarketingWebsiteStructuredData } from "@/components/marketing/structured-data";
 import { MARKETING_DESCRIPTION, MARKETING_SITE_LIVE } from "@/lib/marketing-config";
-import { MARKETING_SHARE_IMAGE } from "@/lib/marketing-metadata";
 
 const title = "DealDock: your Instagram DMs, sorted by money";
 export const metadata: Metadata = {
@@ -12,8 +11,8 @@ export const metadata: Metadata = {
   description: MARKETING_DESCRIPTION,
   alternates: { canonical: "/", languages: { en: "/", "en-IN": "/in", "x-default": "/" } },
   robots: { index: MARKETING_SITE_LIVE, follow: MARKETING_SITE_LIVE },
-  openGraph: { title: "Your DMs, sorted by money. Meet DealDock.", description: MARKETING_DESCRIPTION, type: "website", url: "/", siteName: "DealDock", images: [MARKETING_SHARE_IMAGE] },
-  twitter: { card: "summary_large_image", title, description: MARKETING_DESCRIPTION, images: [MARKETING_SHARE_IMAGE] },
+  openGraph: { title: "Your DMs, sorted by money. Meet DealDock.", description: MARKETING_DESCRIPTION, type: "website", url: "/", siteName: "DealDock" },
+  twitter: { card: "summary_large_image", title, description: MARKETING_DESCRIPTION },
 };
 export const viewport: Viewport = { themeColor: "#FBF8F2" };
 export default function LandingPage() {

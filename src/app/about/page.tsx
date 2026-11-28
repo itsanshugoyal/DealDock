@@ -10,7 +10,7 @@ import styles from "@/components/site/site.module.css";
 import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import { planPriceLabel } from "@/lib/marketing-pricing.mjs";
 
-export const metadata: Metadata = marketingPageMetadata("/about", "About DealDock", "DealDock sorts creators’ Instagram DMs and brand emails by what they’re worth, drafts replies in their voice, and tracks deals until they’re paid.");
+export const metadata: Metadata = marketingPageMetadata("/about", "About DealDock: the Instagram DM inbox for creators", "DealDock sorts creators’ Instagram DMs and brand emails by what they’re worth, drafts replies in their voice, and tracks deals until they’re paid.");
 
 // The product rules, said once; each one is backed by the security page, the terms or the FAQ.
 const RULES = [
@@ -43,7 +43,13 @@ const SECTIONS: DocSection[] = [
     </ul>
   ) },
   { id: "pilot", title: "How the pilot works", body: <p>The first cohort is deliberately small. We set up every account with you, a few creators at a time, and shape the product around candid feedback about where follow-through breaks down. Instagram DMs and Gmail work today; TikTok is not supported yet. See <Link href="/pricing">pricing</Link> and the <Link href="/pilot-terms">pilot terms</Link>.</p> },
-  { id: "team", title: "Who is building it", body: <p>Anshu is building DealDock with design partners. If brand deals or paying clients reach you through DMs or email, <Link href="/#apply">apply for the pilot</Link> or <Link href="/contact">ask a question first</Link>.</p> },
+  { id: "team", title: "Who is building it", body: <>
+    <p>Anshu and Nahush are building DealDock. If brand deals or paying clients reach you through DMs or email, <Link href="/#apply">apply for the pilot</Link> or <Link href="/contact">ask us a question first</Link>.</p>
+    <div className={styles.people}>
+      <div className={styles.person}><span aria-hidden="true">A</span><div><b>Anshu</b><small>Co-founder</small></div></div>
+      <div className={styles.person}><span aria-hidden="true">N</span><div><b>Nahush</b><small>Co-founder</small></div></div>
+    </div>
+  </> },
   { id: "name", title: "About the name", body: <p>DealDock at dealdock.io is an Instagram DM inbox for creators. It isn’t connected to other businesses that use the DealDock name, such as software for real-estate agents or venture-capital firms.</p> },
 ];
 

@@ -65,13 +65,13 @@ const SECTIONS: DocSection[] = [
     <p>You can stop using DealDock and delete your workspace at any time. We may suspend or close an account that seriously or repeatedly breaks these terms, or where a platform or the law requires it. When an account closes, your data is handled as described in the <Link href="/privacy">privacy policy</Link> and on the <Link href="/data-deletion">data deletion page</Link>.</p>
   </> },
   { id: "governing-law-and-disputes", title: "Governing law and disputes", body: <>
-    <p>These terms are governed by the laws of India. Courts in {LEGAL.governingCity}, India have jurisdiction, though you keep any right to bring a claim in the courts of the place you live where the law gives you that right. Please contact us first; most problems can be solved by email.</p>
+    <p>These terms are governed by the laws of India. The courts of India have jurisdiction, though you keep any right to bring a claim in the courts of the place you live where the law gives you that right. Please contact us first; most problems can be solved by email.</p>
   </> },
   { id: "changes-to-these-terms", title: "Changes to these terms", body: <>
     <p>We will post updated terms on this page and change the date above. For material changes we will also email account owners at least 14 days before they take effect. If you keep using DealDock after that, the new terms apply.</p>
   </> },
   { id: "contact", title: "Contact", body: <>
-    <p>{LEGAL.entity}, {LEGAL.address}. Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>. See the <Link href="/contact">contact page</Link> for our grievance officer and other ways to reach us.</p>
+    <p>DealDock, {LEGAL.address}. Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>. See the <Link href="/contact">contact page</Link> for our grievance officer and other ways to reach us.</p>
   </> },
 ];
 
@@ -80,7 +80,7 @@ export default function TermsPage() {
     <MarketingDocument
       title="Terms of Service"
       meta={[`Updated ${LEGAL.updated}`]}
-      lede={<>These terms are the agreement between you and {LEGAL.entity} (“DealDock”, “we”, “us”), {LEGAL.address}, for using DealDock at dealdock.io and {LEGAL.appUrl.replace("https://", "")}. By creating an account or using the service, you agree to them. If you use DealDock for a business or for creators you manage, you agree on their behalf and confirm you are allowed to.</>}
+      lede={<>These terms are the agreement between you and DealDock (“we”, “us”) for using DealDock at dealdock.io and {LEGAL.appUrl.replace("https://", "")}. By creating an account or using the service, you agree to them. If you use DealDock for a business or for creators you manage, you agree on their behalf and confirm you are allowed to.</>}
       aside={<DocSummary items={["You approve, and are responsible for, every message you send.","Billed monthly. No setup fee, no annual commitment, cancel anytime.","You own your content; we process it only to run DealDock.","Governed by the laws of India."]} />}
       sections={SECTIONS}
     ></MarketingDocument>

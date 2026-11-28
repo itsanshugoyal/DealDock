@@ -3,7 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 
 export type BlogPost = {
-  slug: string; title: string; description: string;
+  slug: string; title: string; seoTitle?: string; description: string;
   topic: "Brand deals" | "Coaching and courses" | "Instagram DMs";
   publishedAt: string; updatedAt: string; status: "draft" | "published";
   thumbnail?: string; image?: { url: string; alt: string };
@@ -22,6 +22,7 @@ export function readBlogContent(slug: string) {
   if (!["Brand deals", "Coaching and courses", "Instagram DMs"].includes(data.topic)) fail("topic");
   if (!["draft", "published"].includes(data.status)) fail("status");
   if (!validDate(data.publishedAt) || !validDate(data.updatedAt) || data.updatedAt < data.publishedAt) fail("dates");
+  if (data.seoTitle !== undefined && (typeof data.seoTitle !== "string" || !data.seoTitle.trim())) fail("seoTitle");
   if (!content.trim()) fail("article body");
   const checkAsset = (url: unknown) => {
     if (typeof url !== "string" || !url.startsWith("/") || url.startsWith("//") || url.includes("..")) fail("image path");
@@ -31,7 +32,7 @@ export function readBlogContent(slug: string) {
   if (data.image) { checkAsset(data.image.url); if (typeof data.image.alt !== "string" || !data.image.alt.trim()) fail("image alt"); }
   const faqs = data.faqs ?? [];
   if (!Array.isArray(faqs) || faqs.some(q => !q || typeof q.question !== "string" || typeof q.answer !== "string" || !q.question.trim() || !q.answer.trim())) fail("faqs");
-  const post: BlogPost = { slug, title: data.title, description: data.description, topic: data.topic, publishedAt: data.publishedAt, updatedAt: data.updatedAt, status: data.status, ...(data.thumbnail ? { thumbnail: data.thumbnail } : {}), ...(data.image ? { image: data.image } : {}), faqs };
+  const post: BlogPost = { slug, title: data.title, description: data.description, topic: data.topic, publishedAt: data.publishedAt, updatedAt: data.updatedAt, status: data.status, ...(data.seoTitle ? { seoTitle: data.seoTitle } : {}), ...(data.thumbnail ? { thumbnail: data.thumbnail } : {}), ...(data.image ? { image: data.image } : {}), faqs };
   return { post, content };
 }
 export function getAllBlogPosts(): BlogPost[] {

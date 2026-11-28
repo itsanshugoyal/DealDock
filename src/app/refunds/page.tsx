@@ -4,7 +4,7 @@ import { marketingPageMetadata } from "@/lib/marketing-metadata";
 import { DocSummary, MarketingDocument, type DocSection } from "@/components/site/marketing-document";
 import { LEGAL } from "@/lib/legal";
 
-export const metadata: Metadata = marketingPageMetadata("/refunds", "Refund and cancellation policy | DealDock", "How to cancel a DealDock subscription and when you can get a refund.");
+export const metadata: Metadata = marketingPageMetadata("/refunds", "Refund and cancellation policy | DealDock", "How to cancel a DealDock subscription anytime, how long you keep access after cancelling, and when you can get a refund, including for billing errors.");
 
 const SECTIONS: DocSection[] = [
   { id: "cancel-anytime", title: "Cancel anytime", body: <>
@@ -44,7 +44,7 @@ export default function RefundsPage() {
     <MarketingDocument
       title="Refund and cancellation policy"
       meta={[`Updated ${LEGAL.updated}`]}
-      lede={<>This policy applies to DealDock subscriptions sold by {LEGAL.entity}. It sits alongside our <Link href="/terms">Terms of Service</Link>.</>}
+      lede={<>This policy applies to DealDock subscriptions. It sits alongside our <Link href="/terms">Terms of Service</Link>.</>}
       aside={<DocSummary items={["Cancel anytime from Settings. No fees, no lock-in.","You keep access until the end of the period you paid for.","Billing errors are refunded in full.","Your local consumer rights always apply."]} />}
       sections={SECTIONS}
     ></MarketingDocument>

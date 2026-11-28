@@ -69,7 +69,7 @@ const SECTIONS: DocSection[] = [
       <li>While your account is active, we keep your messages and records so DealDock can work.</li>
       <li>When you delete your account, everything in your workspace is permanently deleted 7 days later (you can cancel during those 7 days).</li>
       <li>When you cancel a subscription, your workspace becomes read-only at the end of the paid period and is permanently deleted 30 days after that.</li>
-      <li>Short-lived voice clips are deleted within 24 hours. Backups expire within {"[backup period]"}.</li>
+      <li>Short-lived voice clips are deleted within 24 hours. Copies in our database backups are deleted when those backups expire.</li>
       <li>Razorpay and Paddle keep their own payment records for as long as tax and payment laws require.</li>
     </ul>
   </> },
@@ -82,7 +82,7 @@ const SECTIONS: DocSection[] = [
       <li><strong>withdraw consent</strong> by disconnecting Instagram or Gmail, turning off voice learning or voice notes, or deleting your account;</li>
       <li><strong>object or restrict</strong> processing, nominate someone to act for you, and complain to us or to your data protection authority (in India, the Data Protection Board of India).</li>
     </ul>
-    <p>Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a> for any request. We reply within 30 days.</p>
+    <p>DealDock, {LEGAL.address}. Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a> for any request. We reply within 30 days.</p>
   </> },
   { id: "disconnecting-instagram-or-gmail", title: "Disconnecting Instagram or Gmail", body: <>
     <p>You can disconnect Instagram or Gmail at any time in Settings. DealDock immediately deletes its access tokens and stops syncing that account. Messages already synced stay in your workspace until you delete them or your account. You can also remove DealDock’s access from Instagram’s or Google’s own settings.</p>
@@ -103,7 +103,7 @@ const SECTIONS: DocSection[] = [
     <p>We will post changes here and update the date above. If a change materially affects how we use your data, we will email account owners before it takes effect.</p>
   </> },
   { id: "contact-and-grievance-officer", title: "Contact and grievance officer", body: <>
-    <p>{LEGAL.entity}, {LEGAL.address}. Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.</p>
+    <p>Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.</p>
     <p>Grievance officer: {LEGAL.grievanceOfficer}, <a href={`mailto:${LEGAL.grievanceEmail}?subject=Grievance`}>{LEGAL.grievanceEmail}</a>. We acknowledge grievances within 72 hours and aim to resolve them within 30 days.</p>
   </> },
 ];
@@ -113,7 +113,7 @@ export default function PrivacyPage() {
     <MarketingDocument
       title="Privacy Policy"
       meta={[`Updated ${LEGAL.updated}`]}
-      lede={<>DealDock is a deal inbox and CRM for creators, with replies you approve. To do that, it has to read the messages you connect. This policy explains what we collect, why, who helps us process it, where it is kept, and how you control it. It is provided by {LEGAL.entity}, {LEGAL.address} (“DealDock”, “we”), which decides how your data is used.</>}
+      lede={<>DealDock is a deal inbox and CRM for creators, with replies you approve. To do that, it has to read the messages you connect. This policy explains what we collect, why, who helps us process it, where it is kept, and how you control it. DealDock (“we”) decides how your data is used.</>}
       aside={<DocSummary items={["We read only the accounts you connect, to run DealDock for you.","Nothing is sent until a person approves it.","Never sold, never used for ads or to train AI models.","Export or delete everything, anytime."]} />}
       sections={SECTIONS}
     >

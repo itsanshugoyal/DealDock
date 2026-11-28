@@ -18,7 +18,7 @@ export function blogMetadata(slug: string): Metadata {
   const url = blogUrl(slug);
   const images = [shareImage(post)];
   return {
-    title: `${post.title} | DealDock`, description: post.description, alternates: { canonical: url },
+    title: `${post.seoTitle ?? post.title} | DealDock`, description: post.description, alternates: { canonical: url },
     openGraph: { type: "article", url, title: post.title, description: post.description, siteName: "DealDock", ...(post.status === "published" ? { publishedTime: post.publishedAt } : {}), modifiedTime: post.updatedAt, images },
     twitter: { card: "summary_large_image", title: post.title, description: post.description, images },
     robots: { index: post.status === "published", follow: post.status === "published" },
