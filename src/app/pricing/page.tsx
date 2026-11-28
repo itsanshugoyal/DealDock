@@ -28,7 +28,7 @@ const SECTIONS: DocSection[] = [
     </ul>
   ) },
   { id: "billing", title: "Billing", body: (
-    <p>Your first invoice is raised after one full week of active use. Customers in India pay in INR through Razorpay; customers elsewhere pay in USD through Paddle, our merchant of record. Taxes are added where applicable. See the <Link href="/refunds">refund and cancellation policy</Link> and the <Link href="/terms">terms</Link>.</p>
+    <p>Your first 30 days are free, counted from the day you connect Instagram; your first invoice is raised after that. Customers in India pay in INR through Razorpay; customers elsewhere pay in USD through Paddle, our merchant of record. Taxes are added where applicable. See the <Link href="/refunds">refund and cancellation policy</Link> and the <Link href="/terms">terms</Link>.</p>
   ) },
 ];
 

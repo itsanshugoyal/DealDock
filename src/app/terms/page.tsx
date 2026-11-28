@@ -40,7 +40,7 @@ const SECTIONS: DocSection[] = [
   { id: "fees-billing-and-cancellation", title: "Fees, billing and cancellation", body: <>
     <ul>
       <li>Plans are billed monthly at the prices on the <Link href="/pricing">pricing page</Link>, plus applicable taxes. There is no setup fee and no annual commitment.</li>
-      <li>Your first invoice is raised after one full week of active use. After that you are billed each month in advance until you cancel.</li>
+      <li>Your first 30 days are free, counted from the day you connect Instagram, and your first invoice is raised after that. After that you are billed each month in advance until you cancel.</li>
       <li>Customers in India pay in INR through Razorpay. Customers elsewhere pay in USD through Paddle, which acts as the merchant of record for those orders and handles their sales tax or VAT; Paddle’s buyer terms also apply to those purchases.</li>
       <li>You can cancel anytime from Settings. Your plan stays active until the end of the period you have paid for, then ends. Your Revenue ledger stays readable (read-only) for 30 days after that.</li>
       <li>Refunds are covered by our <Link href="/refunds">refund and cancellation policy</Link>.</li>

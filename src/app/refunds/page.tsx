@@ -15,8 +15,8 @@ const SECTIONS: DocSection[] = [
       <li>After your plan ends, your Revenue ledger stays readable for 30 days so you can export it.</li>
     </ul>
   </> },
-  { id: "your-first-week-costs-nothing", title: "Your first week costs nothing", body: <>
-    <p>Your first invoice is only raised after one full week of active use. If DealDock isn’t right for you, cancel within that first week and you will not be charged.</p>
+  { id: "your-first-30-days-are-free", title: "Your first 30 days are free", body: <>
+    <p>Your first 30 days are free, counted from the day you connect Instagram, and your first invoice is only raised after that. If DealDock isn’t right for you, cancel within those 30 days and you will not be charged.</p>
   </> },
   { id: "when-we-refund", title: "When we refund", body: <>
     <ul>
