@@ -24,7 +24,7 @@ export default function BlogIndex() {
       <figure className={styles.heroStage} aria-label="Illustrative example: a brand message, DealDock's estimate and a drafted reply">
         <div className={styles.stageMsg}>
           <span className={styles.stageAvatar} aria-hidden="true">GS</span>
-          <div><b>Glowkind Skincare</b><small>Instagram · Message request</small><p>Hi! What’s your rate for 1 Reel + 3 Stories?</p></div>
+          <div><b>Orilune Skincare</b><small>Instagram · Message request</small><p>Hi! What’s your rate for 1 Reel + 3 Stories?</p></div>
         </div>
         <div className={styles.stageDocky}>
           <BrandMark className={styles.stageMark} />

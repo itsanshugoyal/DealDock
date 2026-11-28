@@ -2,13 +2,18 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr/ArrowRight";
-import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { Sparkle } from "@phosphor-icons/react/dist/ssr/Sparkle";
 import { Docky, type DockyMood } from "@/components/docky/docky";
 import { openApply } from "./apply-sheet";
 import { GmailLogo as Gmail, IgLogo as Ig } from "./app-logos";
 import type { LandingContent } from "./content";
+import { GreenTickIcon } from "./price-promise-icons";
+import { StatusBadge } from "./status-badge";
+import { TwoTonePriceCard, type PriceCardTone } from "./two-tone-price-card";
 import s from "./landing.module.css";
+
+// Each example's price card colour: brand deals blue, coaching teal, courses purple.
+const PRICE_TONE: Record<string, PriceCardTone> = { brand: "blue", coaching: "teal", course: "purple" };
 
 type Phase = "in" | "think" | "done" | "out";
 type Field = "idle" | "focus" | "typing" | "valid" | "error";
@@ -115,7 +120,7 @@ export function Hero({ hero }: { hero: LandingContent["hero"] }) {
           <p id="hero-handle-note" className={s.heroFormNote} role={field === "error" ? "alert" : undefined}>{field === "error" ? "Add your Instagram username, like maya.ortiz." : null}</p>
 
           <ul className={s.heroNote}>
-            {hero.note.split(" · ").map(n => <li key={n}><span aria-hidden="true"><Check size={11} weight="bold" /></span>{n}</li>)}
+            {hero.note.split(" · ").map(n => <li key={n}><GreenTickIcon size={18} aria-hidden="true" />{n}</li>)}
           </ul>
         </div>
 
@@ -148,8 +153,8 @@ export function Hero({ hero }: { hero: LandingContent["hero"] }) {
               <div className={s.msgTag}>
                 <div>
                   <div className={s.msgTagRow}>
-                    <span className={s.msgRead}><em className={s.msgStatus}><i />{ex.status}</em>{ex.intent}</span>
-                    <span className={s.msgValue}><b>{ex.value}</b><small>{ex.valueLabel}</small></span>
+                    <span className={s.msgRead}><StatusBadge tone={ex.label === "brand" ? "blue" : "teal"}>{ex.status}</StatusBadge>{ex.intent}</span>
+                    <TwoTonePriceCard label={ex.valueLabel} value={ex.value} tone={PRICE_TONE[ex.label] ?? "blue"} />
                   </div>
                   <div className={s.msgDraft}>
                     <p className={s.msgDraftHead}><Sparkle size={14} weight="fill" />Docky drafted a reply<small>Not sent</small></p>

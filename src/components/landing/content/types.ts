@@ -45,6 +45,8 @@ export type Story = {
   draft: string; rate: string; invoice: string;
   /** the payment reminder she sends, and the brand's reply once paid */
   reminder: string; paidReply: string;
+  /** How many past replies the draft learned from, shown under the draft. Defaults to 14. */
+  replyCount?: number;
   /** dates along the deal, short form ("14 Jan") */
   dates: { enquiry: string; agreed: string; invoiced: string; seen: string; reminded: string; paid: string };
   /** the month's paid total, counting up from the total before this payment; `received` notes what actually landed */

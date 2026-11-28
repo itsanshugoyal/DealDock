@@ -1,0 +1,49 @@
+/* Two-tone price card: a 20px tinted label band over the price. Static; no hover, no pointer. */
+.card {
+  --top: #E3EAF9; --bottom: #FCFDFF; --edge: #D2DDF5; --label: #5974B3; --price: #3456AC; --shadow: rgba(84, 114, 181, 0.16); --min: 142px;
+  box-sizing: border-box;
+  display: inline-grid;
+  grid-template-rows: 20px 1fr;
+  flex: none;
+  width: fit-content;
+  min-width: var(--min);
+  height: 62px;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: var(--bottom);
+  box-shadow: 0 3px 6px var(--shadow);
+  font-family: inherit;
+  cursor: default;
+}
+.card[data-tone="purple"] { --top: #E9E1F3; --bottom: #FFFCFF; --edge: #DCD1EC; --label: #74629F; --price: #59448D; --shadow: rgba(117, 99, 159, 0.16); --min: 99px; }
+.card[data-tone="teal"] { --top: #DCEFEB; --bottom: #FCFFFE; --edge: #C5DFD9; --label: #43847C; --price: #08766D; --shadow: rgba(69, 143, 132, 0.16); --min: 109px; }
+
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background: var(--top);
+  color: var(--label);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  color: var(--price);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

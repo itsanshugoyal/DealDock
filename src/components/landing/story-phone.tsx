@@ -5,12 +5,16 @@ import { Bell } from "@phosphor-icons/react/dist/ssr/Bell";
 import { BellRinging } from "@phosphor-icons/react/dist/ssr/BellRinging";
 import { Receipt } from "@phosphor-icons/react/dist/ssr/Receipt";
 import { HandPointing } from "@phosphor-icons/react/dist/ssr/HandPointing";
-import { Question } from "@phosphor-icons/react/dist/ssr/Question";
+import { Inter } from "next/font/google";
 import { Docky, type DockyMood } from "@/components/docky/docky";
 import type { Story } from "./content";
+import { QuestionIcon } from "./price-promise-icons";
 import { PHONE_SYMBOLS, phoneScreens } from "./phone-screens";
 import ps from "./phone-screens.module.css";
 import s from "./landing.module.css";
+
+// Inside the phone: Apple devices show their own SF Pro; everyone else gets Inter, its closest open match.
+const phoneFont = Inter({ variable: "--font-phone", subsets: ["latin"], display: "swap" });
 
 // One brand DM, five steps. Each step: when, a short heading, one line of copy, and one callout beside the phone.
 const STEPS = [
@@ -19,7 +23,7 @@ const STEPS = [
     icon: Bell, co: ["One alert, with a price", "Only for messages that could pay."], y: "30%" },
   { when: "Wednesday, 7:02 AM", title: "Read before you wake up.",
     sub: "Every enquiry is checked for deliverables, usage rights and missing details. You see what the brand asked for, what still needs clarification, and when to reply.",
-    icon: Question, co: ["What they left out", "So you know what to ask before quoting."], y: "46%" },
+    icon: QuestionIcon, co: ["What they left out", "So you know what to ask before quoting."], y: "46%" },
   { when: "Wednesday, 7:03 AM", title: "Your reply, already written.",
     sub: "Docky learns from your previous replies to draft messages that sound like you. Edit, adjust the tone, and approve before anything gets sent.",
     icon: HandPointing, co: ["Nothing sends on its own", "Review your reply, then slide to send."], y: "79%" },
@@ -72,7 +76,7 @@ function Phone({ screens, active, z, only }: { screens: string[]; active: number
     return countUp([...pane.querySelectorAll<HTMLElement>("[data-count]")]);
   }, [active]);
   return (
-    <div ref={root} className={`${s.pd} ${ps.ps}`} style={z ? ({ "--pz": z } as CSSProperties) : undefined} aria-hidden="true">
+    <div ref={root} className={`${s.pd} ${ps.ps} ${phoneFont.variable}`} style={z ? ({ "--pz": z } as CSSProperties) : undefined} aria-hidden="true">
       {screens.map((html, i) => (only === undefined || i === only) &&
         <div key={i} className={s.pdPane} data-on={i === active || undefined} dangerouslySetInnerHTML={{ __html: html }} />)}
     </div>
@@ -83,7 +87,9 @@ function CalloutCard({ step }: { step: (typeof STEPS)[number] }) {
   const Icon = step.icon;
   return (
     <div className={s.co} style={{ "--y": step.y } as CSSProperties}>
-      <span className={s.coIcon}><Icon size={18} weight="bold" /></span>
+      {Icon === QuestionIcon
+        ? <span className={s.coIcon} data-bare=""><QuestionIcon size={24} aria-hidden="true" /></span>
+        : <span className={s.coIcon}><Icon size={18} weight="bold" /></span>}
       <span><b>{step.co[0]}</b><small>{step.co[1]}</small></span>
     </div>
   );

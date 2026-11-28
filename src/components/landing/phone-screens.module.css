@@ -1,10 +1,12 @@
 /* Phone screens for the story section. Markup is static HTML in phone-screens.ts; every rule is scoped under .ps.
    The app screens follow Lindy's phones: white, a top bar with a status chip, message rows, hairline cards. */
-.ps :global(.screen) { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 42px; background: #fff; color: #18212B; font-family: var(--font-geist-sans), system-ui, sans-serif; font-size: 12px; line-height: 1.42; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+.ps :global(.screen) { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 42px; background: #fff; color: #18212B; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-phone), "Helvetica Neue", system-ui, sans-serif; font-size: 12px; line-height: 1.42; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
 .ps :global(.screen *) { box-sizing: border-box; margin: 0; padding: 0; }
 .ps :global(.screen p) { color: inherit; }
 .ps :global(.screen svg) { display: block; flex: none; }
 .ps :global(.island) { position: absolute; z-index: 9; top: 10px; left: 50%; width: 90px; height: 26px; border-radius: 20px; background: #000; transform: translateX(-50%); }
+/* the front camera inside the island: a dark lens with a blue glint, off to the right like on the device */
+.ps :global(.island::after) { content: ""; position: absolute; top: 50%; right: 9px; width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #3B4F86 0 1.2px, transparent 1.8px), radial-gradient(circle at 50% 50%, #0C1230 0 2.6px, #070A16 3px, #121212 4.5px); box-shadow: 0 0 0 0.6px rgba(255, 255, 255, 0.06); transform: translateY(-50%); }
 .ps :global(.home) { position: absolute; z-index: 9; bottom: 7px; left: 50%; width: 104px; height: 4px; border-radius: 4px; background: #18212B; transform: translateX(-50%); }
 .ps :global(.sb) { position: relative; z-index: 8; display: flex; justify-content: space-between; align-items: center; height: 46px; padding: 4px 24px 0 30px; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
 .ps :global(.sb svg) { height: 11px; }
@@ -13,20 +15,20 @@
 /* 1 · lock screen */
 .ps :global(.lock) { background: #12151F; color: #fff; }
 /* a smooth night wallpaper: indigo sky warming to plum and the brand orange low down, like iOS's gradient walls */
-.ps :global(.wall) { position: absolute; inset: 0; background: radial-gradient(110% 55% at 100% 104%, rgba(255, 122, 26, 0.62), transparent 62%), radial-gradient(95% 55% at 0% 88%, rgba(184, 64, 112, 0.5), transparent 66%), radial-gradient(120% 60% at 50% -8%, rgba(74, 86, 150, 0.55), transparent 70%), linear-gradient(180deg, #151A2E 0%, #1B1730 52%, #2A1527 100%); }
+.ps :global(.wall) { position: absolute; inset: 0; background: linear-gradient(118deg, transparent 38%, rgba(255, 255, 255, 0.07) 39.5%, transparent 46%), linear-gradient(128deg, transparent 58%, rgba(255, 190, 140, 0.1) 60%, transparent 70%), radial-gradient(95% 50% at 104% 102%, rgba(255, 128, 36, 0.95), rgba(255, 110, 40, 0.35) 45%, transparent 72%), radial-gradient(90% 50% at -6% 90%, rgba(214, 64, 142, 0.78), rgba(170, 52, 120, 0.3) 48%, transparent 72%), radial-gradient(120% 55% at 50% -6%, rgba(96, 112, 196, 0.7), transparent 70%), linear-gradient(180deg, #1C2348 0%, #2A2252 40%, #3C2154 70%, #4A1F45 100%); }
 .ps :global(.lock .sb) { color: #fff; }
 .ps :global(.lock .home) { background: #fff; }
 /* after the current iOS lock screen: the date small over a tall, heavy glass clock */
 .ps :global(.lockTop) { position: relative; margin-top: 14px; text-align: center; }
-.ps :global(.lockTop small) { display: block; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; opacity: 0.9; }
-.ps :global(.lockTop strong) { display: block; margin-top: 2px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 236, 222, 0.72)); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: system-ui, -apple-system, sans-serif; font-size: 80px; font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; transform: scaleY(1.32); transform-origin: top; filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.3)); }
+.ps :global(.lockTop small) { display: block; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; opacity: 0.97; }
+.ps :global(.lockTop strong) { display: block; margin-top: 2px; background: linear-gradient(180deg, #FFFFFF 0%, #F6F2F4 60%, #E4DDE6 100%); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-phone), system-ui, sans-serif; font-size: 80px; font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; transform: scaleY(1.24); transform-origin: top; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.28)); }
 /* notifications sit under the clock; DealDock's alert drops in at the top of the list */
 .ps :global(.stack) { position: absolute; left: 9px; right: 9px; top: 158px; display: flex; flex-direction: column; gap: 7px; }
 .ps :global(.nfSlot) { display: grid; grid-template-rows: 1fr; }
 .ps :global(.nfSlot > .nf) { min-height: 0; }
 /* glass cards: translucent, blurred, a light rim, white type */
 .ps :global(.nf) { position: relative; z-index: 2; display: flex; align-items: flex-start; gap: 10px; padding: 11px 13px; border-radius: 22px; background: rgba(40, 34, 52, 0.42); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); color: #fff; box-shadow: inset 0 0 0 0.8px rgba(255, 255, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 18px 40px -22px rgba(0, 0, 0, 0.7); }
-.ps :global(.nf.alert) { padding: 13px 14px; background: rgba(60, 36, 30, 0.5); box-shadow: inset 0 0 0 1px rgba(255, 150, 70, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 14px -6px rgba(255, 122, 26, 0.4), 0 18px 40px -22px rgba(0, 0, 0, 0.7); }
+.ps :global(.nf.alert) { padding: 13px 14px; background: rgba(66, 40, 44, 0.5); box-shadow: inset 0 0 0 1px rgba(255, 166, 90, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 0 18px -4px rgba(255, 122, 26, 0.6), 0 18px 40px -22px rgba(0, 0, 0, 0.7); }
 .ps :global(.nf.alert .nfIcon) { width: 38px; height: 38px; border-radius: 9px; }
 .ps :global(.nf.alert h5) { font-size: 14.5px; }
 .ps :global(.nf.alert p) { font-size: 13px; }
@@ -42,13 +44,14 @@
 .ps :global(.nfIcon svg) { width: 21px; height: 17px; }
 .ps :global(.nfBody) { flex: 1; min-width: 0; }
 .ps :global(.nfTop) { display: flex; align-items: baseline; gap: 6px; }
-.ps :global(.nfTop span) { margin-left: auto; font-size: 11px; color: rgba(255, 255, 255, 0.6); }
+.ps :global(.nfTop span) { margin-left: auto; font-size: 11px; color: rgba(255, 255, 255, 0.7); }
 .ps :global(.nf h5) { font-size: 13.5px; font-weight: 650; }
-.ps :global(.nf p) { margin-top: 1px; font-size: 12.5px; line-height: 1.3; color: rgba(255, 255, 255, 0.86); text-wrap: pretty; }
-.ps :global(.nf .nfVal) { margin-top: 3px; font-size: 11.5px; color: rgba(255, 255, 255, 0.65); }
+.ps :global(.nf p) { margin-top: 1px; font-size: 12.5px; line-height: 1.3; color: rgba(255, 255, 255, 0.93); text-wrap: pretty; }
+.ps :global(.nf .nfVal) { margin-top: 3px; font-size: 11.5px; color: rgba(255, 255, 255, 0.82); }
 .ps :global(.nfVal b) { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; color: #FFB27A; white-space: nowrap; }
-.ps :global(.lockFoot) { position: absolute; left: 34px; right: 34px; bottom: 30px; display: flex; justify-content: space-between; }
-.ps :global(.lockFoot span) { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 0, 0, 0.28); }
+.ps :global(.lockFoot) { position: absolute; left: 30px; right: 30px; bottom: 28px; display: flex; justify-content: space-between; }
+.ps :global(.lockFoot span) { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: rgba(30, 14, 34, 0.42); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 0.6px rgba(255, 255, 255, 0.12); }
+.ps :global(.lockFoot .cm) { background: rgba(92, 38, 18, 0.5); }
 
 /* app screens: header, feed, message rows */
 .ps :global(.bar) { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 42px; padding: 0 12px 0 14px; border-bottom: 1px solid #EFECE7; }
@@ -57,6 +60,9 @@
 .ps :global(.feed) { flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 0; padding: 12px 14px 0; overflow: hidden; }
 .ps :global(.av) { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 9px; font-weight: 700; letter-spacing: 0.02em; }
 .ps :global(.av.you) { background: #18212B; color: #fff; }
+/* the brand's avatar (Orilune, a made-up brand): a lowercase serif monogram on deep olive, like an indie skincare account */
+.ps :global(.av.brand) { display: flex; align-items: center; justify-content: center; background: #3F4B3E; color: #F3EBDD; font-family: var(--font-instrument-serif), Georgia, serif; font-size: 18px; font-style: italic; font-weight: 400; letter-spacing: 0; line-height: 1; padding: 0 0 3px 1px; }
+.ps :global(.av.brand i) { display: inline; font-style: normal; color: #D9A66B; margin-left: -0.5px; }
 .ps :global(.dky) { flex: none; width: 24px; height: 24px; overflow: hidden; border-radius: 50%; background: #FFE8D2; }
 .ps :global(.dky img) { display: block; width: 132%; max-width: none; height: auto; margin: -1px 0 0 -16%; }
 .ps :global(.msg) { display: flex; gap: 9px; }
@@ -66,14 +72,32 @@
 .ps :global(.who small) { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 500; color: #6F685F; }
 .ps :global(.who small svg) { width: 8px; height: 10px; }
 .ps :global(.bd > p:not(.who)) { margin-top: 1px; color: #2C3138; text-wrap: pretty; }
-.ps :global(.tagY) { display: inline-block; margin-top: 8px; padding: 3px 9px; border-radius: 999px; background: #FFF3CC; box-shadow: inset 0 0 0 1px #EFD687; color: #765300; font-size: 10.5px; font-weight: 600; }
+/* soft floating badge under the draft: pencil well + label; informational, not a button */
+.ps :global(.tagY) { box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; width: fit-content; max-width: 100%; height: 24px; margin-top: 8px; padding: 2px 9px 2px 2px; border: 1px solid #E8DDC3; border-radius: 999px; background: #FFFCF5; box-shadow: 0 2px 4px rgba(169, 140, 83, 0.17); color: #78602E; font-size: 10.5px; font-weight: 500; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default; }
+.ps :global(.tagIcon) { flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #F6E9CE; }
 
 /* the status chip and the deal status: stacked states that change in place, one shown at a time */
 .ps :global(.chip) { display: inline-grid; align-self: center; font-size: 11px; font-weight: 600; }
 .ps :global(.chip > span) { grid-area: 1 / 1; justify-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 999px; background: #F1EEE9; color: #4A453F; white-space: nowrap; }
 .ps :global(.bar .chip > span) { justify-self: end; }
-.ps :global(.chip .d.ok) { background: #E3F3E9; color: #17784B; }
-.ps :global(.chip .d.wait) { background: #FFF1E2; color: #A15C07; }
+/* soft floating status badge (done states): tick well, bold status, a dot, the date quieter; not a button */
+.ps :global(.chip .d.ok), .ps :global(.st .d) { box-sizing: border-box; height: 32px; gap: 6px; padding: 4px 12px 4px 6px; border: 1px solid #DDE8D9; border-radius: 999px; background: #FCFDF9; box-shadow: 0 3px 6px rgba(102, 134, 106, 0.18); color: #38724B; font-size: 12px; font-weight: 600; line-height: 1; cursor: default; }
+.ps :global(.d svg) { flex: none; }
+.ps :global(.chip .d b), .ps :global(.st .d b) { display: inline; color: #38724B; font-size: 12px; font-weight: 600; letter-spacing: 0; line-height: 1; }
+/* the same badge at the old chip's size inside the deal card, so it keeps its place beside the amount */
+.ps :global(.val .st .d) { height: auto; gap: 4px; padding: 2px 8px 2px 2px; font-size: 10.5px; box-shadow: 0 2px 5px rgba(102, 134, 106, 0.16); }
+.ps :global(.val .st .d b) { font-size: 10.5px; }
+.ps :global(.val .st .d .sep) { width: 2.5px; height: 2.5px; }
+/* the top bar's badges at the old chip's size too */
+.ps :global(.bar .chip .d.ok) { height: auto; gap: 5px; padding: 3px 10px 3px 3px; font-size: 11px; box-shadow: 0 2px 5px rgba(102, 134, 106, 0.16); }
+.ps :global(.bar .chip .d.ok b) { font-size: 11px; }
+.ps :global(.bar .chip .d.ok .sep) { width: 2.5px; height: 2.5px; }
+.ps :global(.d .sep) { flex: none; width: 3px; height: 3px; border-radius: 50%; background: #A5B39C; }
+.ps :global(.d .dt) { color: #71806D; font-weight: 500; }
+/* soft floating approval badge (waiting on you): clock well + label; a status, not a button */
+.ps :global(.bar .chip .d.wait) { box-sizing: border-box; width: fit-content; height: 24px; gap: 4px; padding: 2px 7px 2px 3px; border: 1px solid #EADBC6; border-radius: 999px; background: #FFFCF7; box-shadow: 0 2px 4px rgba(171, 128, 80, 0.16); color: #986027; font-size: 11px; font-weight: 500; line-height: 1; cursor: default; }
+.ps :global(.clkWell) { flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #F9E8D4; }
+.ps :global(.clkWell svg) { display: block; }
 .ps :global(.chip .dot) { width: 7px; height: 7px; border-radius: 50%; background: #F47721; }
 .ps :global(.w), .ps :global(.was) { visibility: hidden; }
 .ps :global(.spin) { flex: none; display: block; width: 11px; height: 11px; border: 1.8px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -89,11 +113,14 @@
 .ps :global(.row) { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .ps :global(.row > span:nth-child(2)) { color: #6B655E; }
 .ps :global(.row b) { margin-left: auto; font-weight: 600; }
-.ps :global(.row.ask > span:nth-child(2)), .ps :global(.row.ask b) { color: #8A5A00; }
+.ps :global(.row.ask > span:nth-child(2)), .ps :global(.row.ask b) { color: #946F00; } /* the icon's yellow, deepened so small text reads on white (4.6:1) */
+.ps :global(.row.ask b) { font-weight: 500; }
 .ps :global(.val) { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; padding: 9px 11px; border-top: 1px solid #F0EDE8; }
 .ps :global(.ddh + .val) { border-top: 0; }
 .ps :global(.val b) { display: block; font-size: 22px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; }
-.ps :global(.val small) { display: block; font-size: 10.5px; color: #6F685F; white-space: nowrap; }
+.ps :global(.val small) { display: block; font-size: 10px; color: #6F685F; white-space: nowrap; }
+/* iOS-tight tracking on the card's small print and status, so the badge keeps its place beside the amount */
+.ps :global(.val small), .ps :global(.val .st > span) { letter-spacing: -0.02em; }
 .ps :global(.window), .ps :global(.mo) { display: flex; align-items: center; gap: 8px; padding: 8px 11px 9px; border-top: 1px solid #F0EDE8; background: #FAF8F5; font-size: 10.5px; color: #6B655E; white-space: nowrap; }
 .ps :global(.window i) { flex: 1; height: 4px; border-radius: 4px; background: linear-gradient(#18212B, #18212B) 0 0 / 66% 100% no-repeat, #E8E2D8; }
 .ps :global(.window b) { font-weight: 600; color: #18212B; }
@@ -101,9 +128,13 @@
 .ps :global(.mo b) { font-size: 13.5px; font-weight: 650; color: #18212B; }
 .ps :global(.st) { display: inline-grid; justify-items: end; }
 .ps :global(.st > span) { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 650; white-space: nowrap; }
-.ps :global(.st .was) { background: #FFF1D6; color: #8A5A00; }
-.ps :global(.st .d) { background: #E3F3E9; color: #17784B; }
-.ps :global(.st .due) { background: #FFF1D6; color: #8A5A00; }
+/* soft floating calendar badge (due dates), trimmed (2px gaps, 10.5px text) to sit beside the amount: calendar well, "Due", a dot, the date quieter; a status, not a button */
+.ps :global(.val .st .due), .ps :global(.val .st .was) { box-sizing: border-box; width: fit-content; height: 24px; gap: 2px; padding: 2px 4px 2px 2px; border: 1px solid #EADBC6; border-radius: 999px; background: #FFFCF7; box-shadow: 0 2px 4px rgba(171, 128, 80, 0.16); font-size: 10.5px; line-height: 1; cursor: default; }
+.ps :global(.val .st .calWell) { flex: none; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: #F9E8D4; }
+.ps :global(.val .st .calWell svg) { display: block; }
+.ps :global(.val .st .due b), .ps :global(.val .st .was b) { display: inline; color: #986027; font-size: 10.5px; font-weight: 600; letter-spacing: 0; line-height: 1; }
+.ps :global(.val .st .due .sep), .ps :global(.val .st .was .sep) { flex: none; width: 2.4px; height: 2.4px; border-radius: 50%; background: #C6AC8F; }
+.ps :global(.val .st .due .dt), .ps :global(.val .st .was .dt) { color: #8C7965; font-weight: 400; }
 
 /* 3 · reply: the approval tray */
 .ps :global(.approve) { margin-top: auto; padding: 10px 14px 26px; border-top: 1px solid #EFECE7; }

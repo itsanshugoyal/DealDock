@@ -2,9 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr/ArrowRight";
-import { Eye } from "@phosphor-icons/react/dist/ssr/Eye";
-import { ShieldWarning } from "@phosphor-icons/react/dist/ssr/ShieldWarning";
-import { UsersThree } from "@phosphor-icons/react/dist/ssr/UsersThree";
+import { DecisionMakingIcon, EyeIcon, FraudShieldIcon } from "./price-promise-icons";
 import type { Creator } from "./content";
 import s from "./landing.module.css";
 import r from "./roster.module.css";
@@ -15,9 +13,9 @@ const CYCLE = 9, TRAVEL = 2.6, BEAM = 150;
 
 // What the diagram can't show on its own.
 const FACTS = [
-  { icon: Eye, text: "Creators see every reply sent in their name" },
-  { icon: ShieldWarning, text: "Possible scams stop in the queue" },
-  { icon: UsersThree, text: "Manager seats for your team" },
+  { icon: EyeIcon, text: "Creators see every reply sent in their name" },
+  { icon: FraudShieldIcon, text: "Possible scams stop in the queue" },
+  { icon: DecisionMakingIcon, text: "Manager seats for your team" },
 ];
 
 function Face({ c }: { c: Creator }) {
@@ -136,7 +134,7 @@ export function RosterSection({ creators }: { creators: Creator[] }) {
       </div>
       <div className={r.close}>
         <ul className={r.facts}>
-          {FACTS.map(({ icon: Icon, text }) => <li key={text}><span><Icon size={17} weight="bold" aria-hidden="true" /></span>{text}</li>)}
+          {FACTS.map(({ icon: Icon, text }) => <li key={text}><span><Icon size={20} aria-hidden="true" /></span>{text}</li>)}
         </ul>
         <a href="#pricing" className={s.textLink} data-marketing-cta="agencies">See the Roster plan<ArrowRight size={15} weight="bold" aria-hidden="true" /></a>
       </div>

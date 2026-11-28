@@ -6,9 +6,10 @@ import { CheckCircle } from "@phosphor-icons/react/dist/ssr/CheckCircle";
 import { DownloadSimple } from "@phosphor-icons/react/dist/ssr/DownloadSimple";
 import { LinkBreak } from "@phosphor-icons/react/dist/ssr/LinkBreak";
 import { LockSimple } from "@phosphor-icons/react/dist/ssr/LockSimple";
-import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
 import { GmailLogo, IgLogo } from "./app-logos";
+import { SectionBadge, ShieldBadgeIcon } from "./section-badge";
+import { GreenTickIcon } from "./price-promise-icons";
 import type { Story } from "./content";
 import s from "./landing.module.css";
 import c from "./control.module.css";
@@ -34,7 +35,7 @@ export function ControlBento({ story: st, embedded = false }: { story: Story; em
   return (
     <>
       {!embedded && <div className={c.head} data-reveal="">
-        <p className={s.pricePill}><ShieldCheck size={14} weight="bold" aria-hidden="true" />Privacy and control</p>
+        <SectionBadge icon={<ShieldBadgeIcon />}>Privacy and control</SectionBadge>
         <h2 id="control-heading" className={s.h2}>You stay in control of every word.</h2>
         <p className={s.lede}>DealDock sorts and drafts. You decide what goes out, and you can leave with everything.</p>
       </div>}
@@ -46,7 +47,7 @@ export function ControlBento({ story: st, embedded = false }: { story: Story; em
             <p>Docky drafts every reply in your voice, then waits. You read it, slide to send, and still have 5 seconds to undo.</p>
           </div>
           <div className={c.heroArt} aria-hidden="true">
-            <span className={c.heroChip}><CheckCircle size={15} weight="fill" />Draft ready · waiting for you</span>
+            <span className={c.heroChip}><GreenTickIcon size={15} aria-hidden="true" />Draft ready · waiting for you</span>
             <img src="/docky/docky.webp" alt="" width={240} height={281} />
           </div>
         </article>
