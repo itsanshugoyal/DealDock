@@ -28,7 +28,7 @@ const SECTIONS: DocSection[] = [
     </ul>
   ) },
   { id: "delete", title: "Deleting your data", body: <p>Disconnect Instagram or Gmail anytime and syncing stops. Export your data whenever you like. Delete your account and everything is permanently erased after a 7-day grace period. After you cancel, your revenue history stays readable for 30 days and is then deleted.</p> },
-  { id: "report", title: "Reporting a problem", body: <p>If you think something is wrong with your account or your data, <Link href="/contact">contact the founders</Link> and we will reply within two working days.</p> },
+  { id: "report", title: "Reporting a problem", body: <p>If you think something is wrong with your account or your data, <Link href="/contact">contact us</Link> and we will reply within two working days.</p> },
 ];
 
 export default function SecurityPage() {

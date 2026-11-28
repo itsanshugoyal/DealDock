@@ -136,7 +136,7 @@ export function LandingPage({ site, c }: { site: SiteContent; c: LandingContent 
             <div className={`${s.wrap} ${s.faqGrid}`}>
               <div>
                 <h2 id="faq-heading" className={s.h2}>Questions before you apply</h2>
-                <p className={s.lede}>Something else on your mind? <Link href="/contact">Ask the founders</Link>.</p>
+                <p className={s.lede}>Something else on your mind? <Link href="/contact">Ask Anshu</Link>.</p>
               </div>
               <div className={s.faqList} data-reveal="" style={{ "--d": 1 } as CSSProperties}>
                 {site.faq.map(item => (

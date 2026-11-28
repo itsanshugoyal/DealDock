@@ -22,7 +22,7 @@ const SECTIONS: DocSection[] = [
   { id: "approval", title: "You approve every send", body: <p>DealDock never sends a message on its own. Every reply, follow-up and payment reminder is a draft until you or someone on your team approves it.</p> },
   { id: "estimates", title: "Estimates are estimates", body: <p>Money estimates help decide what to answer first. They are not valuations or promised results, and only deals you record count as money you made.</p> },
   { id: "access", title: "Account access and data", body: <p>You connect Instagram through Meta’s official login and, if you choose, Gmail through Google’s sign-in. DealDock never asks for your passwords. The <Link href="/security">security page</Link> explains what is read, kept and deleted, and the <Link href="/privacy">website privacy notice</Link> covers application details.</p> },
-  { id: "questions", title: "Questions", body: <p><Link href="/#apply">Apply for the pilot</Link> or <Link href="/contact">ask the founders</Link> first.</p> },
+  { id: "questions", title: "Questions", body: <p><Link href="/#apply">Apply for the pilot</Link> or <Link href="/contact">ask Anshu</Link> first.</p> },
 ];
 
 export default function PilotTermsPage() {

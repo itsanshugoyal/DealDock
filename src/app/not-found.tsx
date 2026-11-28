@@ -16,7 +16,7 @@ export default function NotFound() {
       band={
         <div className={styles.actions}>
           <Link href="/">Back to the home page<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link>
-          <Link href="/contact" data-variant="light">Contact the founders</Link>
+          <Link href="/contact" data-variant="light">Contact us</Link>
         </div>
       }
     />

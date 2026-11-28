@@ -5,45 +5,50 @@ import { ChatCircleText } from "@phosphor-icons/react/dist/ssr/ChatCircleText";
 import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr/EnvelopeSimple";
 import { PaperPlaneTilt } from "@phosphor-icons/react/dist/ssr/PaperPlaneTilt";
 import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
-import { APPLICATION_EMAIL } from "@/components/site/application.mjs";
 import { CopyEmail } from "@/components/site/copy-email";
-import { MarketingDocument } from "@/components/site/marketing-document";
+import { MarketingDocument, type DocSection } from "@/components/site/marketing-document";
 import styles from "@/components/site/site.module.css";
+import { LEGAL } from "@/lib/legal";
 import { marketingPageMetadata } from "@/lib/marketing-metadata";
 
-export const metadata: Metadata = marketingPageMetadata("/contact", "Contact | DealDock", "Contact DealDock’s founders about pilot fit, an application or your data.");
+export const metadata: Metadata = marketingPageMetadata("/contact", "Contact | DealDock", "Contact DealDock about the pilot, your account, billing, your data or a grievance.");
 
-const MAILTO = `mailto:${APPLICATION_EMAIL}?subject=DealDock%20pilot%20question`;
+const MAILTO = `mailto:${LEGAL.email}?subject=DealDock%20question`;
+
+const SECTIONS: DocSection[] = [
+  { id: "company", title: "Company details", body: <p>{LEGAL.entity}<br />{LEGAL.address}<br />{LEGAL.registration}<br />GSTIN: {LEGAL.gstin}</p> },
+  { id: "grievance", title: "Grievance officer", body: <p>For a complaint about the service or how we handle your personal data, contact our grievance officer, {LEGAL.grievanceOfficer}, at <a href={`mailto:${LEGAL.grievanceEmail}?subject=Grievance`}>{LEGAL.grievanceEmail}</a>. We acknowledge grievances within 72 hours and aim to resolve them within 30 days.</p> },
+];
 
 export default function ContactPage() {
   return (
     <MarketingDocument
       title="Talk to the people building it."
-      lede="We’re Anshu and Nahush, building DealDock. If brand deals or paying clients reach you through Instagram DMs or email, we’d like to hear where they get lost."
+      lede="I’m Anshu, building DealDock. If brand deals or paying clients reach you through Instagram DMs or email, I’d like to understand where they get lost."
       aside={
         <aside className={styles.emailCard} aria-labelledby="email-heading">
-          <h2 id="email-heading">Email the founders</h2>
-          <a href={MAILTO}>{APPLICATION_EMAIL}</a>
+          <h2 id="email-heading">Email Anshu</h2>
+          <a href={MAILTO}>{LEGAL.email}</a>
           <div className={styles.actions}>
             <a href={MAILTO}><EnvelopeSimple size={16} weight="bold" aria-hidden="true" />Write to us</a>
-            <CopyEmail email={APPLICATION_EMAIL} />
+            <CopyEmail email={LEGAL.email} />
           </div>
-          <p>We reply within two working days. If a mail app does not open, copy the address into the email service you normally use.</p>
+          <p>Phone: {LEGAL.phone}. Support hours: {LEGAL.supportHours}. We reply to email within 2 business days.</p>
         </aside>
       }
       band={
         <div className={styles.cards}>
           <article className={styles.card}>
             <ChatCircleText size={26} weight="duotone" aria-hidden="true" />
-            <h2>Pilot questions</h2>
-            <p>Tell us what you sell or who you work with, and what tends to get missed. Ask about pilot timing, how it works, pricing, or Instagram and Gmail setup.</p>
-            <Link href="/pilot-terms" className={styles.textLink}>Read the pilot terms<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link>
+            <h2>Pilot and billing</h2>
+            <p>Ask about pilot timing, how it works, pricing, Instagram or Gmail setup, or billing. Please leave out passwords and private DM screenshots.</p>
+            <Link href="/pricing" className={styles.textLink}>See pricing<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link>
           </article>
           <article className={styles.card}>
             <ShieldCheck size={26} weight="duotone" aria-hidden="true" />
             <h2>Your data</h2>
-            <p>Ask what DealDock reads and keeps, or ask us to correct or delete an application. Please leave out passwords and private DM screenshots.</p>
-            <Link href="/security" className={styles.textLink}>Security and your data<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link>
+            <p>The privacy policy explains what we collect and why. You can delete your data at any time, in the app or by email.</p>
+            <Link href="/data-deletion" className={styles.textLink}>Delete your data<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link>
           </article>
           <article className={styles.card}>
             <PaperPlaneTilt size={26} weight="duotone" aria-hidden="true" />
@@ -53,6 +58,7 @@ export default function ContactPage() {
           </article>
         </div>
       }
+      sections={SECTIONS}
     />
   );
 }

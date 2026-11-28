@@ -166,7 +166,7 @@ export function PilotApplication({ online = false, compact = false, handle = "",
         <div className={styles.applicationReview}>
           <span className={styles.reviewCheck} aria-hidden="true">✓</span>
           <h3 ref={resultHeading} tabIndex={-1}>Application received.</h3>
-          <p>Anshu or Nahush will reply by email within two working days to set up a short call.</p>
+          <p>Anshu will reply by email within two working days to set up a short call.</p>
           <ol className={styles.receiptSteps}><li>Look out for a personal email from one of us.</li><li>On the call, we check fit and connect your account together.</li><li>Your Leak Scan runs as soon as you connect.</li></ol>
           <p className={styles.formPrivacy}>Nothing has been connected and no payment has been taken.</p>
           <p className={styles.reference}>Reference: DD-{receipt.reference.slice(0, 8).toUpperCase()}</p>

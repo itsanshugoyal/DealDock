@@ -32,9 +32,11 @@ export function SiteHeader({ home = "/", onPage = false }: { home?: "/" | "/in";
 }
 
 const FOOTER_LINKS = (home: string) => [
-  { title: "Product", links: [["How it works", home + "#how-it-works"], ["Pricing", home + "#pricing"], ["FAQ", home + "#faq"], ["Security", "/security"]] },
+  { title: "Product", links: [["How it works", home + "#how-it-works"], ["Pricing", "/pricing"], ["FAQ", home + "#faq"], ["Security", "/security"]] },
   { title: "Resources", links: [["Guides", "/blog"], ["Free tools", "/tools"], ["Rate calculator", "/tools/brand-deal-rate-calculator"], ["DM tracker", "/tools/dm-enquiry-tracker"]] },
-  { title: "Company", links: [["About", "/about"], ["Contact", "/contact"], ["Privacy", "/privacy"], ["Pilot terms", "/pilot-terms"]] },
+  { title: "Company", links: [["About", "/about"], ["Contact", "/contact"], ["Pilot terms", "/pilot-terms"]] },
+  // the policy pages Meta, Google, Razorpay and Paddle review (docs/policy-pages-review.md)
+  { title: "Legal", links: [["Terms", "/terms"], ["Privacy", "/privacy"], ["Refunds", "/refunds"], ["Delivery", "/delivery"], ["Data deletion", "/data-deletion"]] },
 ];
 
 export function SiteFooter({ home = "/" }: { home?: "/" | "/in" }) {
@@ -57,11 +59,11 @@ export function SiteFooter({ home = "/" }: { home?: "/" | "/in" }) {
             ))}
           </nav>
         </div>
-        <p className={styles.footerLogo} aria-hidden="true" translate="no">DealDock<span>.</span></p>
         <div className={styles.footerBase}>
           <p>© 2026 {LEGAL_ENTITY || "DealDock"}. Instagram is a trademark of Meta Platforms, Inc. DealDock is an independent product, not affiliated with or endorsed by Meta.</p>
           <a href={"mailto:" + APPLICATION_EMAIL}>{APPLICATION_EMAIL}</a>
         </div>
+        <p className={styles.footerLogo} aria-hidden="true" translate="no">DealDock<span>.</span></p>
       </div>
     </footer>
   );

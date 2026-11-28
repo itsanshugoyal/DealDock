@@ -39,7 +39,7 @@ export function ApplySheet({ online }: { online: boolean }) {
         <button type="button" className={s.sheetClose} onClick={() => dialog.current?.close()} aria-label="Close"><X size={18} weight="bold" /></button>
         <p className={s.sheetKicker}>Pilot · 30 days free</p>
         <h2 id="apply-sheet-title" className={s.sheetTitle}>Apply for the pilot</h2>
-        <p className={s.sheetLede}>Three quick details. Anshu or Nahush reads every application and replies by email within two working days.</p>
+        <p className={s.sheetLede}>Three quick details. Anshu reads every application and replies by email within two working days.</p>
         <PilotApplication key={handle} online={online} compact handle={handle} prefix="sheet-" />
       </div>
     </dialog>
