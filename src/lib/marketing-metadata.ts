@@ -5,7 +5,7 @@ export const MARKETING_SHARE_IMAGE = {
   url: `${MARKETING_ORIGIN}/opengraph-image`,
   width: 1200,
   height: 630,
-  alt: "DealDock: Some DMs mean business. You approve every send.",
+  alt: "DealDock: your DMs, sorted by money. Nothing sends until you approve.",
 };
 
 export function marketingPageMetadata(path: string, title: string, description: string): Metadata {

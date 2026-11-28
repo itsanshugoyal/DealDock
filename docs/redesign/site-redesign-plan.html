@@ -50,6 +50,34 @@
     <p class="meta">Based on a walk-through of every route in <code>src/app</code> on the local build, with screenshots of each page. Design coding starts only after this plan is agreed.</p>
   </header>
 
+  <h2>Done so far (28 November, branch <code>redesign/site-cleanup</code>)</h2>
+  <div class="grid">
+    <div class="card"><h3>Pages</h3><ul>
+      <li><code>/in</code> now renders the new landing page with its own India content (<code>landing/content/india.ts</code>): rupees, Indian creators and brands, Hinglish drafts where a sender writes Hinglish, TDS on the payment.</li>
+      <li>Removed <code>/global</code>, <code>/original</code>, <code>/design-preview</code>, <code>/docky</code>, <code>/dashboard</code> and <code>/guides</code> (the blog on <code>main</code> replaces guides; the header and footer link to it).</li></ul></div>
+    <div class="card"><h3>Code</h3><ul>
+      <li><code>origin/main</code> (blog, tools, share images, SEO) merged in.</li>
+      <li>Shared site layer renamed <code>components/design-preview</code> → <code>components/site</code>; the old design's components, the CRM dashboard and its APIs, and five unused packages deleted.</li>
+      <li>Landing content is one typed model (<code>landing/content/</code>); the phone story and the control bento read from it.</li></ul></div>
+    <div class="card"><h3>Repo</h3><ul>
+      <li>Airtable scripts deleted. n8n, Apify, the lead-gen plan and the pipeline skills archived in founder-crm (<code>docs/archive/dealdock-lead-pipeline</code>).</li>
+      <li>Old root notes moved to <code>docs/archive</code>.</li></ul></div>
+    <div class="card"><h3>Every other page (second pass)</h3><ul>
+      <li>New brand mark from <code>public/brand</code> (the source files); <code>scripts/build-brand-icons.mjs</code> makes the favicon, browser and Apple icons and the header logo.</li>
+      <li>Tokens moved out of <code>.landing</code> into <code>site/site.module.css</code>, so every page uses the same values. The old yellow styles are gone.</li>
+      <li>New footer: a night band with link columns, the "Your DMs, sorted by money." line and Docky waving over the wordmark.</li>
+      <li>New document template: a header on the warm stage, a "short version" card, sticky numbered contents, a serif reading column. Security (with the control bento), privacy and pilot terms use it; pilot prices now come from the price list.</li>
+      <li>About (rule tiles, pilot status, founders) and contact (email card with copy, three topic cards) rebuilt as pages. Branded 404 with Docky.</li>
+      <li>Share images: one design for every page (warm stage, serif title, Docky's deal card on the homepages, Docky on the rest), blog posts and tools included.</li>
+      <li>Blog and tools: the green-and-yellow palette mapped onto the shared tokens, serif titles, and the header and footer no longer overridden.</li>
+      <li>Tailwind removed (three class names used it); <code>globals.css</code> is now a small reset. Landing screenshots match before and after.</li></ul></div>
+    <div class="card"><h3>Decisions taken by default</h3><ul>
+      <li>Leak Scan: no separate section; the closing line keeps it as the first-call offer.</li>
+      <li>About: no founder photos yet, so the page leads with the product rules and initials cards. Swap in photos when they exist.</li>
+      <li>Contact: email only, with a copy button. No form backend to run.</li>
+      <li>Guides: the blog is the guides index; the header and footer link to it.</li></ul></div>
+  </div>
+
   <h2>The design we are matching</h2>
   <p class="lede">These are the choices the new home page settled on. Every rebuilt page uses the same tokens and components, not lookalikes.</p>
   <div class="grid">

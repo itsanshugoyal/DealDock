@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { PLAN_PRICES, PRICE_VERSION, currencyForCountry, currencySuggestionResponse, formatMoney, loadCurrencySuggestion, planPriceLabel, pricingSnapshot } from "../src/lib/marketing-pricing.mjs";
-import { prepareApplication } from "../src/components/design-preview/application.mjs";
+import { prepareApplication } from "../src/components/site/application.mjs";
 import { normalizeMarketingEvent } from "../src/lib/marketing-events.mjs";
 
 test("hosting hints suggest INR for India, USD internationally, and neither for an unknown location", () => {

@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { MARKETING_SITE_LIVE } from "@/lib/marketing-config";
 import { marketingGtmId } from "@/lib/marketing-analytics-config.mjs";
-import { MarketingAnalytics } from "@/components/design-preview/marketing-analytics";
+import { MarketingAnalytics } from "@/components/site/marketing-analytics";
 import { MARKETING_SHARE_IMAGE } from "@/lib/marketing-metadata";
 
 // This public container is loaded only on the live marketing site. Tags and
@@ -33,17 +33,15 @@ const devanagari = Noto_Sans_Devanagari({
   preload: false,
 });
 
-// Serif accent for the original design archive only.
+// The display serif for every headline.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
   weight: "400",
-  style: ["normal", "italic"],
   display: "swap",
-  preload: false,
 });
 
-// Default/fallback metadata — each locale route (/, /global) overrides
+// Default/fallback metadata: each page overrides
 // title, description, openGraph, twitter, and alternates with its own values.
 export const metadata: Metadata = {
   title: "DealDock: your Instagram DMs, sorted by money",
@@ -61,14 +59,14 @@ export const metadata: Metadata = {
     follow: MARKETING_SITE_LIVE,
   },
   metadataBase: new URL(process.env.SITE_URL || "https://dealdock.io"),
-  openGraph: { type: "website", siteName: "DealDock", title: "DealDock | Some DMs mean business", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
-  twitter: { card: "summary_large_image", title: "DealDock | Some DMs mean business", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
+  openGraph: { type: "website", siteName: "DealDock", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
+  twitter: { card: "summary_large_image", title: "Your DMs, sorted by money. Meet DealDock.", description: "Prioritize Instagram buyer enquiries, draft replies in your voice and approve every send.", images: [MARKETING_SHARE_IMAGE] },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f4f3ee",
+  themeColor: "#FBF8F2",
 };
 
 export default function RootLayout({
@@ -88,7 +86,7 @@ export default function RootLayout({
           </Script>
         ) : null}
       </head>
-      <body className="bg-[#050505] text-[#fafafa] antialiased">
+      <body>
         {GOOGLE_TAG_MANAGER_ID ? (
           <noscript>
             <iframe

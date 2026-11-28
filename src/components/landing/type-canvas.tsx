@@ -8,7 +8,7 @@ import { Clock } from "@phosphor-icons/react/dist/ssr/Clock";
 import { LockSimple } from "@phosphor-icons/react/dist/ssr/LockSimple";
 import { SealCheck } from "@phosphor-icons/react/dist/ssr/SealCheck";
 import { XCircle } from "@phosphor-icons/react/dist/ssr/XCircle";
-import { BrandMark } from "@/components/design-preview/site-chrome";
+import { BrandMark } from "@/components/site/site-chrome";
 import { AppLogo } from "./app-logos";
 import { LABEL_TEXT, type LandingContent } from "./content";
 import s from "./landing.module.css";
@@ -94,7 +94,7 @@ export function TypeCanvas({ items }: { items: LandingContent["catches"] }) {
 
             {it.draft
               ? <div className={s.ibReply}>
-                  <p className={s.ibReplyHead}><b>Your reply</b><span>Not sent</span></p>
+                  <p className={s.ibReplyHead}><b>Your reply</b>{it.voice && <em className={s.ibVoice}>{it.voice}</em>}<span>Not sent</span></p>
                   <p className={s.ibReplyText}>{it.draft}</p>
                   <div className={s.ibReplyFoot}>
                     <span>Edit</span><span>Shorter</span><span>Warmer</span>

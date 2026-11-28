@@ -7,11 +7,11 @@ import { LockSimple } from "@phosphor-icons/react/dist/ssr/LockSimple";
 import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
 import { XCircle } from "@phosphor-icons/react/dist/ssr/XCircle";
 import { PILOT_OFFER, PLAN_PRICES, formatMoney } from "@/lib/marketing-pricing.mjs";
-import { IndiaBar } from "@/components/design-preview/page-bars";
-import { PilotCurrencyProvider } from "@/components/design-preview/pilot-currency";
-import { SiteFooter, SiteHeader } from "@/components/design-preview/site-chrome";
-import type { SiteContent } from "@/components/design-preview/site-content";
-import base from "@/components/design-preview/preview.module.css";
+import { IndiaBar } from "@/components/site/page-bars";
+import { PilotCurrencyProvider } from "@/components/site/pilot-currency";
+import { SiteFooter, SiteHeader } from "@/components/site/site-chrome";
+import type { SiteContent } from "@/components/site/site-content";
+import base from "@/components/site/site.module.css";
 import type { LandingContent } from "./content";
 import { ApplySheet } from "./apply-sheet";
 import { Hero } from "./hero";
@@ -79,7 +79,7 @@ export function LandingPage({ site, c }: { site: SiteContent; c: LandingContent 
                 <p className={s.lede}>Follow a single message from a Requests folder at midnight to the payment landing in February.</p>
               </div>
             </div>
-            <StoryPhone />
+            <StoryPhone story={c.story} />
             <div className={s.wrap}>
               <div className={s.ctaBand} data-reveal="">
                 <div>
@@ -101,7 +101,7 @@ export function LandingPage({ site, c }: { site: SiteContent; c: LandingContent 
 
           {/* TRUST */}
           <section id="safety" className={s.section} aria-labelledby="control-heading">
-            <div className={s.wrap}><ControlBento /></div>
+            <div className={s.wrap}><ControlBento story={c.story} /></div>
           </section>
 
           {/* PRICING */}
@@ -151,7 +151,7 @@ export function LandingPage({ site, c }: { site: SiteContent; c: LandingContent 
 
         </main>
         <ApplySheet online={online} />
-        <SiteFooter />
+        <SiteFooter home={site.path} />
       </div>
     </PilotCurrencyProvider>
   );

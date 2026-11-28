@@ -9,6 +9,7 @@ import { LockSimple } from "@phosphor-icons/react/dist/ssr/LockSimple";
 import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
 import { GmailLogo, IgLogo } from "./app-logos";
+import type { Story } from "./content";
 import s from "./landing.module.css";
 import c from "./control.module.css";
 
@@ -27,14 +28,15 @@ const SIGN_IN = [
  * a coral gradient), a mono eyebrow, and a picture made of type and interface rather than icons. Every promise here is
  * backed by the security page and the FAQ; the example names are made up.
  */
-export function ControlBento() {
+/** `embedded`: on the security page, which supplies its own heading and is where the details link points. */
+export function ControlBento({ story: st, embedded = false }: { story: Story; embedded?: boolean }) {
   return (
     <>
-      <div className={c.head} data-reveal="">
+      {!embedded && <div className={c.head} data-reveal="">
         <p className={s.pricePill}><ShieldCheck size={14} weight="bold" aria-hidden="true" />Privacy and control</p>
         <h2 id="control-heading" className={s.h2}>You stay in control of every word.</h2>
         <p className={s.lede}>DealDock sorts and drafts. You decide what goes out, and you can leave with everything.</p>
-      </div>
+      </div>}
       <div className={c.bento} data-reveal="" style={{ "--d": 1 } as CSSProperties}>
         <article className={c.hero}>
           <div className={c.heroText}>
@@ -51,8 +53,8 @@ export function ControlBento() {
         <article className={`${c.tile} ${c.photo}`}>
           <img className={c.photoBg} src={TEXTING} alt="" width={900} height={900} />
           <div className={c.chat} aria-hidden="true">
-            <span className={c.them}>Invoice received, thanks Maya!</span>
-            <span className={c.me}><small>Drafted by Docky · not sent</small>Hi Mia! Just checking in on invoice MO-0042 🙂</span>
+            <span className={c.them}>Invoice received, thanks {st.creator}!</span>
+            <span className={c.me}><small>Drafted by Docky · not sent</small>Hi {st.contact}! Just checking in on invoice {st.invoice} 🙂</span>
             <span className={c.wait}><i />Waiting for your slide</span>
           </div>
           <div className={c.copy}>
@@ -69,7 +71,7 @@ export function ControlBento() {
             <p>Never used to train public AI, either.</p>
           </div>
           <div className={c.stack} aria-hidden="true">
-            <span className={c.card}><b>Glowkind Skincare <small>11:48 PM</small></b>Hi Maya! What’s your rate for 1 Reel + 3 Stories?</span>
+            <span className={c.card}><b>{st.brand} <small>11:48 PM</small></b>{st.rateAsk}</span>
             <span className={c.dashed}><LockSimple size={15} weight="bold" />Stored encrypted</span>
             <span className={`${c.card} ${c.cipher}`}><code>8f3a c91e b04d 7e2f d61b</code><code>09ac 55f0 3be1 a7c2 e418</code></span>
           </div>
@@ -105,7 +107,7 @@ export function ControlBento() {
           </div>
         </article>
       </div>
-      <p className={c.more}><Link href="/security" className={s.textLink}>Security and data details<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link></p>
+      {!embedded && <p className={c.more}><Link href="/security" className={s.textLink}>Security and data details<ArrowRight size={15} weight="bold" aria-hidden="true" /></Link></p>}
     </>
   );
 }

@@ -76,7 +76,7 @@ export function RosterSection({ creators }: { creators: Creator[] }) {
   // the pings, so they stay in step (and pause together off screen). Every 3s each creator sends their next message.
   const run = end - start + BEAM, axis = (d: number) => (tall ? `0 ${d}` : `${d} 0`);
   const headAt = (d: number) => +(TRAVEL * (d + 0.15 * BEAM) / run).toFixed(2); // seconds until the beam's head is d px along
-  const beams = creators.flatMap((c, i) => c.queue.map((q, j) => ({ id: `${uid}b${i}${j}`, i, label: q.label, begin: i * 0.6 + j * 3 })));
+  const beams = creators.flatMap((c, i) => c.labels.map((label, j) => ({ id: `${uid}b${i}${j}`, i, label, begin: i * 0.6 + j * 3 })));
   const ping = (key: string, [x, y]: number[], label: string, at: number) => (
     <circle key={key} cx={x} cy={y} r={3} opacity={0} className={r.ping} style={{ stroke: `var(--c-${label})` }}>
       <animate attributeName="r" values="3;14;14" keyTimes={`0;${(0.9 / CYCLE).toFixed(3)};1`} dur={`${CYCLE}s`} begin={`${at}s`} repeatCount="indefinite" />

@@ -24,12 +24,12 @@ test("the currency hint is bounded, private, uncached and has no mutation method
   assert.equal((await fetch(new URL("/api/marketing-currency", origin), { method: "POST" })).status, 405);
 });
 
-test("public pages follow launch indexing and comparison pages stay excluded", async () => {
-  for (const route of ["/", "/in", "/design-preview", "/original", "/privacy", "/pilot-terms", "/security", "/about", "/contact"]) {
+test("public pages follow launch indexing", async () => {
+  for (const route of ["/", "/in", "/privacy", "/pilot-terms", "/security", "/about", "/contact"]) {
     const response = await fetch(new URL(route, origin));
     assert.equal(response.status, 200, route);
     const html = await response.text();
-    if (!siteLive || ["/design-preview", "/original"].includes(route)) {
+    if (!siteLive) {
       assert.match(response.headers.get("x-robots-tag"), /noindex/);
       assert.match(html, /<meta name="robots" content="noindex, nofollow"/);
     } else {
@@ -47,14 +47,9 @@ test("public pages follow launch indexing and comparison pages stay excluded", a
       }
     }
     assert.equal((html.match(/<main[\s>]/g) || []).length, 1);
-    if (["/", "/in", "/design-preview"].includes(route)) {
-      assert.match(html, /Auto-send: off\. Always\./);
-      assert.match(html, /First 30 days free/);
-      assert.doesNotMatch(html, /review-notice"/);
-    } else if (route === "/original") {
-      assert.match(html, /Claims, figures and testimonials are unverified/);
-      assert.match(html, /View the accepted design/);
-      assert.equal(html.includes('application/ld+json'), false, "The review copy must not publish unverified structured claims");
+    if (["/", "/in"].includes(route)) {
+      assert.match(html, /Nothing sends without your approval/);
+      assert.match(html, /Free for 30 days/);
     }
   }
 });
@@ -83,9 +78,9 @@ test("launch SEO files list only public canonical routes", async () => {
   assert.match(sitemap, /\/about<\/loc>/);
   assert.match(sitemap, /\/privacy<\/loc>/);
   assert.match(sitemap, /\/pilot-terms<\/loc>/);
-  assert.doesNotMatch(sitemap, /original|design-preview|dashboard|api\//);
+  assert.doesNotMatch(sitemap, /original|design-preview|dashboard|guides|api\//);
   const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-  assert.equal(locations.length, 7);
+  for (const route of ["/in", "/security", "/blog", "/tools"]) assert.ok(locations.some(location => new URL(location).pathname === route), route);
   assert.ok(locations.every(location => new URL(location).origin === canonicalOrigin));
   const robots = await (await fetch(new URL("/robots.txt", origin))).text();
   assert.match(robots, /Disallow: \/api\//);
@@ -93,7 +88,7 @@ test("launch SEO files list only public canonical routes", async () => {
 });
 
 test("social previews reference this deployment and return real PNGs", async () => {
-  for (const route of ["/", "/in", "/design-preview/"]) {
+  for (const route of ["/", "/in"]) {
   const html = await (await fetch(new URL(route, origin))).text();
   const image = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
   assert.ok(image, `${route} has an Open Graph image`);
@@ -107,8 +102,8 @@ test("social previews reference this deployment and return real PNGs", async () 
   }
 });
 
-test("the review page CSS and JavaScript assets resolve", async () => {
-  const html = await (await fetch(new URL("/design-preview/", origin))).text();
+test("the homepage CSS and JavaScript assets resolve", async () => {
+  const html = await (await fetch(new URL("/", origin))).text();
   const assets = [...html.matchAll(/(?:href|src)="([^" ]+\.(?:css|js)(?:\?[^" ]*)?)"/g)].map(m => m[1]);
   assert.ok(assets.length > 1);
   for (const asset of new Set(assets)) {

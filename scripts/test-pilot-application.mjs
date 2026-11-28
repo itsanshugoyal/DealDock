@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import * as application from "../src/components/design-preview/application.mjs";
+import * as application from "../src/components/site/application.mjs";
 const { prepareApplication, APPLICATION_EMAIL } = application;
 
 const valid = {email:"reviewer@example.com",instagram:"@example_coach",offer:"coaching",note:"Course questions & coaching enquiries."};

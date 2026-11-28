@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { normalizeApplication } from "../../components/design-preview/application.mjs";
+import { normalizeApplication } from "../../components/site/application.mjs";
 import { normalizeCurrency, pricingSnapshot } from "../marketing-pricing.mjs";
 
 const MAX_BYTES = 8192;

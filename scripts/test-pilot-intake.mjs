@@ -3,7 +3,7 @@ import { mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import * as application from "../src/components/design-preview/application.mjs";
+import * as application from "../src/components/site/application.mjs";
 import { PRICE_VERSION } from "../src/lib/marketing-pricing.mjs";
 
 const intakeModule = await import("../src/lib/pilot/intake.mjs").catch(() => null);

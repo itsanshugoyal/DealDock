@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { Bell } from "@phosphor-icons/react/dist/ssr/Bell";
 import { BellRinging } from "@phosphor-icons/react/dist/ssr/BellRinging";
 import { Receipt } from "@phosphor-icons/react/dist/ssr/Receipt";
 import { HandPointing } from "@phosphor-icons/react/dist/ssr/HandPointing";
 import { Question } from "@phosphor-icons/react/dist/ssr/Question";
 import { Docky, type DockyMood } from "@/components/docky/docky";
-import { PHONE_SCREENS, PHONE_SYMBOLS } from "./phone-screens";
+import type { Story } from "./content";
+import { PHONE_SYMBOLS, phoneScreens } from "./phone-screens";
 import ps from "./phone-screens.module.css";
 import s from "./landing.module.css";
 
@@ -43,11 +44,12 @@ function countUp(els: HTMLElement[]) {
   const timers: ReturnType<typeof setTimeout>[] = [], frames: number[] = [];
   for (const el of els) {
     const final = el.dataset.count ?? "", from = (el.dataset.from ?? "").match(NUM) ?? [];
+    const locale = final.includes("₹") ? "en-IN" : "en-US"; // ₹2,77,000, not ₹277,000
     const render = (k: number) => {
       let j = 0;
       el.textContent = final.replace(NUM, m => {
         const dec = m.split(".")[1]?.length ?? 0, a = num(from[j++] ?? "0");
-        return (a + (num(m) - a) * k).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+        return (a + (num(m) - a) * k).toLocaleString(locale, { minimumFractionDigits: dec, maximumFractionDigits: dec });
       });
     };
     render(0);
@@ -62,7 +64,7 @@ function countUp(els: HTMLElement[]) {
 
 /** The phone with all four screens stacked (desktop, cross-fading), or just screen `only` (the phone carousel).
  * A screen plays its motion while it is `active`. */
-function Phone({ active, z, only }: { active: number; z?: number; only?: number }) {
+function Phone({ screens, active, z, only }: { screens: string[]; active: number; z?: number; only?: number }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const pane = root.current?.querySelector<HTMLElement>("[data-on]");
@@ -71,7 +73,7 @@ function Phone({ active, z, only }: { active: number; z?: number; only?: number 
   }, [active]);
   return (
     <div ref={root} className={`${s.pd} ${ps.ps}`} style={z ? ({ "--pz": z } as CSSProperties) : undefined} aria-hidden="true">
-      {PHONE_SCREENS.map((html, i) => (only === undefined || i === only) &&
+      {screens.map((html, i) => (only === undefined || i === only) &&
         <div key={i} className={s.pdPane} data-on={i === active || undefined} dangerouslySetInnerHTML={{ __html: html }} />)}
     </div>
   );
@@ -87,7 +89,8 @@ function CalloutCard({ step }: { step: (typeof STEPS)[number] }) {
   );
 }
 
-export function StoryPhone() {
+export function StoryPhone({ story }: { story: Story }) {
+  const screens = useMemo(() => phoneScreens(story), [story]);
   const track = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const tell = useRef<HTMLDivElement>(null);
@@ -164,7 +167,7 @@ export function StoryPhone() {
             <Docky mood={mood} look={mood === "sleepy" ? [0.3, -0.5] : [0.9, 0.25]} className={s.storyDocky} />
           </div>
           <div className={s.phoneWrap}>
-            <Phone active={seen ? active : -1} />
+            <Phone screens={screens} active={seen ? active : -1} />
             <CalloutCard key={`c${active}`} step={step} />
           </div>
           <span />
@@ -178,7 +181,7 @@ export function StoryPhone() {
         }}>
           {STEPS.map((x, i) => (
             <article key={x.title} className={s.mSlide} aria-label={`${x.when}: ${x.title}`}>
-              <div className={s.mDevice}><Phone active={stripSeen && i === slide ? i : -1} z={0.86} only={i} /></div>
+              <div className={s.mDevice}><Phone screens={screens} active={stripSeen && i === slide ? i : -1} z={0.86} only={i} /></div>
               <p className={s.tellTime}>{x.when}</p>
               <h3>{x.title}</h3>
               <p className={s.mBody}>{x.sub}</p>

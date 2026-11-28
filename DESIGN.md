@@ -2,15 +2,15 @@
 
 This governs the marketing website. Authenticated product design remains in C:/code/dealdock-app/DESIGN.md.
 
-## Current design — rebuilt 2026-11-05 (colour direction pending)
+## Current design — rebuilt 2026-11-28
 
-The page was rebuilt from the written plan in docs/site-plan/dealdock-site-plan.html. `/` is the global page in US dollars; `/in` is the India page in rupees with Hinglish examples. Both render one component (src/components/design-preview/marketing-design-preview.tsx) from the content in site-content.ts, and hreflang links them with `/` as x-default. `/design-preview` keeps old review links working (noindex), `/global` permanently redirects to `/`, and `/original` is the labelled archive. Do not use the archive in acquisition campaigns.
+`/` is the global page in US dollars; `/in` is the India page in rupees. Both render one component (src/components/landing/landing-page.tsx) from typed content (src/components/landing/content: LANDING_GLOBAL, LANDING_IN) plus per-locale settings (src/components/site/site-content.ts), and hreflang links them with `/` as x-default. The India page keeps the same design and sections; Hinglish appears only where a sender writes Hinglish and the draft mirrors them.
 
-Concept: "Watch it sort". The hero inbox sorts one example brand deal to the top, and the page follows that deal through the draft, the approval slide and payment. Six objects carry every visual: DM bubble, value chip, draft bubble, receipt card, sticky note and the slide. Each chapter uses the same template: a mono label, a short Geist 800 headline, a one-sentence lede and one visual. Only two chapters are dark: the approval chapter and the application.
+Look: warm paper #FBF8F2, ink #14202C, one orange accent #FF7A1A (Docky's colour) for buttons, progress and focus. Label colours stay inside product UI. Warm "stage" gradients sit behind product moments; at most one night band (#1E1A16) per page, plus the footer. Soft lift shadows and hairlines, no hard offset shadows or highlighter marks.
 
-Colour: direction A is the default. Warm paper #F4F3EE, ink #111111, highlighter yellow #FFD43B. Yellow means money: the headline highlight, value chips, the Leak Scan total and the Solo plan; keep it off decoration. Directions B (cobalt) and C (night and gold) exist only as `data-direction` token overrides for the comparison in docs/site-plan/dealdock-directions.html. Once the founders choose, delete the other two token blocks. Status colours are fixed: paid green, late orange, scam red.
+Type: Instrument Serif for headlines, Geist for text, Geist Mono for small uppercase labels. Motion is CSS-first, gated by reveal-on-scroll, and every view is readable with reduced motion.
 
-Type: Geist 800 for headlines, Geist for text, Geist Mono for labels and captions. Motion is CSS-first. Reduced motion shows every demo at its end state, and numbers render their final value on the server. Resets in preview.module.css use `:where(.page)` so component classes always win.
+Code: the tokens, header, footer, long-form document template and application form live in src/components/site/site.module.css; the landing's own parts in src/components/landing/*.module.css read the same tokens. Long pages (security, privacy, pilot terms, about, contact, blog posts, tools) use MarketingDocument: eyebrow, serif title, lede, an optional "short version" card, an optional full-width band, and numbered sections with sticky contents. The brand files are in public/brand; scripts/build-brand-icons.mjs makes the site icons from them. Share images come from one function (src/components/marketing/og-image.tsx).
 
 ## Positioning — updated 2026-11-05
 
@@ -32,12 +32,12 @@ Support routes: /privacy, /pilot-terms, /security, /about, /contact. These expla
 
 ## Publication and measurement
 
-Deploy only the marketing allowlist with scripts/prepare-pilot-website.mjs. Only POST /api/pilot-application and GET /api/marketing-currency are allowed server-side. Credentials, private exports, internal APIs, dashboards and research must not enter the upload.
+This repository is the marketing site only; Vercel builds it from main. Only POST /api/pilot-application and GET /api/marketing-currency are allowed server-side. Credentials, private exports, internal APIs, dashboards and research must not enter the upload.
 
-The review stays noindex until a commercial plan and canonical launch domain are agreed. SITE_URL supplies canonical, sitemap and social URLs. MARKETING_SITE_LIVE=true enables indexing; preview and archive remain noindex.
+The review stays noindex until a commercial plan and canonical launch domain are agreed. SITE_URL supplies canonical, sitemap and social URLs. MARKETING_SITE_LIVE=true enables indexing.
 
 Basic Vercel Web Analytics is mounted on the live public site. URL queries and fragments are removed; categorical event helpers exclude form content and references. Custom Vercel events stay disabled on Hobby. Google Tag Manager container `GTM-MXV6HLJT` is loaded only on the live public site; it receives no application fields, references or DM content from DealDock. Count actual saved applications separately from email drafts. No conversion uplift is claimed before real visitor evidence.
 
 ## Search, answer-engine and crawler foundation — 2026-10-27
 
-Public discovery relies on ordinary crawlable, useful pages rather than a separate AI-ranking mechanism. The homepages publish narrowly truthful Organization/WebSite structured data; approved guides use Article metadata with a named author, visible update date and matching visible copy. The static guide route remains empty until reviewed content exists. `robots.txt` allows public crawlers and excludes only private API/dashboard surfaces. Search inclusion and AI training are separate policy decisions: retain `OAI-SearchBot` access for ChatGPT search, and decide any `GPTBot` training directive explicitly with the founders. Do not add `llms.txt`, fabricated reviews/results, FAQ markup, generic AI-tool pages or mass keyword variants as discovery tactics.
+Public discovery relies on ordinary crawlable, useful pages rather than a separate AI-ranking mechanism. The homepages publish narrowly truthful Organization/WebSite structured data; approved guides use Article metadata with a named author, visible update date and matching visible copy. Guides are the blog at /blog, published only after founder review. `robots.txt` allows public crawlers and excludes only private API/dashboard surfaces. Search inclusion and AI training are separate policy decisions: retain `OAI-SearchBot` access for ChatGPT search, and decide any `GPTBot` training directive explicitly with the founders. Do not add `llms.txt`, fabricated reviews/results, FAQ markup, generic AI-tool pages or mass keyword variants as discovery tactics.

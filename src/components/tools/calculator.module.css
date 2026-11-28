@@ -1,37 +1,37 @@
 .calculator { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: start; gap: 28px; margin: 32px 0 52px; }
 .fieldset { border: 0; padding: 0; margin: 0 0 26px; min-width: 0; }
 .fieldset legend { font-size: 19px; font-weight: 700; letter-spacing: -.025em; padding: 0; margin-bottom: 14px; }
-.calculator .hint { font-size: 12px; line-height: 1.65; color: #59615b; margin: 8px 0 14px; }
+.calculator .hint { font-size: 12px; line-height: 1.65; color: var(--ink-2); margin: 8px 0 14px; }
 .calculator label { display: grid; gap: 7px; font-size: 13px; line-height: 1.5; font-weight: 550; min-width: 0; }
-.calculator small { display: block; font-size: 11px; line-height: 1.5; font-weight: 400; color: #59615b; }
-.calculator :is(input:not([type="radio"]):not([type="checkbox"]),select,textarea) { width: 100%; min-width: 0; min-height: 44px; border: 1px solid #b9c3af; border-radius: 8px; color: #191d1b; background: #fffdf8; padding: 10px 12px; font: inherit; font-size: 14px; }
-.calculator :is(input,select,textarea):focus-visible { outline: 3px solid #896c00; outline-offset: 3px; }
+.calculator small { display: block; font-size: 11px; line-height: 1.5; font-weight: 400; color: var(--ink-2); }
+.calculator :is(input:not([type="radio"]):not([type="checkbox"]),select,textarea) { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: var(--card); padding: 10px 12px; font: inherit; font-size: 14px; }
+.calculator :is(input,select,textarea):focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 3px; }
 .currency { display: flex; gap: 10px; }
 .currency label { position: relative; }
 .currency input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.currency span { display: grid; place-items: center; min-height: 44px; min-width: 94px; padding: 10px 17px; border: 1px solid #b9c3af; border-radius: 8px; cursor: pointer; }
-.currency input:checked + span { background: #191d1b; border-color: #191d1b; color: #fffdf8; }
-.currency input:focus-visible + span { outline: 3px solid #896c00; outline-offset: 3px; }
+.currency span { display: grid; place-items: center; min-height: 44px; min-width: 94px; padding: 10px 17px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+.currency input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--card); }
+.currency input:focus-visible + span { outline: 3px solid var(--accent-ink); outline-offset: 3px; }
 .feeRow { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); gap: 12px; margin-top: 14px; }
 .moneyInput { display: flex; align-items: center; position: relative; }
 .moneyInput > span { position: absolute; left: 12px; font-size: 13px; }
 .calculator .moneyInput input[type="number"] { padding-left: 29px; }
 .extra { margin: 18px 0; }
-.extra > span { font-size: 12px; color: #59615b; font-weight: 400; }
+.extra > span { font-size: 12px; color: var(--ink-2); font-weight: 400; }
 .calculator .checkbox { display: flex; align-items: start; gap: 11px; margin-bottom: 20px; cursor: pointer; }
-.checkbox input { width: 19px; height: 19px; margin-top: 2px; accent-color: #425331; flex: none; }
-.viewsHelper { border: 1px solid #cdd2c9; padding: 16px; border-radius: 10px; margin: 0 0 26px; }
+.checkbox input { width: 19px; height: 19px; margin-top: 2px; accent-color: var(--ink-2); flex: none; }
+.viewsHelper { border: 1px solid var(--line); padding: 16px; border-radius: 10px; margin: 0 0 26px; }
 .viewsHelper summary { cursor: pointer; font-size: 13px; font-weight: 650; }
 .helperFields { display: grid; gap: 12px; }
 .calculator .viewsHelper p { font-size: 13px; }
-.result { position: sticky; top: 102px; padding: 25px; border: 1px solid #d6dcce; border-radius: 18px; background: #edf0e5; }
+.result { position: sticky; top: 102px; padding: 25px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
 .result .eyebrow { margin: 0; text-transform: uppercase; letter-spacing: .1em; font-size: 11px; font-weight: 650; }
 .result .amount { font-size: clamp(29px,3.4vw,42px); line-height: 1.2; font-weight: 750; letter-spacing: -.05em; margin: 10px 0 6px; overflow-wrap: anywhere; }
 .result .range { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
 .result h2 { font-size: 18px; margin: 22px 0 12px; }
 .breakdown { overflow-x: auto; }
 .breakdown table { width: 100%; border-collapse: collapse; font-size: 11px; line-height: 1.55; }
-.breakdown :is(th,td) { padding: 9px 5px; border-bottom: 1px solid #cdd2c9; vertical-align: top; }
+.breakdown :is(th,td) { padding: 9px 5px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .breakdown th { text-align: left; font-weight: 500; min-width: 100px; }
 .breakdown td { text-align: right; white-space: nowrap; }
 .breakdown thead th:not(:first-child) { text-align: right; }
@@ -39,14 +39,13 @@
 .base :is(th,td), .total :is(th,td) { font-weight: 750; }
 .replyLabel { margin: 22px 0 10px; }
 .calculator textarea { resize: vertical; font-size: 12px; line-height: 1.7; }
-.primaryButton,.secondaryButton { min-height: 44px; padding: 11px 17px; border: 0; border-radius: 8px; color: #191d1b; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; margin-top: 12px; }
-.primaryButton { background: #f9d84a; }
+.primaryButton,.secondaryButton { min-height: 44px; padding: 11px 17px; border: 0; border-radius: 8px; color: var(--ink); font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; margin-top: 12px; }
+.primaryButton { background: var(--accent); }
 .primaryButton:disabled { opacity: .5; cursor: not-allowed; }
-.secondaryButton { background: #e8ecdf; border: 1px solid #b9c3af; }
-.reset { background: none; border: 0; padding: 10px 0; min-height: 44px; color: #59615b; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font: inherit; font-size: 13px; }
+.secondaryButton { background: var(--surface); border: 1px solid var(--line); }
+.reset { background: none; border: 0; padding: 10px 0; min-height: 44px; color: var(--ink-2); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font: inherit; font-size: 13px; }
 .result .copyStatus { font-size: 12px; min-height: 20px; margin: 8px 0; }
 .result > a { font-size: 12px; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.toolPage > main { width: min(1050px,100%); }
 .methodology { scroll-margin-top: 105px; }
 @media (max-width: 760px) { .calculator { grid-template-columns: minmax(0,1fr); gap: 24px; } .result { position: static; padding: 20px; } .feeRow { gap: 10px; } }

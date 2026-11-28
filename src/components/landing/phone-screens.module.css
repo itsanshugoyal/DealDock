@@ -90,9 +90,9 @@
 .ps :global(.row > span:nth-child(2)) { color: #6B655E; }
 .ps :global(.row b) { margin-left: auto; font-weight: 600; }
 .ps :global(.row.ask > span:nth-child(2)), .ps :global(.row.ask b) { color: #8A5A00; }
-.ps :global(.val) { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 11px; border-top: 1px solid #F0EDE8; }
+.ps :global(.val) { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; padding: 9px 11px; border-top: 1px solid #F0EDE8; }
 .ps :global(.ddh + .val) { border-top: 0; }
-.ps :global(.val b) { display: block; font-size: 24px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; }
+.ps :global(.val b) { display: block; font-size: 22px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; }
 .ps :global(.val small) { display: block; font-size: 10.5px; color: #8B847B; white-space: nowrap; }
 .ps :global(.window), .ps :global(.mo) { display: flex; align-items: center; gap: 8px; padding: 8px 11px 9px; border-top: 1px solid #F0EDE8; background: #FAF8F5; font-size: 10.5px; color: #6B655E; white-space: nowrap; }
 .ps :global(.window i) { flex: 1; height: 4px; border-radius: 4px; background: linear-gradient(#18212B, #18212B) 0 0 / 66% 100% no-repeat, #E8E2D8; }

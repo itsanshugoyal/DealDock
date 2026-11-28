@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { X } from "@phosphor-icons/react/dist/ssr/X";
-import { PilotApplication } from "@/components/design-preview/pilot-application";
+import { PilotApplication } from "@/components/site/pilot-application";
 import s from "./landing.module.css";
 
 /** Open the apply sheet from anywhere, optionally with the Instagram handle already typed (the hero does this). */

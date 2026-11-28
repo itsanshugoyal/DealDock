@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { MARKETING_ORIGIN } from "@/lib/marketing-config";
-import { marketingGuides } from "@/lib/marketing-guides";
 import { getPublishedBlogPosts, freeTools } from "@/lib/blog-posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -13,6 +12,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${MARKETING_ORIGIN}/tools`, lastModified: newest, priority: 0.6 },
     ...blogPosts.map((post) => ({ url: `${MARKETING_ORIGIN}/blog/${post.slug}`, lastModified: post.updatedAt, priority: 0.7 })),
     ...freeTools.map((tool) => ({ url: MARKETING_ORIGIN + tool.href, lastModified: tool.updatedAt, priority: 0.7 })),
-    ...marketingGuides.map((guide) => ({ url: `${MARKETING_ORIGIN}/guides/${guide.slug}`, lastModified: guide.updatedAt, priority: 0.7 })),
   ];
 }

@@ -1,4 +1,4 @@
-const routes = new Set(["/", "/in", "/design-preview", "/privacy", "/pilot-terms", "/security", "/about", "/contact"]);
+const routes = new Set(["/", "/in", "/privacy", "/pilot-terms", "/security", "/about", "/contact", "/blog", "/tools"]);
 const eventNames = new Set(["pilot_cta_clicked", "form_started", "application_attempted", "application_received", "application_failed", "email_fallback_prepared", "demo_sent"]);
 const categories = {
   location: new Set(["navigation", "hero", "leak_scan", "agencies", "pricing_solo", "pricing_studio", "pricing_roster", "sticky_bar"]),
