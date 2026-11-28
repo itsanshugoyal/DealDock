@@ -16,7 +16,7 @@
     "@vercel/blob": "^2.8.2",
     "geist": "^1.9.2",
     "gray-matter": "^4.0.3",
-    "next": "16.4.3",
+    "next": "16.4.6",
     "next-mdx-remote": "^6.0.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -28,7 +28,7 @@
     "@types/react-dom": "^19",
     "cheerio": "^1.2.0",
     "eslint": "^9",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.6",
     "turndown": "^7.2.5",
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5"
